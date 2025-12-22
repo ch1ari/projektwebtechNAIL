@@ -162,7 +162,7 @@ body {
 .board {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
   border-radius: 16px;
   background: #fff;
@@ -377,21 +377,21 @@ body {
 
 .sticker img {
   display: block;
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
   object-fit: contain;
   pointer-events: none;
 }
 
 .sticker.is-placed {
   position: absolute;
-  width: 72px;
-  height: 72px;
+  width: 60px;
+  height: 60px;
 }
 
 .sticker.is-palette {
-  width: 72px;
-  height: 72px;
+  width: 68px;
+  height: 68px;
   background: linear-gradient(160deg, #fff7fb, #ffe8f6);
   border: 1px dashed #ffd0e5;
   border-radius: 14px;
@@ -413,17 +413,40 @@ body {
 
 .color-shelf {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
   gap: 0.4rem;
 }
 
 .swatch {
+  position: relative;
   width: 100%;
-  padding-bottom: 80%;
-  border-radius: 12px;
+  padding: 0.2rem 0.4rem 0.35rem;
+  border-radius: 16px;
   border: 2px solid transparent;
   cursor: pointer;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 6px 14px rgba(0, 0, 0, 0.06);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 234, 245, 0.7));
+}
+
+.nail-chip {
+  display: grid;
+  gap: 0.25rem;
+  justify-items: center;
+}
+
+.nail-cap,
+.nail-bed {
+  display: block;
+  width: 100%;
+  border-radius: 12px 12px 16px 16px;
+  height: 22px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75), 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.nail-cap {
+  width: 70%;
+  height: 16px;
+  border-radius: 12px 12px 10px 10px;
 }
 
 .swatch.active {

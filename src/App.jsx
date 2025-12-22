@@ -274,16 +274,19 @@ function Toolbelt({ app, boardRef }) {
     <div className="toolbelt panel">
       <div className="tool-section color-section">
         <div className="section-heading">Paleta lakov</div>
-        <p className="muted">Potiahni alebo klikni na necht pre zafarbenie.</p>
+        <p className="muted">Potiahni lakový nechtík na ruky alebo len klikni na konkrétny necht.</p>
         <div className="color-shelf">
           {app.paletteColors.map((color) => (
             <button
               key={color}
-              className={`swatch ${app.state.selectedColor === color ? 'active' : ''}`}
-              style={{ backgroundColor: color }}
+              className={`swatch nail-chip ${app.state.selectedColor === color ? 'active' : ''}`}
+              onPointerDown={() => app.dispatch({ type: 'setColor', payload: color })}
               onClick={() => app.dispatch({ type: 'setColor', payload: color })}
               aria-label={`Select ${color}`}
-            />
+            >
+              <span className="nail-cap" style={{ backgroundColor: color }} />
+              <span className="nail-bed" style={{ backgroundColor: color }} />
+            </button>
           ))}
         </div>
       </div>

@@ -47,7 +47,14 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
   }
 
   function handlePaintPointerMove(event) {
-    if (!paintingRef.current.active) return;
+    const shouldPaint = paintingRef.current.active || event.buttons === 1;
+    if (!shouldPaint) return;
+
+    if (!paintingRef.current.active) {
+      paintingRef.current = { active: true, pointerId: event.pointerId };
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
+
     const nailId = nailFromPoint(event.clientX, event.clientY);
     if (nailId) handlePaint(nailId);
   }
