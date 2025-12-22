@@ -167,6 +167,34 @@ body {
   transition: background-color 0.2s ease;
 }
 
+.nails-clip {
+  position: absolute;
+  inset: 0;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  -webkit-mask-position: center;
+  pointer-events: auto;
+}
+
+.board-hints {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hint-dot {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: rgba(244, 143, 177, 0.25);
+  border: 2px dashed rgba(244, 143, 177, 0.8);
+  transform: translate(-50%, -50%);
+}
+
 .board-footer {
   display: flex;
   gap: 0.6rem;
@@ -185,6 +213,83 @@ body {
 .tag.tone {
   color: #111;
   border-color: transparent;
+}
+
+.palette {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.8rem;
+}
+
+.palette-item {
+  background: #fff;
+  border: 1px solid #ffd0e5;
+  border-radius: 12px;
+  padding: 0.5rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.palette-meta {
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #7a5a73;
+}
+
+.palette-meta .status {
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  background: #ffe5f2;
+  color: #9c4f78;
+}
+
+.palette-meta .status.on-board {
+  background: #e3f6f3;
+  color: #2d7a68;
+}
+
+.sticker {
+  position: relative;
+  display: grid;
+  place-items: center;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+.sticker img {
+  display: block;
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.sticker.is-placed {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+}
+
+.sticker.is-palette {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(160deg, #fff7fb, #ffe8f6);
+  border: 1px dashed #ffd0e5;
+  border-radius: 14px;
+}
+
+.sticker:active {
+  cursor: grabbing;
 }
 
 .right-panel input[type='color'] {

@@ -1,24 +1,29 @@
-import React, { createContext, useMemo, useReducer } from 'react';
+import React, { createContext, useMemo, useReducer, useRef } from 'react';
+import Board from './components/Board.jsx';
+import Palette from './components/Palette.jsx';
 import tasks from './data/tasks.json';
 import { clamp } from './lib/geometry.js';
 
 export const AppStateContext = createContext();
 
+const firstTaskId = tasks[0]?.id ?? null;
+
 const initialState = {
-  currentTaskId: tasks[0]?.id ?? null,
+  currentTaskId: firstTaskId,
   placements: {},
-  selectedColor: '#f06292',
-  stickers: [],
+  selectedColor: tasks.find((task) => task.id === firstTaskId)?.goalColor ?? '#f06292',
   status: 'idle'
 };
 
 function appReducer(state, action) {
   switch (action.type) {
     case 'setTask': {
+      const nextTask = tasks.find((task) => task.id === action.payload) ?? null;
       return {
         ...state,
-        currentTaskId: action.payload,
+        currentTaskId: nextTask?.id ?? null,
         placements: {},
+        selectedColor: nextTask?.goalColor ?? state.selectedColor,
         status: 'task:selected'
       };
     }
@@ -31,6 +36,21 @@ function appReducer(state, action) {
         ...state,
         placements: { ...state.placements, [stickerId]: position },
         status: 'editing'
+      };
+    }
+    case 'removeSticker': {
+      const updated = { ...state.placements };
+      delete updated[action.payload];
+      return { ...state, placements: updated };
+    }
+    case 'rotateSticker': {
+      const { stickerId, delta } = action.payload;
+      const current = state.placements[stickerId];
+      if (!current) return state;
+      const rotation = ((current.rotation ?? 0) + delta + 360) % 360;
+      return {
+        ...state,
+        placements: { ...state.placements, [stickerId]: { ...current, rotation } }
       };
     }
     default:
@@ -79,45 +99,17 @@ function LeftPanel({ app }) {
   );
 }
 
-function Board({ app }) {
-  const { selectedColor } = app.state;
-  const activeTask = app.currentTask;
-  return (
-    <div className="board-shell">
-      <div className="board" aria-label="Nail art workspace">
-        <div
-          className="board-surface"
-          style={{ backgroundImage: "url('/bakground.png')" }}
-          aria-hidden
-        />
-        <img className="board-hand" src="/hand.png" alt="Hand with nails" />
-        <div
-          className="nails-layer"
-          style={{
-            backgroundColor: selectedColor,
-            maskImage: "url('/mask_nails.png')",
-            WebkitMaskImage: "url('/mask_nails.png')"
-          }}
-          aria-hidden
-        />
-      </div>
-      <div className="board-footer">
-        <div className="tag">Active task: {activeTask?.name ?? 'none'}</div>
-        <div className="tag tone" style={{ backgroundColor: selectedColor }}>
-          Selected tone
-        </div>
-      </div>
-    </div>
+function RightPanel({ app, boardRef }) {
+  const plannedCoverage = clamp(
+    Math.round((Object.keys(app.state.placements).length / 5) * 100),
+    0,
+    100
   );
-}
-
-function RightPanel({ app }) {
-  const plannedCoverage = clamp(Math.round((Object.keys(app.state.placements).length / 5) * 100), 0, 100);
 
   return (
     <aside className="panel right-panel">
       <h2>Palette</h2>
-      <p className="muted">Pick a base color for the nail layer.</p>
+      <p className="muted">Pick a base color and decorate with stickers.</p>
       <input
         aria-label="Pick nail color"
         type="color"
@@ -132,12 +124,19 @@ function RightPanel({ app }) {
         <span className="label">Coverage plan</span>
         <span className="value">{plannedCoverage}%</span>
       </div>
+      <Palette
+        boardRef={boardRef}
+        stickers={app.currentTask?.stickers ?? []}
+        placements={app.state.placements}
+        dispatch={app.dispatch}
+      />
     </aside>
   );
 }
 
 export default function App() {
   const app = useAppState();
+  const boardRef = useRef(null);
 
   return (
     <AppStateContext.Provider value={app}>
@@ -145,8 +144,12 @@ export default function App() {
         <TopBar />
         <div className="layout">
           <LeftPanel app={app} />
-          <Board app={app} />
-          <RightPanel app={app} />
+          <Board
+            ref={boardRef}
+            app={app}
+            stickers={app.currentTask?.stickers ?? []}
+          />
+          <RightPanel app={app} boardRef={boardRef} />
         </div>
       </div>
     </AppStateContext.Provider>

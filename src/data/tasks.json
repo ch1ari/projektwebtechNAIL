@@ -2,12 +2,17 @@
   {
     "id": "task-1",
     "name": "Pink Warmup",
-    "description": "Fill the nails with a cozy pink hue.",
+    "description": "Fill the nails with a cozy pink hue and try a few stickers.",
     "placements": [
       { "spot": "thumb", "x": 0.32, "y": 0.58 },
       { "spot": "index", "x": 0.46, "y": 0.53 }
     ],
-    "goalColor": "#f48fb1"
+    "goalColor": "#f48fb1",
+    "stickers": [
+      { "id": "sticker-rose", "name": "Rose", "src": "/stickers/rose.png", "scale": 0.7 },
+      { "id": "sticker-rainbow", "name": "Rainbow", "src": "/stickers/rainbow.png", "scale": 0.68 },
+      { "id": "sticker-diamond", "name": "Diamond", "src": "/stickers/diamond.png", "scale": 0.7 }
+    ]
   },
   {
     "id": "task-2",
@@ -17,6 +22,11 @@
       { "spot": "middle", "x": 0.55, "y": 0.52 },
       { "spot": "ring", "x": 0.64, "y": 0.56 }
     ],
-    "goalColor": "#7ae0c5"
+    "goalColor": "#7ae0c5",
+    "stickers": [
+      { "id": "sticker-cherry", "name": "Cherry", "src": "/stickers/cherry.png", "scale": 0.72 },
+      { "id": "sticker-star", "name": "Shooting Star", "src": "/stickers/shooting-star.png", "scale": 0.7 },
+      { "id": "sticker-sunflower", "name": "Sunflower", "src": "/stickers/sunflower.png", "scale": 0.7 }
+    ]
   }
 ]
