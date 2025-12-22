@@ -87,13 +87,17 @@ function Board({ app }) {
       <div className="board" aria-label="Nail art workspace">
         <div
           className="board-surface"
-          style={{ backgroundImage: "url('/assets/bakground.png')" }}
+          style={{ backgroundImage: "url('/bakground.png')" }}
           aria-hidden
         />
-        <img className="board-hand" src="/assets/hand.png" alt="Hand with nails" />
+        <img className="board-hand" src="/hand.png" alt="Hand with nails" />
         <div
           className="nails-layer"
-          style={{ backgroundColor: selectedColor, maskImage: "url('/assets/mask_nails.png')" }}
+          style={{
+            backgroundColor: selectedColor,
+            maskImage: "url('/mask_nails.png')",
+            WebkitMaskImage: "url('/mask_nails.png')"
+          }}
           aria-hidden
         />
       </div>
