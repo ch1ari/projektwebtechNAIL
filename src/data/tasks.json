@@ -1,0 +1,104 @@
+[
+  {
+    "id": "level-rose",
+    "name": "Rose Glimmer",
+    "description": "Soft rose tones with delicate gems for the thumb and middle nails.",
+    "clientRequest": "Blend a rose base with tiny crystal accents on thumb and middle. Keep angles tidy.",
+    "canvas": { "width": 900, "height": 900 },
+    "nailTargets": {
+      "thumb": "#f48fb1",
+      "index": "#f6b2c8",
+      "middle": "#f48fb1",
+      "ring": "#fbd4df",
+      "pinky": "#f9c2d6"
+    },
+    "stickers": [
+      {
+        "id": "sticker-rose",
+        "type": "decal",
+        "name": "Rose",
+        "img": "/stickers/rose.png",
+        "startTransform": { "x": 0.15, "y": 0.75, "rotation": 0, "scale": 0.7 }
+      },
+      {
+        "id": "sticker-diamond",
+        "type": "gem",
+        "name": "Diamond",
+        "img": "/stickers/diamond.png",
+        "startTransform": { "x": 0.1, "y": 0.65, "rotation": -10, "scale": 0.7 }
+      },
+      {
+        "id": "sticker-sunflower",
+        "type": "floral",
+        "name": "Sunflower",
+        "img": "/stickers/sunflower.png",
+        "startTransform": { "x": 0.12, "y": 0.85, "rotation": 8, "scale": 0.68 }
+      }
+    ],
+    "targets": [
+      {
+        "stickerId": "sticker-rose",
+        "nailName": "thumb",
+        "targetTransform": { "x": 0.3, "y": 0.62, "rotation": -12, "scale": 0.7 },
+        "tolerance": { "x": 0.03, "y": 0.03, "rotation": 12, "scale": 0.08 }
+      },
+      {
+        "stickerId": "sticker-diamond",
+        "nailName": "middle",
+        "targetTransform": { "x": 0.53, "y": 0.58, "rotation": 20, "scale": 0.7 },
+        "tolerance": { "x": 0.03, "y": 0.03, "rotation": 12, "scale": 0.08 }
+      }
+    ]
+  },
+  {
+    "id": "level-mint",
+    "name": "Mint Breeze",
+    "description": "Cool mint with stars and stripes on index and ring.",
+    "clientRequest": "Use mint polish, align a comet on index and a starburst on ring. Keep them centered.",
+    "canvas": { "width": 900, "height": 900 },
+    "nailTargets": {
+      "thumb": "#7ae0c5",
+      "index": "#7ae0c5",
+      "middle": "#a3e8d6",
+      "ring": "#b7efe1",
+      "pinky": "#c8f3e7"
+    },
+    "stickers": [
+      {
+        "id": "sticker-star",
+        "type": "burst",
+        "name": "Shooting Star",
+        "img": "/stickers/shooting-star.png",
+        "startTransform": { "x": 0.82, "y": 0.78, "rotation": 0, "scale": 0.7 }
+      },
+      {
+        "id": "sticker-rainbow",
+        "type": "arc",
+        "name": "Rainbow",
+        "img": "/stickers/rainbow.png",
+        "startTransform": { "x": 0.86, "y": 0.68, "rotation": 8, "scale": 0.68 }
+      },
+      {
+        "id": "sticker-cherry",
+        "type": "fruit",
+        "name": "Cherry",
+        "img": "/stickers/cherry.png",
+        "startTransform": { "x": 0.78, "y": 0.82, "rotation": -6, "scale": 0.72 }
+      }
+    ],
+    "targets": [
+      {
+        "stickerId": "sticker-star",
+        "nailName": "index",
+        "targetTransform": { "x": 0.45, "y": 0.55, "rotation": -6, "scale": 0.7 },
+        "tolerance": { "x": 0.03, "y": 0.03, "rotation": 14, "scale": 0.08 }
+      },
+      {
+        "stickerId": "sticker-rainbow",
+        "nailName": "ring",
+        "targetTransform": { "x": 0.62, "y": 0.57, "rotation": 10, "scale": 0.68 },
+        "tolerance": { "x": 0.03, "y": 0.03, "rotation": 14, "scale": 0.08 }
+      }
+    ]
+  }
+]
