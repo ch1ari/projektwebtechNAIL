@@ -1,0 +1,22 @@
+[
+  {
+    "id": "task-1",
+    "name": "Pink Warmup",
+    "description": "Fill the nails with a cozy pink hue.",
+    "placements": [
+      { "spot": "thumb", "x": 0.32, "y": 0.58 },
+      { "spot": "index", "x": 0.46, "y": 0.53 }
+    ],
+    "goalColor": "#f48fb1"
+  },
+  {
+    "id": "task-2",
+    "name": "Mint Breeze",
+    "description": "Try a cooler tone and a couple of sticker anchors.",
+    "placements": [
+      { "spot": "middle", "x": 0.55, "y": 0.52 },
+      { "spot": "ring", "x": 0.64, "y": 0.56 }
+    ],
+    "goalColor": "#7ae0c5"
+  }
+]
