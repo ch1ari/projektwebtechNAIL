@@ -269,38 +269,36 @@ function TopBar({ app }) {
   );
 }
 
-function LeftPanel({ app, boardRef }) {
+function Toolbelt({ app, boardRef }) {
   return (
-    <aside className="panel left-panel">
-      <h2>Ateliér ozdôb</h2>
-      <p className="muted">Najprv nalakuj nechty, potom lep ozdoby. Klik = otočenie 15°.</p>
-      <Palette
-        boardRef={boardRef}
-        stickers={app.currentTask?.stickers ?? []}
-        placements={app.state.placements}
-        dispatch={app.dispatch}
-        lockCorrect={app.state.lockCorrect}
-      />
-      <h3>Paleta lakov</h3>
-      <div className="color-shelf">
-        {app.paletteColors.map((color) => (
-          <button
-            key={color}
-            className={`swatch ${app.state.selectedColor === color ? 'active' : ''}`}
-            style={{ backgroundColor: color }}
-            onClick={() => app.dispatch({ type: 'setColor', payload: color })}
-            aria-label={`Select ${color}`}
-          />
-        ))}
+    <div className="toolbelt panel">
+      <div className="tool-section color-section">
+        <div className="section-heading">Paleta lakov</div>
+        <p className="muted">Potiahni alebo klikni na necht pre zafarbenie.</p>
+        <div className="color-shelf">
+          {app.paletteColors.map((color) => (
+            <button
+              key={color}
+              className={`swatch ${app.state.selectedColor === color ? 'active' : ''}`}
+              style={{ backgroundColor: color }}
+              onClick={() => app.dispatch({ type: 'setColor', payload: color })}
+              aria-label={`Select ${color}`}
+            />
+          ))}
+        </div>
       </div>
-      <div className="helper-card">
-        <ul>
-          <li>Dotkni sa nechtu pre zafarbenie vybratou farbou.</li>
-          <li>Potiahni nálepku na plochu rúk, tapnutie ju otočí.</li>
-          <li>Uzamkni správne ozdoby, aby sa už nepohli.</li>
-        </ul>
+      <div className="tool-section sticker-section">
+        <div className="section-heading">Box s nálepkami</div>
+        <p className="muted">Potiahni nálepku na nechty, klepnutie ju otočí o 15°.</p>
+        <Palette
+          boardRef={boardRef}
+          stickers={app.currentTask?.stickers ?? []}
+          placements={app.state.placements}
+          dispatch={app.dispatch}
+          lockCorrect={app.state.lockCorrect}
+        />
       </div>
-    </aside>
+    </div>
   );
 }
 
@@ -402,8 +400,10 @@ export default function App() {
       <div className="app-shell">
         <TopBar app={app} />
         <div className="layout">
-          <LeftPanel app={app} boardRef={boardRef} />
-          <Board ref={boardRef} app={app} stickers={app.currentTask?.stickers ?? []} />
+          <div className="main-column">
+            <Board ref={boardRef} app={app} stickers={app.currentTask?.stickers ?? []} />
+            <Toolbelt app={app} boardRef={boardRef} />
+          </div>
           <RightPanel app={app} />
         </div>
         {app.state.showStats ? (

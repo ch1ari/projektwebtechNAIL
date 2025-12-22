@@ -9,7 +9,7 @@ export default function Sticker({ sticker, placement, boardRef, dispatch, varian
   const nodeRef = useRef(null);
   const dragState = useRef(null);
 
-  const baseScale = placement?.scale ?? sticker.startTransform?.scale ?? sticker.scale ?? 1;
+  const baseScale = placement?.scale ?? sticker.startTransform?.scale ?? sticker.scale ?? 0.7;
   const rotation = placement?.rotation ?? sticker.startTransform?.rotation ?? 0;
   const isBoardPlacement = Boolean(placement) && variant === 'board';
 

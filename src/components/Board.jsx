@@ -1,4 +1,4 @@
-import React, { forwardRef, useMemo } from 'react';
+import React, { forwardRef, useMemo, useRef } from 'react';
 import Sticker from './Sticker.jsx';
 
 const nailLayout = [
@@ -12,6 +12,8 @@ const nailLayout = [
 const Board = forwardRef(function Board({ app, stickers }, boardRef) {
   const { selectedColor, placements, showHints, showTemplate, nailColors } = app.state;
   const activeTask = app.currentTask;
+  const nailRefs = useRef({});
+  const paintingRef = useRef({ active: false });
 
   const placedStickers = useMemo(
     () => stickers.filter((sticker) => placements[sticker.id]),
@@ -22,6 +24,39 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
 
   function handlePaint(nailId) {
     app.dispatch({ type: 'paintNail', payload: { nail: nailId, color: selectedColor } });
+  }
+
+  function nailFromPoint(clientX, clientY) {
+    const entries = Object.entries(nailRefs.current);
+    for (const [nailId, node] of entries) {
+      if (!node) continue;
+      const rect = node.getBoundingClientRect();
+      if (clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom) {
+        return nailId;
+      }
+    }
+    return null;
+  }
+
+  function handlePaintPointerDown(event) {
+    if (!boardRef?.current) return;
+    paintingRef.current = { active: true, pointerId: event.pointerId };
+    event.currentTarget.setPointerCapture(event.pointerId);
+    const nailId = nailFromPoint(event.clientX, event.clientY);
+    if (nailId) handlePaint(nailId);
+  }
+
+  function handlePaintPointerMove(event) {
+    if (!paintingRef.current.active) return;
+    const nailId = nailFromPoint(event.clientX, event.clientY);
+    if (nailId) handlePaint(nailId);
+  }
+
+  function handlePaintPointerUp(event) {
+    if (paintingRef.current.pointerId && event.currentTarget.hasPointerCapture(paintingRef.current.pointerId)) {
+      event.currentTarget.releasePointerCapture(paintingRef.current.pointerId);
+    }
+    paintingRef.current = { active: false };
   }
 
   return (
@@ -41,7 +76,14 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
             WebkitMaskImage: "url('/mask_nails.png')"
           }}
         >
-          <div className="paint-layer" aria-label="Nail polish layer">
+          <div
+            className="paint-layer"
+            aria-label="Nail polish layer"
+            onPointerDown={handlePaintPointerDown}
+            onPointerMove={handlePaintPointerMove}
+            onPointerUp={handlePaintPointerUp}
+            onPointerCancel={handlePaintPointerUp}
+          >
             {nailLayout.map((nail) => (
               <div
                 key={nail.id}
@@ -53,7 +95,13 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
                   height: nail.height,
                   backgroundColor: nailColors[nail.id] ?? selectedColor
                 }}
-                onPointerDown={() => handlePaint(nail.id)}
+                ref={(node) => {
+                  if (node) {
+                    nailRefs.current[nail.id] = node;
+                  } else {
+                    delete nailRefs.current[nail.id];
+                  }
+                }}
               />
             ))}
           </div>

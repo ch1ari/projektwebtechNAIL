@@ -23,7 +23,7 @@ body {
 }
 
 .app-shell {
-  max-width: 1200px;
+  max-width: 1320px;
   margin: 0 auto;
   padding: 1.5rem;
   display: flex;
@@ -85,9 +85,15 @@ body {
 
 .layout {
   display: grid;
-  grid-template-columns: 280px 1fr 280px;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.85fr);
   gap: 1rem;
   align-items: start;
+}
+
+.main-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .panel {
@@ -156,7 +162,7 @@ body {
 .board {
   position: relative;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
   border-radius: 16px;
   background: #fff;
@@ -203,6 +209,7 @@ body {
   inset: 0;
   pointer-events: auto;
   z-index: 1;
+  touch-action: none;
 }
 
 .paint-nail {
@@ -279,10 +286,29 @@ body {
 }
 
 .palette {
-  margin-top: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
+}
+
+.toolbelt {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.tool-section {
+  background: linear-gradient(180deg, rgba(255, 247, 251, 0.95), rgba(255, 232, 246, 0.95));
+  border: 1px solid #ffd0e5;
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  box-shadow: 0 12px 30px rgba(255, 177, 209, 0.25);
+}
+
+.section-heading {
+  font-weight: 700;
+  margin-bottom: 0.2rem;
 }
 
 .helper-card {
@@ -303,15 +329,15 @@ body {
 
 .palette-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 0.8rem;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 0.6rem;
 }
 
 .palette-item {
   background: #fff;
   border: 1px solid #ffd0e5;
   border-radius: 12px;
-  padding: 0.5rem;
+  padding: 0.4rem 0.5rem;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
@@ -351,21 +377,21 @@ body {
 
 .sticker img {
   display: block;
-  width: 72px;
-  height: 72px;
+  width: 64px;
+  height: 64px;
   object-fit: contain;
   pointer-events: none;
 }
 
 .sticker.is-placed {
   position: absolute;
-  width: 80px;
-  height: 80px;
+  width: 72px;
+  height: 72px;
 }
 
 .sticker.is-palette {
-  width: 80px;
-  height: 80px;
+  width: 72px;
+  height: 72px;
   background: linear-gradient(160deg, #fff7fb, #ffe8f6);
   border: 1px dashed #ffd0e5;
   border-radius: 14px;
@@ -499,5 +525,9 @@ body {
 
   .board-shell {
     order: 0;
+  }
+
+  .toolbelt {
+    grid-template-columns: 1fr;
   }
 }
