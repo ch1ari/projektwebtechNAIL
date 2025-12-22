@@ -9,13 +9,13 @@ export default function Sticker({ sticker, placement, boardRef, dispatch, varian
   const nodeRef = useRef(null);
   const dragState = useRef(null);
 
-  const baseScale = placement?.scale ?? sticker.startTransform?.scale ?? sticker.scale ?? 1;
+  const baseScale = placement?.scale ?? sticker.startTransform?.scale ?? sticker.scale ?? 0.6;
   const rotation = placement?.rotation ?? sticker.startTransform?.rotation ?? 0;
   const isBoardPlacement = Boolean(placement) && variant === 'board';
 
   function handlePointerDown(event) {
     if (lockCorrect && placement?.isCorrect) return;
-    if (!nodeRef.current) return;
+    if (!nodeRef.current || !boardRef?.current) return;
     const rect = nodeRef.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
@@ -26,19 +26,17 @@ export default function Sticker({ sticker, placement, boardRef, dispatch, varian
       startX: event.clientX,
       startY: event.clientY,
       offsetX,
-      offsetY,
-      originPlacement: placement ? { ...placement } : null
+      offsetY
     };
 
     event.currentTarget.setPointerCapture(event.pointerId);
 
-    if (!placement && boardRef?.current) {
+    if (!placement) {
       const boardRect = boardRef.current.getBoundingClientRect();
       const targetCenterX = event.clientX - offsetX;
       const targetCenterY = event.clientY - offsetY;
       const xNorm = (targetCenterX - boardRect.left) / boardRect.width;
       const yNorm = (targetCenterY - boardRect.top) / boardRect.height;
-
       dispatch({
         type: 'placeSticker',
         payload: {
@@ -62,10 +60,8 @@ export default function Sticker({ sticker, placement, boardRef, dispatch, varian
     const targetCenterY = event.clientY - dragState.current.offsetY;
     const xNorm = (targetCenterX - boardRect.left) / boardRect.width;
     const yNorm = (targetCenterY - boardRect.top) / boardRect.height;
-    const currentRotation =
-      placement?.rotation ?? dragState.current.originPlacement?.rotation ?? sticker.startTransform?.rotation ?? 0;
-    const currentScale =
-      placement?.scale ?? dragState.current.originPlacement?.scale ?? sticker.startTransform?.scale ?? sticker.scale ?? 1;
+    const currentRotation = placement?.rotation ?? sticker.startTransform?.rotation ?? 0;
+    const currentScale = placement?.scale ?? sticker.startTransform?.scale ?? sticker.scale ?? 1;
 
     dispatch({
       type: 'placeSticker',
@@ -88,23 +84,21 @@ export default function Sticker({ sticker, placement, boardRef, dispatch, varian
       event.currentTarget.releasePointerCapture(event.pointerId);
     }
 
+    const boardRect = boardRef?.current?.getBoundingClientRect();
     const distance = Math.hypot(
       event.clientX - dragState.current.startX,
       event.clientY - dragState.current.startY
     );
 
-    const boardRect = boardRef?.current?.getBoundingClientRect();
-
     if (distance < 6) {
-      const basePlacement = dragState.current.originPlacement || placement;
+      const basePlacement = placement;
       if (basePlacement) {
         const nextRotation = normalizeRotation((basePlacement.rotation ?? 0) + 15);
-        const currentScale = basePlacement.scale ?? sticker.scale ?? 1;
         dispatch({
           type: 'placeSticker',
           payload: {
             stickerId: sticker.id,
-            position: { ...basePlacement, rotation: nextRotation, scale: currentScale }
+            position: { ...basePlacement, rotation: nextRotation }
           }
         });
         if (taskId) {
@@ -137,18 +131,19 @@ export default function Sticker({ sticker, placement, boardRef, dispatch, varian
       return;
     }
 
-    const currentRotation =
-      placement?.rotation ?? dragState.current.originPlacement?.rotation ?? sticker.startTransform?.rotation ?? 0;
-    const currentScale =
-      placement?.scale ?? dragState.current.originPlacement?.scale ?? sticker.startTransform?.scale ?? sticker.scale ?? 1;
+    const currentRotation = placement?.rotation ?? sticker.startTransform?.rotation ?? 0;
+    const currentScale = placement?.scale ?? sticker.startTransform?.scale ?? sticker.scale ?? 1;
+    const rect = nodeRef.current.getBoundingClientRect();
+    const marginX = (rect.width / boardRect.width) / 2;
+    const marginY = (rect.height / boardRect.height) / 2;
 
     dispatch({
       type: 'placeSticker',
       payload: {
         stickerId: sticker.id,
         position: {
-          x: clamp(xNorm, 0, 1),
-          y: clamp(yNorm, 0, 1),
+          x: clamp(xNorm, marginX, 1 - marginX),
+          y: clamp(yNorm, marginY, 1 - marginY),
           rotation: currentRotation,
           scale: currentScale
         }

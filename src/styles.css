@@ -23,7 +23,7 @@ body {
 }
 
 .app-shell {
-  max-width: 1200px;
+  max-width: 1320px;
   margin: 0 auto;
   padding: 1.5rem;
   display: flex;
@@ -34,11 +34,17 @@ body {
 .top-bar {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   padding: 1rem 1.25rem;
   border-radius: 14px;
   background: linear-gradient(120deg, #ffcee5, #ffc5f5);
   box-shadow: 0 18px 50px rgba(255, 164, 213, 0.35);
+}
+
+.brand-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
 }
 
 .brand {
@@ -52,11 +58,42 @@ body {
   font-size: 0.95rem;
 }
 
+.top-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.45rem 0.7rem;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid #ffd0e5;
+  border-radius: 999px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.pill.muted {
+  color: #7a5a73;
+  background: rgba(255, 255, 255, 0.6);
+}
+
 .layout {
   display: grid;
-  grid-template-columns: 280px 1fr 280px;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.85fr);
   gap: 1rem;
   align-items: start;
+}
+
+.main-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .panel {
@@ -131,6 +168,7 @@ body {
   background: #fff;
   border: 1px solid #ffd0e5;
   box-shadow: 0 20px 60px rgba(255, 164, 213, 0.32);
+  touch-action: none;
 }
 
 .board-surface {
@@ -152,21 +190,6 @@ body {
   pointer-events: none;
 }
 
-.nails-layer {
-  position: absolute;
-  inset: 0;
-  mask-repeat: no-repeat;
-  mask-size: contain;
-  mask-position: center;
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-size: contain;
-  -webkit-mask-position: center;
-  mix-blend-mode: screen;
-  opacity: 0.9;
-  pointer-events: none;
-  transition: background-color 0.2s ease;
-}
-
 .nails-clip {
   position: absolute;
   inset: 0;
@@ -177,30 +200,37 @@ body {
   -webkit-mask-size: contain;
   -webkit-mask-position: center;
   pointer-events: auto;
+  display: grid;
+  place-items: center;
 }
 
 .paint-layer {
   position: absolute;
   inset: 0;
-  mask-repeat: no-repeat;
-  mask-size: contain;
-  mask-position: center;
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-size: contain;
-  -webkit-mask-position: center;
-  display: flex;
+  pointer-events: auto;
+  z-index: 1;
+  touch-action: none;
 }
 
 .paint-nail {
   position: absolute;
-  inset: 0 auto 0 0;
-  opacity: 0.85;
+  border-radius: 20px;
+  opacity: 0.92;
   mix-blend-mode: screen;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+.sticker-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: auto;
+  z-index: 2;
 }
 
 .board-hints {
   position: absolute;
   inset: 0;
+  z-index: 3;
   pointer-events: none;
 }
 
@@ -217,6 +247,7 @@ body {
 .template-overlay {
   position: absolute;
   inset: 0;
+  z-index: 2;
   pointer-events: none;
 }
 
@@ -255,23 +286,58 @@ body {
 }
 
 .palette {
-  margin-top: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
 }
 
+.toolbelt {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.tool-section {
+  background: linear-gradient(180deg, rgba(255, 247, 251, 0.95), rgba(255, 232, 246, 0.95));
+  border: 1px solid #ffd0e5;
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  box-shadow: 0 12px 30px rgba(255, 177, 209, 0.25);
+}
+
+.section-heading {
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+
+.helper-card {
+  background: #fff;
+  border: 1px solid #ffd0e5;
+  border-radius: 12px;
+  padding: 0.75rem 0.9rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  color: #5a2f47;
+}
+
+.helper-card ul {
+  margin: 0.25rem 0 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.25rem;
+}
+
 .palette-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 0.8rem;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 0.6rem;
 }
 
 .palette-item {
   background: #fff;
   border: 1px solid #ffd0e5;
   border-radius: 12px;
-  padding: 0.5rem;
+  padding: 0.4rem 0.5rem;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
@@ -311,21 +377,21 @@ body {
 
 .sticker img {
   display: block;
-  width: 72px;
-  height: 72px;
+  width: 56px;
+  height: 56px;
   object-fit: contain;
   pointer-events: none;
 }
 
 .sticker.is-placed {
   position: absolute;
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
 }
 
 .sticker.is-palette {
-  width: 80px;
-  height: 80px;
+  width: 68px;
+  height: 68px;
   background: linear-gradient(160deg, #fff7fb, #ffe8f6);
   border: 1px dashed #ffd0e5;
   border-radius: 14px;
@@ -347,17 +413,40 @@ body {
 
 .color-shelf {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
   gap: 0.4rem;
 }
 
 .swatch {
+  position: relative;
   width: 100%;
-  padding-bottom: 80%;
-  border-radius: 12px;
+  padding: 0.2rem 0.4rem 0.35rem;
+  border-radius: 16px;
   border: 2px solid transparent;
   cursor: pointer;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 6px 14px rgba(0, 0, 0, 0.06);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 234, 245, 0.7));
+}
+
+.nail-chip {
+  display: grid;
+  gap: 0.25rem;
+  justify-items: center;
+}
+
+.nail-cap,
+.nail-bed {
+  display: block;
+  width: 100%;
+  border-radius: 12px 12px 16px 16px;
+  height: 22px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75), 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.nail-cap {
+  width: 70%;
+  height: 16px;
+  border-radius: 12px 12px 10px 10px;
 }
 
 .swatch.active {
@@ -459,5 +548,9 @@ body {
 
   .board-shell {
     order: 0;
+  }
+
+  .toolbelt {
+    grid-template-columns: 1fr;
   }
 }
