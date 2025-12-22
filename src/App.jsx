@@ -16,17 +16,23 @@ const paletteColors = [
   '#7ad6ff',
   '#ffcc80',
   '#ffd6a5',
-  '#f28cb0'
+  '#f28cb0',
+  '#f5c1d8',
+  '#bde0fe'
 ];
 
 const firstTaskId = tasks[0]?.id ?? null;
 
 const loadQueue = () => {
   const stored = window.localStorage.getItem('nail-art-queue');
+  const validIds = new Set(tasks.map((task) => task.id));
   if (stored) {
     try {
       const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed) && parsed.length) return parsed;
+      const filtered = Array.isArray(parsed)
+        ? parsed.filter((id) => validIds.has(id))
+        : null;
+      if (filtered && filtered.length) return filtered;
     } catch (err) {
       return tasks.map((task) => task.id);
     }
@@ -157,6 +163,9 @@ function appReducer(state, action) {
         selectedColor: paletteColors[0],
         elapsedMs: 0,
         timerRunning: true,
+        showHints: false,
+        showTemplate: false,
+        lockCorrect: false,
         status: 'restart'
       };
     }
@@ -166,7 +175,12 @@ function appReducer(state, action) {
         map[target.stickerId] = { ...target.targetTransform, isCorrect: true };
         return map;
       }, {});
-      return { ...state, placements: solved, status: 'solved' };
+      return {
+        ...state,
+        placements: solved,
+        nailColors: task?.nailTargets ?? state.nailColors,
+        status: 'solved'
+      };
     }
     case 'nextLevel': {
       const queue = state.queue.length ? state.queue.slice(1) : loadQueue();
@@ -228,49 +242,46 @@ function useAppState() {
   );
 }
 
-function TopBar() {
+function TopBar({ app }) {
+  const elapsedSec = Math.round(app.state.elapsedMs / 1000);
+  const totalTargets = app.currentTask?.targets?.length ?? 0;
+  const correctCount = Object.values(app.state.placements).filter((p) => p?.isCorrect).length;
+  const nailsCorrect = Object.entries(app.currentTask?.nailTargets ?? {}).filter(
+    ([key, target]) => app.state.nailColors[key] === target
+  ).length;
+
   return (
     <header className="top-bar">
-      <div className="brand">Nail Art Match</div>
-      <div className="subtitle">Prototype playground</div>
+      <div className="brand-block">
+        <div className="brand">Nail Art Match</div>
+        <div className="subtitle">Nail salon puzzle pre dievčatá</div>
+      </div>
+      <div className="top-progress">
+        <span className="pill">{app.currentTask?.title ?? app.currentTask?.name}</span>
+        <span className="pill muted">{app.currentTask?.difficulty ?? 'easy'}</span>
+        <span className="pill">
+          ⏱ {elapsedSec}s
+        </span>
+        <span className="pill">✨ Stickers {correctCount}/{totalTargets}</span>
+        <span className="pill">🎨 Nechty {nailsCorrect}/5</span>
+      </div>
     </header>
   );
 }
 
-function LeftPanel({ app }) {
+function LeftPanel({ app, boardRef }) {
   return (
     <aside className="panel left-panel">
-      <h2>Tasks</h2>
-      <p className="muted">Choose a target to match.</p>
-      <ul className="task-list">
-        {app.tasks.map((task) => (
-          <li key={task.id} className={task.id === app.state.currentTaskId ? 'active' : ''}>
-            <button onClick={() => app.dispatch({ type: 'setTask', payload: task.id })}>
-              <span className="task-name">{task.name}</span>
-              <span className="task-desc">{task.description}</span>
-            </button>
-          </li>
-        ))}
-      </ul>
-    </aside>
-  );
-}
-
-function RightPanel({ app, boardRef }) {
-  const plannedCoverage = clamp(
-    Math.round((Object.keys(app.state.placements).length / 5) * 100),
-    0,
-    100
-  );
-
-  const correctCount = Object.values(app.state.placements).filter((p) => p?.isCorrect).length;
-  const totalTargets = app.currentTask?.targets?.length ?? 0;
-  const elapsedSec = Math.round(app.state.elapsedMs / 1000);
-
-  return (
-    <aside className="panel right-panel">
-      <h2>Palette</h2>
-      <p className="muted">Pick a base color and decorate with stickers.</p>
+      <h2>Ateliér ozdôb</h2>
+      <p className="muted">Najprv nalakuj nechty, potom lep ozdoby. Klik = otočenie 15°.</p>
+      <Palette
+        boardRef={boardRef}
+        stickers={app.currentTask?.stickers ?? []}
+        placements={app.state.placements}
+        dispatch={app.dispatch}
+        lockCorrect={app.state.lockCorrect}
+      />
+      <h3>Paleta lakov</h3>
       <div className="color-shelf">
         {app.paletteColors.map((color) => (
           <button
@@ -282,59 +293,102 @@ function RightPanel({ app, boardRef }) {
           />
         ))}
       </div>
+      <div className="helper-card">
+        <ul>
+          <li>Dotkni sa nechtu pre zafarbenie vybratou farbou.</li>
+          <li>Potiahni nálepku na plochu rúk, tapnutie ju otočí.</li>
+          <li>Uzamkni správne ozdoby, aby sa už nepohli.</li>
+        </ul>
+      </div>
+    </aside>
+  );
+}
+
+function RightPanel({ app }) {
+  const plannedCoverage = clamp(
+    Math.round((Object.keys(app.state.placements).length / 5) * 100),
+    0,
+    100
+  );
+
+  const correctCount = Object.values(app.state.placements).filter((p) => p?.isCorrect).length;
+  const totalTargets = app.currentTask?.targets?.length ?? 0;
+  const elapsedSec = Math.round(app.state.elapsedMs / 1000);
+  const nailsCorrect = Object.entries(app.currentTask?.nailTargets ?? {}).filter(
+    ([key, target]) => app.state.nailColors[key] === target
+  ).length;
+
+  return (
+    <aside className="panel right-panel">
+      <h2>Popis & návod</h2>
+      <div className="helper-card">
+        <ul>
+          <li>Porovnaj s klientskou kartou a udrž farby aj ozdoby presne.</li>
+          <li>Šablóna a duchovia sú len náhľad – nezastavia ťahanie.</li>
+          <li>Reštart vymaže lak aj ozdoby, Riešenie ťa naučí správny tvar.</li>
+        </ul>
+      </div>
+      <div className="client-brief">
+        <h3>Klientsky request</h3>
+        <p>{app.currentTask?.clientRequest}</p>
+      </div>
       <div className="stat-grid">
         <div className="stat">
-          <span className="label">Placed stickers</span>
-          <span className="value">{Object.keys(app.state.placements).length}</span>
-        </div>
-        <div className="stat">
-          <span className="label">Coverage plan</span>
-          <span className="value">{plannedCoverage}%</span>
-        </div>
-        <div className="stat">
-          <span className="label">Correct</span>
+          <span className="label">Stickers</span>
           <span className="value">{correctCount}/{totalTargets}</span>
         </div>
         <div className="stat">
-          <span className="label">Timer</span>
+          <span className="label">Nechty</span>
+          <span className="value">{nailsCorrect}/5</span>
+        </div>
+        <div className="stat">
+          <span className="label">Rozmiestnené</span>
+          <span className="value">{Object.keys(app.state.placements).length}</span>
+        </div>
+        <div className="stat">
+          <span className="label">Čas</span>
           <span className="value">{elapsedSec}s</span>
+        </div>
+        <div className="stat">
+          <span className="label">Plán pokrytia</span>
+          <span className="value">{plannedCoverage}%</span>
         </div>
       </div>
       <div className="control-row">
-        <button onClick={() => app.dispatch({ type: 'restart' })}>Restart</button>
-        <button onClick={() => app.dispatch({ type: 'nextLevel' })}>Next Level</button>
+        <button onClick={() => app.dispatch({ type: 'restart' })}>Reštart</button>
+        <button onClick={() => app.dispatch({ type: 'nextLevel' })}>Ďalšia</button>
       </div>
       <div className="control-row">
         <button onClick={() => app.dispatch({ type: 'toggleHints' })}>
-          {app.state.showHints ? 'Hide hints' : 'Show hints'}
+          {app.state.showHints ? 'Skryť hint' : 'Hint duch'}
         </button>
         <button onClick={() => app.dispatch({ type: 'toggleTemplate' })}>
-          {app.state.showTemplate ? 'Hide template' : 'Show template'}
+          {app.state.showTemplate ? 'Skryť šablónu' : 'Šablóna'}
         </button>
       </div>
       <div className="control-row">
-        <button onClick={() => app.dispatch({ type: 'solution' })}>Solution</button>
+        <button onClick={() => app.dispatch({ type: 'solution' })}>Riešenie</button>
         <button onClick={() => app.dispatch({ type: 'toggleLockCorrect' })}>
-          {app.state.lockCorrect ? 'Unlock correct' : 'Lock correct'}
+          {app.state.lockCorrect ? 'Odomkni správne' : 'Lock correct'}
         </button>
       </div>
       <div className="control-row">
         <button onClick={() => app.dispatch({ type: 'timer:toggle' })}>
-          {app.state.timerRunning ? 'Pause timer' : 'Resume timer'}
+          {app.state.timerRunning ? 'Pauza' : 'Pokračuj'}
         </button>
-        <button onClick={() => app.dispatch({ type: 'toggleStats' })}>Stats</button>
+        <button onClick={() => app.dispatch({ type: 'toggleStats' })}>Štatistiky</button>
       </div>
-      <div className="client-brief">
-        <h3>Client request</h3>
-        <p>{app.currentTask?.clientRequest}</p>
-      </div>
-      <Palette
-        boardRef={boardRef}
-        stickers={app.currentTask?.stickers ?? []}
-        placements={app.state.placements}
-        dispatch={app.dispatch}
-        lockCorrect={app.state.lockCorrect}
-      />
+      <h3>Výber levelu</h3>
+      <ul className="task-list">
+        {app.tasks.map((task) => (
+          <li key={task.id} className={task.id === app.state.currentTaskId ? 'active' : ''}>
+            <button onClick={() => app.dispatch({ type: 'setTask', payload: task.id })}>
+              <span className="task-name">{task.title ?? task.name}</span>
+              <span className="task-desc">{task.difficulty}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
     </aside>
   );
 }
@@ -346,15 +400,11 @@ export default function App() {
   return (
     <AppStateContext.Provider value={app}>
       <div className="app-shell">
-        <TopBar />
+        <TopBar app={app} />
         <div className="layout">
-          <LeftPanel app={app} />
-          <Board
-            ref={boardRef}
-            app={app}
-            stickers={app.currentTask?.stickers ?? []}
-          />
-          <RightPanel app={app} boardRef={boardRef} />
+          <LeftPanel app={app} boardRef={boardRef} />
+          <Board ref={boardRef} app={app} stickers={app.currentTask?.stickers ?? []} />
+          <RightPanel app={app} />
         </div>
         {app.state.showStats ? (
           <div className="modal-backdrop" role="dialog" aria-modal>
@@ -363,7 +413,7 @@ export default function App() {
               <div className="stat-grid">
                 <div className="stat">
                   <span className="label">Task</span>
-                  <span className="value">{app.currentTask?.name}</span>
+                  <span className="value">{app.currentTask?.title ?? app.currentTask?.name}</span>
                 </div>
                 <div className="stat">
                   <span className="label">Elapsed</span>
