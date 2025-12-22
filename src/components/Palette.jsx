@@ -1,7 +1,7 @@
 import React from 'react';
 import Sticker from './Sticker.jsx';
 
-export default function Palette({ stickers, placements, dispatch, boardRef }) {
+export default function Palette({ stickers, placements, dispatch, boardRef, lockCorrect }) {
   return (
     <div className="palette">
       <div className="palette-grid">
@@ -13,10 +13,17 @@ export default function Palette({ stickers, placements, dispatch, boardRef }) {
               dispatch={dispatch}
               boardRef={boardRef}
               variant="palette"
+              lockCorrect={lockCorrect}
             />
             <div className="palette-meta">
               <span className="name">{sticker.name}</span>
-              {placements[sticker.id] ? <span className="status on-board">On board</span> : <span className="status">Ready</span>}
+              {placements[sticker.id] ? (
+                <span className={`status ${placements[sticker.id].isCorrect ? 'correct' : 'on-board'}`}>
+                  {placements[sticker.id].isCorrect ? 'Locked' : 'On board'}
+                </span>
+              ) : (
+                <span className="status">Ready</span>
+              )}
             </div>
           </div>
         ))}

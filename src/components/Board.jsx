@@ -1,14 +1,38 @@
 import React, { forwardRef, useMemo } from 'react';
 import Sticker from './Sticker.jsx';
 
+const nailOrder = ['thumb', 'index', 'middle', 'ring', 'pinky'];
+
 const Board = forwardRef(function Board({ app, stickers }, boardRef) {
-  const { selectedColor, placements } = app.state;
+  const { selectedColor, placements, showHints, showTemplate, nailColors } = app.state;
   const activeTask = app.currentTask;
 
   const placedStickers = useMemo(
     () => stickers.filter((sticker) => placements[sticker.id]),
     [placements, stickers]
   );
+
+  const templateTargets = useMemo(() => activeTask?.targets ?? [], [activeTask]);
+
+  function getNailFromPointer(event) {
+    if (!boardRef?.current) return null;
+    const rect = boardRef.current.getBoundingClientRect();
+    const xRatio = (event.clientX - rect.left) / rect.width;
+    const index = clampIndex(Math.floor(xRatio * nailOrder.length));
+    return nailOrder[index];
+  }
+
+  function clampIndex(idx) {
+    if (idx < 0) return 0;
+    if (idx >= nailOrder.length) return nailOrder.length - 1;
+    return idx;
+  }
+
+  function handlePaint(event) {
+    const nail = getNailFromPointer(event);
+    if (!nail) return;
+    app.dispatch({ type: 'paintNail', payload: { nail, color: selectedColor } });
+  }
 
   return (
     <div className="board-shell">
@@ -30,6 +54,23 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
           aria-hidden
         />
         <div
+          className="paint-layer"
+          style={{ maskImage: "url('/mask_nails.png')", WebkitMaskImage: "url('/mask_nails.png')" }}
+          onPointerDown={handlePaint}
+        >
+          {nailOrder.map((nail, index) => (
+            <div
+              key={nail}
+              className="paint-nail"
+              style={{
+                left: `${(index / nailOrder.length) * 100}%`,
+                width: `${100 / nailOrder.length}%`,
+                backgroundColor: nailColors[nail] ?? selectedColor
+              }}
+            />
+          ))}
+        </div>
+        <div
           className="nails-clip"
           style={{
             maskImage: "url('/mask_nails.png')",
@@ -44,18 +85,42 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
               boardRef={boardRef}
               dispatch={app.dispatch}
               variant="board"
+              taskId={activeTask?.id}
+              lockCorrect={app.state.lockCorrect}
             />
           ))}
         </div>
         <div className="board-hints" aria-hidden>
-          {(activeTask?.placements ?? []).map((hint) => (
-            <span
-              key={`${hint.spot}-${hint.x}-${hint.y}`}
-              className="hint-dot"
-              style={{ left: `${hint.x * 100}%`, top: `${hint.y * 100}%` }}
-            />
-          ))}
+          {showHints
+            ? templateTargets.map((hint) => (
+                <span
+                  key={`${hint.stickerId}-${hint.targetTransform.x}-${hint.targetTransform.y}`}
+                  className="hint-dot"
+                  style={{
+                    left: `${hint.targetTransform.x * 100}%`,
+                    top: `${hint.targetTransform.y * 100}%`
+                  }}
+                />
+              ))
+            : null}
         </div>
+        {showTemplate ? (
+          <div className="template-overlay" aria-hidden>
+            {templateTargets.map((target) => (
+              <div
+                key={target.stickerId}
+                className="template-ghost"
+                style={{
+                  left: `${target.targetTransform.x * 100}%`,
+                  top: `${target.targetTransform.y * 100}%`,
+                  transform: `translate(-50%, -50%) rotate(${target.targetTransform.rotation}deg) scale(${target.targetTransform.scale})`
+                }}
+              >
+                <span>{target.nailName}</span>
+              </div>
+            ))}
+          </div>
+        ) : null}
       </div>
       <div className="board-footer">
         <div className="tag">Active task: {activeTask?.name ?? 'none'}</div>

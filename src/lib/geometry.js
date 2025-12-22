@@ -20,3 +20,8 @@ export function toPixels(point, size) {
     y: clamp(point.y, 0, 1) * size.height
   };
 }
+
+export function rotationDeltaDegrees(a, b) {
+  const diff = ((a - b) % 360 + 360) % 360;
+  return diff > 180 ? 360 - diff : diff;
+}

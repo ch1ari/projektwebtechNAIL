@@ -5,15 +5,16 @@ function normalizeRotation(value) {
   return ((value % 360) + 360) % 360;
 }
 
-export default function Sticker({ sticker, placement, boardRef, dispatch, variant }) {
+export default function Sticker({ sticker, placement, boardRef, dispatch, variant, taskId, lockCorrect }) {
   const nodeRef = useRef(null);
   const dragState = useRef(null);
 
-  const baseScale = placement?.scale ?? sticker.scale ?? 1;
-  const rotation = placement?.rotation ?? 0;
+  const baseScale = placement?.scale ?? sticker.startTransform?.scale ?? sticker.scale ?? 1;
+  const rotation = placement?.rotation ?? sticker.startTransform?.rotation ?? 0;
   const isBoardPlacement = Boolean(placement) && variant === 'board';
 
   function handlePointerDown(event) {
+    if (lockCorrect && placement?.isCorrect) return;
     if (!nodeRef.current) return;
     const rect = nodeRef.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
@@ -45,8 +46,8 @@ export default function Sticker({ sticker, placement, boardRef, dispatch, varian
           position: {
             x: xNorm,
             y: yNorm,
-            rotation: 0,
-            scale: sticker.scale ?? 1
+            rotation: sticker.startTransform?.rotation ?? 0,
+            scale: sticker.startTransform?.scale ?? sticker.scale ?? 1
           }
         }
       });
@@ -61,8 +62,10 @@ export default function Sticker({ sticker, placement, boardRef, dispatch, varian
     const targetCenterY = event.clientY - dragState.current.offsetY;
     const xNorm = (targetCenterX - boardRect.left) / boardRect.width;
     const yNorm = (targetCenterY - boardRect.top) / boardRect.height;
-    const currentRotation = placement?.rotation ?? dragState.current.originPlacement?.rotation ?? 0;
-    const currentScale = placement?.scale ?? dragState.current.originPlacement?.scale ?? sticker.scale ?? 1;
+    const currentRotation =
+      placement?.rotation ?? dragState.current.originPlacement?.rotation ?? sticker.startTransform?.rotation ?? 0;
+    const currentScale =
+      placement?.scale ?? dragState.current.originPlacement?.scale ?? sticker.startTransform?.scale ?? sticker.scale ?? 1;
 
     dispatch({
       type: 'placeSticker',
@@ -104,6 +107,9 @@ export default function Sticker({ sticker, placement, boardRef, dispatch, varian
             position: { ...basePlacement, rotation: nextRotation, scale: currentScale }
           }
         });
+        if (taskId) {
+          dispatch({ type: 'finalizePlacement', payload: { stickerId: sticker.id, taskId } });
+        }
       }
       dragState.current = null;
       return;
@@ -131,8 +137,10 @@ export default function Sticker({ sticker, placement, boardRef, dispatch, varian
       return;
     }
 
-    const currentRotation = placement?.rotation ?? dragState.current.originPlacement?.rotation ?? 0;
-    const currentScale = placement?.scale ?? dragState.current.originPlacement?.scale ?? sticker.scale ?? 1;
+    const currentRotation =
+      placement?.rotation ?? dragState.current.originPlacement?.rotation ?? sticker.startTransform?.rotation ?? 0;
+    const currentScale =
+      placement?.scale ?? dragState.current.originPlacement?.scale ?? sticker.startTransform?.scale ?? sticker.scale ?? 1;
 
     dispatch({
       type: 'placeSticker',
@@ -146,6 +154,10 @@ export default function Sticker({ sticker, placement, boardRef, dispatch, varian
         }
       }
     });
+
+    if (taskId) {
+      dispatch({ type: 'finalizePlacement', payload: { stickerId: sticker.id, taskId } });
+    }
 
     dragState.current = null;
   }
@@ -176,7 +188,7 @@ export default function Sticker({ sticker, placement, boardRef, dispatch, varian
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerCancel}
     >
-      <img src={sticker.src} alt={sticker.name} draggable="false" />
+      <img src={sticker.img ?? sticker.src} alt={sticker.name} draggable="false" />
     </div>
   );
 }
