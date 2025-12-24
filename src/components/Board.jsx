@@ -10,7 +10,7 @@ const NAILS = [
   { id: 'pinky', x: 635, y: 290, width: 105, height: 155 }
 ];
 
-const Board = forwardRef(function Board({ app, stickers }, boardRef) {
+const Board = forwardRef(function Board({ app, stickers, hoveredNailId }, boardRef) {
   const { selectedColor, placements, showHints, showTemplate, nailColors } = app.state;
   const activeTask = app.currentTask;
   const nailRefs = useRef({});
@@ -116,11 +116,12 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
                   }}
                 >
                   <div
-                    className="paint-nail"
+                    className={`paint-nail ${hoveredNailId === nail.id ? 'is-hovered' : ''}`}
                     style={{
                       backgroundColor: nailColors[nail.id] ?? selectedColor
                     }}
                   />
+                  <div className="nail-ring" />
                   <div className="sticker-layer">
                     {stickersOnNail.map((sticker) => (
                       <Sticker

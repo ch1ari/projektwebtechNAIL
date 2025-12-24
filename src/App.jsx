@@ -489,6 +489,7 @@ export default function App() {
       }, {}),
     [app.state.stats, app.tasks]
   );
+  const [hoveredNailId, setHoveredNailId] = useState(null);
 
   useEffect(() => {
     if (!app.currentTask) return;
@@ -507,6 +508,8 @@ export default function App() {
     (event) => {
       if (!dragColor) return;
       setDragPos({ x: event.clientX, y: event.clientY });
+      const nailEl = document.elementFromPoint(event.clientX, event.clientY)?.closest('.nail');
+      setHoveredNailId(nailEl?.dataset.nailId ?? null);
     },
     [dragColor]
   );
@@ -521,6 +524,7 @@ export default function App() {
         app.dispatch({ type: 'paintNail', payload: { nail: nailId, color: dragColor.value } });
       }
       setDragColor(null);
+      setHoveredNailId(null);
     },
     [dragColor, app]
   );
@@ -538,9 +542,14 @@ export default function App() {
     <AppStateContext.Provider value={app}>
       <div className="app-shell">
         <TopBar app={app} completionMap={completionMap} />
-        <div className="layout">
-          <div className="main-column">
-            <Board ref={boardRef} app={app} stickers={app.currentTask?.stickers ?? []} />
+          <div className="layout">
+            <div className="main-column">
+            <Board
+              ref={boardRef}
+              app={app}
+              stickers={app.currentTask?.stickers ?? []}
+              hoveredNailId={hoveredNailId}
+            />
             <Toolbelt
               app={app}
               boardRef={boardRef}
