@@ -31,35 +31,21 @@ export default function Sticker({ sticker, placement, boardRef, dispatch, varian
 
     event.currentTarget.setPointerCapture(event.pointerId);
 
-    if (!placement) {
-      const boardRect = boardRef.current.getBoundingClientRect();
-      const targetCenterX = event.clientX - offsetX;
-      const targetCenterY = event.clientY - offsetY;
-      const xNorm = (targetCenterX - boardRect.left) / boardRect.width;
-      const yNorm = (targetCenterY - boardRect.top) / boardRect.height;
-      dispatch({
-        type: 'placeSticker',
-        payload: {
-          stickerId: sticker.id,
-          position: {
-            x: xNorm,
-            y: yNorm,
-            rotation: sticker.startTransform?.rotation ?? 0,
-            scale: sticker.startTransform?.scale ?? sticker.scale ?? 1
-          }
-        }
-      });
-    }
   }
 
   function handlePointerMove(event) {
     if (!dragState.current || !boardRef?.current) return;
 
+    const nailEl = document.elementFromPoint(event.clientX, event.clientY)?.closest('.nail');
+    if (!nailEl) return;
     const boardRect = boardRef.current.getBoundingClientRect();
+    const nailRect = nailEl.getBoundingClientRect();
     const targetCenterX = event.clientX - dragState.current.offsetX;
     const targetCenterY = event.clientY - dragState.current.offsetY;
-    const xNorm = (targetCenterX - boardRect.left) / boardRect.width;
-    const yNorm = (targetCenterY - boardRect.top) / boardRect.height;
+    const xNorm = (targetCenterX - nailRect.left) / nailRect.width;
+    const yNorm = (targetCenterY - nailRect.top) / nailRect.height;
+    const boardX = (targetCenterX - boardRect.left) / boardRect.width;
+    const boardY = (targetCenterY - boardRect.top) / boardRect.height;
     const currentRotation = placement?.rotation ?? sticker.startTransform?.rotation ?? 0;
     const currentScale = placement?.scale ?? sticker.startTransform?.scale ?? sticker.scale ?? 1;
 
@@ -68,8 +54,11 @@ export default function Sticker({ sticker, placement, boardRef, dispatch, varian
       payload: {
         stickerId: sticker.id,
         position: {
+          nailId: nailEl.dataset.nailId,
           x: xNorm,
           y: yNorm,
+          boardX,
+          boardY,
           rotation: currentRotation,
           scale: currentScale
         }
@@ -84,7 +73,8 @@ export default function Sticker({ sticker, placement, boardRef, dispatch, varian
       event.currentTarget.releasePointerCapture(event.pointerId);
     }
 
-    const boardRect = boardRef?.current?.getBoundingClientRect();
+    const nailEl = document.elementFromPoint(event.clientX, event.clientY)?.closest('.nail');
+    const nailRect = nailEl?.getBoundingClientRect();
     const distance = Math.hypot(
       event.clientX - dragState.current.startX,
       event.clientY - dragState.current.startY
@@ -109,21 +99,24 @@ export default function Sticker({ sticker, placement, boardRef, dispatch, varian
       return;
     }
 
-    if (!boardRect) {
+    if (!nailRect || !nailEl) {
+      dispatch({ type: 'removeSticker', payload: sticker.id });
       dragState.current = null;
       return;
     }
 
     const targetCenterX = event.clientX - dragState.current.offsetX;
     const targetCenterY = event.clientY - dragState.current.offsetY;
-    const xNorm = (targetCenterX - boardRect.left) / boardRect.width;
-    const yNorm = (targetCenterY - boardRect.top) / boardRect.height;
-
+    const xNorm = (targetCenterX - nailRect.left) / nailRect.width;
+    const yNorm = (targetCenterY - nailRect.top) / nailRect.height;
+    const boardRect = boardRef.current.getBoundingClientRect();
+    const boardX = (targetCenterX - boardRect.left) / boardRect.width;
+    const boardY = (targetCenterY - boardRect.top) / boardRect.height;
     const outside =
-      event.clientX < boardRect.left ||
-      event.clientX > boardRect.right ||
-      event.clientY < boardRect.top ||
-      event.clientY > boardRect.bottom;
+      event.clientX < nailRect.left ||
+      event.clientX > nailRect.right ||
+      event.clientY < nailRect.top ||
+      event.clientY > nailRect.bottom;
 
     if (outside) {
       dispatch({ type: 'removeSticker', payload: sticker.id });
@@ -134,16 +127,19 @@ export default function Sticker({ sticker, placement, boardRef, dispatch, varian
     const currentRotation = placement?.rotation ?? sticker.startTransform?.rotation ?? 0;
     const currentScale = placement?.scale ?? sticker.startTransform?.scale ?? sticker.scale ?? 1;
     const rect = nodeRef.current.getBoundingClientRect();
-    const marginX = (rect.width / boardRect.width) / 2;
-    const marginY = (rect.height / boardRect.height) / 2;
+    const marginX = (rect.width / nailRect.width) / 2;
+    const marginY = (rect.height / nailRect.height) / 2;
 
     dispatch({
       type: 'placeSticker',
       payload: {
         stickerId: sticker.id,
         position: {
+          nailId: nailEl.dataset.nailId,
           x: clamp(xNorm, marginX, 1 - marginX),
           y: clamp(yNorm, marginY, 1 - marginY),
+          boardX: clamp(boardX, 0, 1),
+          boardY: clamp(boardY, 0, 1),
           rotation: currentRotation,
           scale: currentScale
         }

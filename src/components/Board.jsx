@@ -14,10 +14,6 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
   const activeTask = app.currentTask;
   const nailRefs = useRef({});
   const paintingRef = useRef({ active: false });
-  const colorMap = useMemo(
-    () => new Map(app.paletteColors.map((color) => [color.value, color.name])),
-    [app.paletteColors]
-  );
 
   const placedStickers = useMemo(
     () => stickers.filter((sticker) => placements[sticker.id]),
@@ -70,28 +66,6 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
     paintingRef.current = { active: false };
   }
 
-  function handleColorDrop(event, nailId) {
-    event.preventDefault();
-    const colorValue =
-      event.dataTransfer?.getData('text/nail-color') ?? event.dataTransfer?.getData('text/plain');
-    if (!colorValue) return;
-    const colorName = colorMap.get(colorValue) ?? 'Neznáma farba';
-    app.dispatch({ type: 'setColor', payload: { value: colorValue, name: colorName } });
-    app.dispatch({ type: 'paintNail', payload: { nail: nailId, color: colorValue } });
-  }
-
-  function handleColorDropAnywhere(event) {
-    event.preventDefault();
-    const colorValue =
-      event.dataTransfer?.getData('text/nail-color') ?? event.dataTransfer?.getData('text/plain');
-    if (!colorValue) return;
-    const nailId = nailFromPoint(event.clientX, event.clientY);
-    if (!nailId) return;
-    const colorName = colorMap.get(colorValue) ?? 'Neznáma farba';
-    app.dispatch({ type: 'setColor', payload: { value: colorValue, name: colorName } });
-    app.dispatch({ type: 'paintNail', payload: { nail: nailId, color: colorValue } });
-  }
-
   return (
     <div className="board-shell">
       <div className="board" aria-label="Nail art workspace" ref={boardRef}>
@@ -116,46 +90,53 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
             onPointerMove={handlePaintPointerMove}
             onPointerUp={handlePaintPointerUp}
             onPointerCancel={handlePaintPointerUp}
-            onDragOver={(event) => event.preventDefault()}
-            onDrop={handleColorDropAnywhere}
           >
-            {nailLayout.map((nail) => (
-              <div
-                key={nail.id}
-                className="paint-nail"
-                style={{
-                  left: nail.left,
-                  top: nail.top,
-                  width: nail.width,
-                  height: nail.height,
-                  backgroundColor: nailColors[nail.id] ?? selectedColor
-                }}
-                onDragOver={(event) => event.preventDefault()}
-                onDrop={(event) => handleColorDrop(event, nail.id)}
-                ref={(node) => {
-                  if (node) {
-                    nailRefs.current[nail.id] = node;
-                  } else {
-                    delete nailRefs.current[nail.id];
-                  }
-                }}
-              />
-            ))}
-          </div>
-
-          <div className="sticker-layer">
-            {placedStickers.map((sticker) => (
-              <Sticker
-                key={sticker.id}
-                sticker={sticker}
-                placement={placements[sticker.id]}
-                boardRef={boardRef}
-                dispatch={app.dispatch}
-                variant="board"
-                taskId={activeTask?.id}
-                lockCorrect={app.state.lockCorrect}
-              />
-            ))}
+            {nailLayout.map((nail) => {
+              const stickersOnNail = placedStickers.filter(
+                (sticker) => placements[sticker.id]?.nailId === nail.id
+              );
+              return (
+                <div
+                  key={nail.id}
+                  className="nail"
+                  data-nail-id={nail.id}
+                  style={{
+                    left: nail.left,
+                    top: nail.top,
+                    width: nail.width,
+                    height: nail.height
+                  }}
+                  ref={(node) => {
+                    if (node) {
+                      nailRefs.current[nail.id] = node;
+                    } else {
+                      delete nailRefs.current[nail.id];
+                    }
+                  }}
+                >
+                  <div
+                    className="paint-nail"
+                    style={{
+                      backgroundColor: nailColors[nail.id] ?? selectedColor
+                    }}
+                  />
+                  <div className="sticker-layer">
+                    {stickersOnNail.map((sticker) => (
+                      <Sticker
+                        key={sticker.id}
+                        sticker={sticker}
+                        placement={placements[sticker.id]}
+                        boardRef={boardRef}
+                        dispatch={app.dispatch}
+                        variant="board"
+                        taskId={activeTask?.id}
+                        lockCorrect={app.state.lockCorrect}
+                      />
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
           {showHints ? (
