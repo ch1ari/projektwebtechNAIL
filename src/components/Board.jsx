@@ -80,6 +80,18 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
     app.dispatch({ type: 'paintNail', payload: { nail: nailId, color: colorValue } });
   }
 
+  function handleColorDropAnywhere(event) {
+    event.preventDefault();
+    const colorValue =
+      event.dataTransfer?.getData('text/nail-color') ?? event.dataTransfer?.getData('text/plain');
+    if (!colorValue) return;
+    const nailId = nailFromPoint(event.clientX, event.clientY);
+    if (!nailId) return;
+    const colorName = colorMap.get(colorValue) ?? 'Neznáma farba';
+    app.dispatch({ type: 'setColor', payload: { value: colorValue, name: colorName } });
+    app.dispatch({ type: 'paintNail', payload: { nail: nailId, color: colorValue } });
+  }
+
   return (
     <div className="board-shell">
       <div className="board" aria-label="Nail art workspace" ref={boardRef}>
@@ -104,6 +116,8 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
             onPointerMove={handlePaintPointerMove}
             onPointerUp={handlePaintPointerUp}
             onPointerCancel={handlePaintPointerUp}
+            onDragOver={(event) => event.preventDefault()}
+            onDrop={handleColorDropAnywhere}
           >
             {nailLayout.map((nail) => (
               <div

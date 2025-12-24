@@ -272,6 +272,7 @@ function TopBar({ app, completionMap }) {
   const nailsCorrect = Object.entries(app.currentTask?.nailTargets ?? {}).filter(
     ([key, target]) => app.state.nailColors[key] === target
   ).length;
+  const activeColorName = app.state.selectedColorName;
 
   return (
     <header className="top-bar">
@@ -313,6 +314,7 @@ function TopBar({ app, completionMap }) {
         </span>
         <span className="pill">✨ Stickers {correctCount}/{totalTargets}</span>
         <span className="pill">🎨 Nechty {nailsCorrect}/5</span>
+        <span className="pill">🖌 {activeColorName}</span>
       </div>
     </header>
   );
