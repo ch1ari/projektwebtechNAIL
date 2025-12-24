@@ -14,6 +14,10 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
   const activeTask = app.currentTask;
   const nailRefs = useRef({});
   const paintingRef = useRef({ active: false });
+  const colorMap = useMemo(
+    () => new Map(app.paletteColors.map((color) => [color.value, color.name])),
+    [app.paletteColors]
+  );
 
   const placedStickers = useMemo(
     () => stickers.filter((sticker) => placements[sticker.id]),
@@ -66,6 +70,16 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
     paintingRef.current = { active: false };
   }
 
+  function handleColorDrop(event, nailId) {
+    event.preventDefault();
+    const colorValue =
+      event.dataTransfer?.getData('text/nail-color') ?? event.dataTransfer?.getData('text/plain');
+    if (!colorValue) return;
+    const colorName = colorMap.get(colorValue) ?? 'Neznáma farba';
+    app.dispatch({ type: 'setColor', payload: { value: colorValue, name: colorName } });
+    app.dispatch({ type: 'paintNail', payload: { nail: nailId, color: colorValue } });
+  }
+
   return (
     <div className="board-shell">
       <div className="board" aria-label="Nail art workspace" ref={boardRef}>
@@ -102,6 +116,8 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
                   height: nail.height,
                   backgroundColor: nailColors[nail.id] ?? selectedColor
                 }}
+                onDragOver={(event) => event.preventDefault()}
+                onDrop={(event) => handleColorDrop(event, nail.id)}
                 ref={(node) => {
                   if (node) {
                     nailRefs.current[nail.id] = node;
@@ -165,7 +181,7 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
       <div className="board-footer">
         <div className="tag">Aktívny level: {activeTask?.title ?? activeTask?.name ?? 'none'}</div>
         <div className="tag tone" style={{ backgroundColor: selectedColor }}>
-          Vybraná farba
+          Vybraná farba: {app.state.selectedColorName ?? 'Neznáma farba'}
         </div>
       </div>
     </div>

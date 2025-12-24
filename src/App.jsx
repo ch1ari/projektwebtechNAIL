@@ -7,18 +7,18 @@ import { clamp, rotationDeltaDegrees } from './lib/geometry.js';
 export const AppStateContext = createContext();
 
 const paletteColors = [
-  '#f06292',
-  '#f48fb1',
-  '#ffb3c1',
-  '#fce4ec',
-  '#7ae0c5',
-  '#9bf6e6',
-  '#7ad6ff',
-  '#ffcc80',
-  '#ffd6a5',
-  '#f28cb0',
-  '#f5c1d8',
-  '#bde0fe'
+  { name: 'Horúca ružová', value: '#f06292' },
+  { name: 'Lesklá ružová', value: '#f48fb1' },
+  { name: 'Candy ružová', value: '#ffb3c1' },
+  { name: 'Púdrová ružová', value: '#fce4ec' },
+  { name: 'Tyrkysová', value: '#7ae0c5' },
+  { name: 'Mentolová', value: '#9bf6e6' },
+  { name: 'Nebesky modrá', value: '#7ad6ff' },
+  { name: 'Broskyňová', value: '#ffcc80' },
+  { name: 'Zlatá broskyňa', value: '#ffd6a5' },
+  { name: 'Jahodová', value: '#f28cb0' },
+  { name: 'Bavlnená ružová', value: '#f5c1d8' },
+  { name: 'Ľadová modrá', value: '#bde0fe' }
 ];
 
 const firstTaskId = tasks[0]?.id ?? null;
@@ -63,7 +63,8 @@ const initialTaskColors = tasks.find((task) => task.id === firstTaskId)?.nailTar
 const initialState = {
   currentTaskId: firstTaskId,
   placements: {},
-  selectedColor: paletteColors[0],
+  selectedColor: paletteColors[0].value,
+  selectedColorName: paletteColors[0].name,
   nailColors: initialTaskColors,
   activeToolTab: 'colors',
   showHints: false,
@@ -119,7 +120,8 @@ function appReducer(state, action) {
         currentTaskId: nextTask?.id ?? null,
         placements: {},
         nailColors: nextTask?.nailTargets ?? state.nailColors,
-        selectedColor: paletteColors[0],
+        selectedColor: paletteColors[0].value,
+        selectedColorName: paletteColors[0].name,
         activeToolTab: 'colors',
         showHints: false,
         showTemplate: false,
@@ -130,7 +132,7 @@ function appReducer(state, action) {
       };
     }
     case 'setColor': {
-      return { ...state, selectedColor: action.payload };
+      return { ...state, selectedColor: action.payload.value, selectedColorName: action.payload.name };
     }
     case 'paintNail': {
       const { nail, color } = action.payload;
@@ -177,7 +179,8 @@ function appReducer(state, action) {
         ...state,
         placements: {},
         nailColors: task?.nailTargets ?? state.nailColors,
-        selectedColor: paletteColors[0],
+        selectedColor: paletteColors[0].value,
+        selectedColorName: paletteColors[0].name,
         activeToolTab: 'colors',
         elapsedMs: 0,
         timerRunning: true,
@@ -209,7 +212,8 @@ function appReducer(state, action) {
         currentTaskId: nextId,
         placements: {},
         nailColors: tasks.find((t) => t.id === nextId)?.nailTargets ?? state.nailColors,
-        selectedColor: paletteColors[0],
+        selectedColor: paletteColors[0].value,
+        selectedColorName: paletteColors[0].name,
         activeToolTab: 'colors',
         elapsedMs: 0,
         timerRunning: true
@@ -315,6 +319,15 @@ function TopBar({ app, completionMap }) {
 }
 
 function Toolbelt({ app, boardRef }) {
+  const selectColor = (color) => app.dispatch({ type: 'setColor', payload: color });
+  const handleColorDragStart = (event, color) => {
+    if (!event.dataTransfer) return;
+    event.dataTransfer.setData('text/nail-color', color.value);
+    event.dataTransfer.setData('text/plain', color.value);
+    event.dataTransfer.effectAllowed = 'copy';
+    selectColor(color);
+  };
+
   return (
     <div className="toolbelt panel">
       <div className="tool-tabs">
@@ -333,20 +346,28 @@ function Toolbelt({ app, boardRef }) {
       </div>
       <div className="tool-strip">
         {app.state.activeToolTab === 'colors' ? (
-          <div className="color-shelf scroll-row" aria-label="Color palette">
-            {app.paletteColors.map((color) => (
-              <button
-                key={color}
-                className={`swatch nail-chip ${app.state.selectedColor === color ? 'active' : ''}`}
-                onPointerDown={() => app.dispatch({ type: 'setColor', payload: color })}
-                onClick={() => app.dispatch({ type: 'setColor', payload: color })}
-                aria-label={`Select ${color}`}
-              >
-                <span className="nail-cap" style={{ backgroundColor: color }} />
-                <span className="nail-bed" style={{ backgroundColor: color }} />
-              </button>
-            ))}
-          </div>
+          <>
+            <div className="color-shelf scroll-row" aria-label="Color palette">
+              {app.paletteColors.map((color) => (
+                <button
+                  key={color.value}
+                  className={`swatch nail-chip ${app.state.selectedColor === color.value ? 'active' : ''}`}
+                  onPointerDown={() => selectColor(color)}
+                  onClick={() => selectColor(color)}
+                  draggable
+                  onDragStart={(event) => handleColorDragStart(event, color)}
+                  aria-label={`Vybrať farbu ${color.name}`}
+                >
+                  <span className="nail-cap" style={{ backgroundColor: color.value }} />
+                  <span className="nail-bed" style={{ backgroundColor: color.value }} />
+                </button>
+              ))}
+            </div>
+            <div className="selected-color-readout">
+              <span>Aktuálna farba:</span>
+              <strong>{app.state.selectedColorName}</strong>
+            </div>
+          </>
         ) : (
           <div className="scroll-row sticker-row" aria-label="Sticker box">
             <Palette

@@ -410,6 +410,15 @@ body {
   align-items: stretch;
 }
 
+.selected-color-readout {
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: center;
+  font-weight: 700;
+  color: #5a2f47;
+  padding: 0.3rem 0.1rem 0;
+}
+
 .helper-card {
   background: #fff;
   border: 1px solid #ffd0e5;

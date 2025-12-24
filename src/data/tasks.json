@@ -5,11 +5,11 @@
     "difficulty": "easy",
     "clientRequest": "Rýchly berry briefing: sladké ružové nechty s čerešňou a diamantovým leskom.",
     "clientRequirements": [
-      "Palec: Natrela som ho berry ružovou a chcem malý diamant presne do stredu nechtu.",
-      "Ukazovák: Nech je celý v jemnej bavlnenej ružovej, bez nálepiek.",
-      "Prostredník: Zafarb ho berry ružovou a polož čerešňu šikmo k špičke.",
-      "Prstenník: Udrž jemný blush lak bez ozdoby.",
-      "Malíček: Natrela som teplý koral, nech ostane ako malý akcent."
+      "Palec: Lesklá ružová a malý diamant presne do stredu nechtu.",
+      "Ukazovák: Bavlnená ružová, bez nálepiek.",
+      "Prostredník: Lesklá ružová a čerešňa šikmo k špičke.",
+      "Prstenník: Púdrová ružová bez ozdoby.",
+      "Malíček: Jahodová ako akcent, bez nálepky."
     ],
     "nailTargets": {
       "thumb": "#f48fb1",
@@ -43,11 +43,11 @@
     "difficulty": "easy",
     "clientRequest": "Pastelový briefing: jemné tóny s dúhou na ukazováku a hviezdou na prstenníku.",
     "clientRequirements": [
-      "Palec: Natrieť jemnou broskyňou a nechať čistý.",
-      "Ukazovák: Mentolový lak a malá dúha cez stred nechtu.",
-      "Prostredník: Svetloružový lak bez nálepky.",
-      "Prstenník: Broskyňovo-zlatý lak a hviezda šikmo smerom nahor.",
-      "Malíček: Akvamarínový lak bez ozdoby."
+      "Palec: Zlatá broskyňa a nechať čistý.",
+      "Ukazovák: Tyrkysová s malou dúhou cez stred nechtu.",
+      "Prostredník: Púdrová ružová bez nálepky.",
+      "Prstenník: Broskyňová a hviezda šikmo smerom nahor.",
+      "Malíček: Mentolová bez ozdoby."
     ],
     "nailTargets": {
       "thumb": "#ffd6a5",
@@ -81,11 +81,11 @@
     "difficulty": "easy",
     "clientRequest": "Jarný briefing: svieže farby, ruža na palec a slnko na prstenník.",
     "clientRequirements": [
-      "Palec: Mintový lak a veľká ruža uprostred nechtu.",
-      "Ukazovák: Jemne ružový lak bez ozdoby.",
-      "Prostredník: Svetlomodrý lak bez nálepky.",
-      "Prstenník: Broskyňový lak so slnečnou nálepkou v strede.",
-      "Malíček: Svetloružový lak ako čistý finiš."
+      "Palec: Tyrkysová a veľká ruža uprostred nechtu.",
+      "Ukazovák: Bavlnená ružová bez ozdoby.",
+      "Prostredník: Nebesky modrá bez nálepky.",
+      "Prstenník: Zlatá broskyňa so slnečnou nálepkou v strede.",
+      "Malíček: Púdrová ružová ako čistý finiš."
     ],
     "nailTargets": {
       "thumb": "#7ae0c5",
@@ -119,11 +119,11 @@
     "difficulty": "medium",
     "clientRequest": "Ľadový briefing: čisté modré tóny, diamant na ukazováku a dúha na prostredníku.",
     "clientRequirements": [
-      "Palec: Ľadovo modrý lak bez ozdoby.",
-      "Ukazovák: Jasný modrý lak a diamant v strede nechtu.",
-      "Prostredník: Mentolový lak a dúha mierne otočená doprava.",
-      "Prstenník: Jemne ružový lak bez nálepky.",
-      "Malíček: Candy ružový lak, žiadna nálepka."
+      "Palec: Ľadová modrá bez ozdoby.",
+      "Ukazovák: Nebesky modrá a diamant v strede nechtu.",
+      "Prostredník: Mentolová a dúha mierne otočená doprava.",
+      "Prstenník: Púdrová ružová bez nálepky.",
+      "Malíček: Candy ružová, žiadna nálepka."
     ],
     "nailTargets": {
       "thumb": "#bde0fe",
@@ -157,11 +157,11 @@
     "difficulty": "medium",
     "clientRequest": "Fiesta briefing: tropické farby, slnko na palci, čerešne na prstenníku a hviezda na malíčku.",
     "clientRequirements": [
-      "Palec: Broskyňový lak a veľká slnečná nálepka v strede.",
-      "Ukazovák: Jahodový lak bez ozdoby.",
-      "Prostredník: Jemná ružová, nech zostane čistá.",
-      "Prstenník: Broskyňový lak s čerešňami šikmo do stredu nechtu.",
-      "Malíček: Nebesky modrý lak a hviezda smerujúca k špičke."
+      "Palec: Broskyňová a veľká slnečná nálepka v strede.",
+      "Ukazovák: Jahodová bez ozdoby.",
+      "Prostredník: Bavlnená ružová, nech zostane čistá.",
+      "Prstenník: Zlatá broskyňa s čerešňami šikmo do stredu nechtu.",
+      "Malíček: Nebesky modrá a hviezda smerujúca k špičke."
     ],
     "nailTargets": {
       "thumb": "#ffcc80",
@@ -202,11 +202,11 @@
     "difficulty": "medium",
     "clientRequest": "Romantický briefing: pudrové tóny, ruža na prstenníku, diamant na palci a hviezda na prostredníku.",
     "clientRequirements": [
-      "Palec: Púdrovo ružový lak a drobný diamant v strede.",
-      "Ukazovák: Jemne ružový lak bez ozdoby.",
-      "Prostredník: Candy ružový lak a malá hviezda mierne k špičke.",
-      "Prstenník: Sýty ružový lak a veľká ruža stredom.",
-      "Malíček: Broskyňový lak bez nálepky."
+      "Palec: Púdrová ružová a drobný diamant v strede.",
+      "Ukazovák: Bavlnená ružová bez ozdoby.",
+      "Prostredník: Candy ružová a malá hviezda mierne k špičke.",
+      "Prstenník: Lesklá ružová a veľká ruža stredom.",
+      "Malíček: Zlatá broskyňa bez nálepky."
     ],
     "nailTargets": {
       "thumb": "#fce4ec",
@@ -247,11 +247,11 @@
     "difficulty": "hard",
     "clientRequest": "Neon briefing: žiarivé farby, hviezda na malíčku, diamant na ukazováku a čerešne na prostredníku.",
     "clientRequirements": [
-      "Palec: Tyrkysový lak, nech je čistý.",
+      "Palec: Tyrkysová, nech je čistý.",
       "Ukazovák: Horúca ružová s diamantom v strede, mierne natočeným doľava.",
-      "Prostredník: Jemná ružová s čerešňami v strede, šikmo k špičke.",
-      "Prstenník: Studená modrá bez nálepky.",
-      "Malíček: Svetlá ružová s hviezdou presne na stred špičky."
+      "Prostredník: Candy ružová s čerešňami v strede, šikmo k špičke.",
+      "Prstenník: Nebesky modrá bez nálepky.",
+      "Malíček: Lesklá ružová s hviezdou presne na stred špičky."
     ],
     "nailTargets": {
       "thumb": "#7ae0c5",
@@ -292,11 +292,11 @@
     "difficulty": "hard",
     "clientRequest": "Drama briefing: výrazné farby, break-up nálepka na palci, slnko na strede a ruža na prstenníku.",
     "clientRequirements": [
-      "Palec: Tmavá ružová a nálepka break-up presne do stredu.",
-      "Ukazovák: Modrý lak, nech ostane čistý.",
-      "Prostredník: Ružový lak s veľkým slnkom otočeným rovno.",
-      "Prstenník: Sýty ružový lak s ružou mierne k špičke.",
-      "Malíček: Jemne ružový lak bez ozdoby."
+      "Palec: Horúca ružová a nálepka break-up presne do stredu.",
+      "Ukazovák: Nebesky modrá, nech ostane čistý.",
+      "Prostredník: Jahodová s veľkým slnkom otočeným rovno.",
+      "Prstenník: Lesklá ružová s ružou mierne k špičke.",
+      "Malíček: Bavlnená ružová bez ozdoby."
     ],
     "nailTargets": {
       "thumb": "#f06292",
