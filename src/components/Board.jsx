@@ -2,12 +2,12 @@ import React, { forwardRef, useMemo, useRef } from 'react';
 import Sticker from './Sticker.jsx';
 
 const BASE_BOARD = { width: 800, height: 600 };
-const nailLayout = [
-  { id: 'thumb', x: 96, y: 348, width: 140, height: 170 },
-  { id: 'index', x: 248, y: 240, width: 124, height: 188 },
-  { id: 'middle', x: 372, y: 210, width: 126, height: 195 },
-  { id: 'ring', x: 502, y: 228, width: 120, height: 190 },
-  { id: 'pinky', x: 620, y: 280, width: 110, height: 168 }
+const NAILS = [
+  { id: 'thumb', x: 100, y: 360, width: 140, height: 170 },
+  { id: 'index', x: 250, y: 250, width: 120, height: 170 },
+  { id: 'middle', x: 380, y: 220, width: 120, height: 180 },
+  { id: 'ring', x: 510, y: 235, width: 115, height: 175 },
+  { id: 'pinky', x: 635, y: 290, width: 105, height: 155 }
 ];
 
 const Board = forwardRef(function Board({ app, stickers }, boardRef) {
@@ -92,7 +92,7 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
             onPointerUp={handlePaintPointerUp}
             onPointerCancel={handlePaintPointerUp}
           >
-            {nailLayout.map((nail) => {
+            {NAILS.map((nail) => {
               const stickersOnNail = placedStickers.filter(
                 (sticker) => placements[sticker.id]?.nailId === nail.id
               );
