@@ -283,6 +283,8 @@ body {
 
 .nail {
   position: absolute;
+  pointer-events: auto;
+  z-index: 2;
   overflow: hidden;
   clip-path: polygon(
     20% 0%,

@@ -1,12 +1,13 @@
 import React, { forwardRef, useMemo, useRef } from 'react';
 import Sticker from './Sticker.jsx';
 
+const BASE_BOARD = { width: 800, height: 600 };
 const nailLayout = [
-  { id: 'thumb', left: '12%', top: '58%', width: '16%', height: '26%' },
-  { id: 'index', left: '28%', top: '40%', width: '15%', height: '30%' },
-  { id: 'middle', left: '45%', top: '34%', width: '16%', height: '32%' },
-  { id: 'ring', left: '62%', top: '36%', width: '15%', height: '30%' },
-  { id: 'pinky', left: '78%', top: '44%', width: '12%', height: '26%' }
+  { id: 'thumb', x: 96, y: 348, width: 140, height: 170 },
+  { id: 'index', x: 248, y: 240, width: 124, height: 188 },
+  { id: 'middle', x: 372, y: 210, width: 126, height: 195 },
+  { id: 'ring', x: 502, y: 228, width: 120, height: 190 },
+  { id: 'pinky', x: 620, y: 280, width: 110, height: 168 }
 ];
 
 const Board = forwardRef(function Board({ app, stickers }, boardRef) {
@@ -101,10 +102,10 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
                   className="nail"
                   data-nail-id={nail.id}
                   style={{
-                    left: nail.left,
-                    top: nail.top,
-                    width: nail.width,
-                    height: nail.height
+                    left: `${(nail.x / BASE_BOARD.width) * 100}%`,
+                    top: `${(nail.y / BASE_BOARD.height) * 100}%`,
+                    width: `${(nail.width / BASE_BOARD.width) * 100}%`,
+                    height: `${(nail.height / BASE_BOARD.height) * 100}%`
                   }}
                   ref={(node) => {
                     if (node) {
