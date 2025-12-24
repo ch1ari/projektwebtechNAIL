@@ -4,7 +4,7 @@ import Sticker from './Sticker.jsx';
 export default function Palette({ stickers, placements, dispatch, boardRef, lockCorrect }) {
   return (
     <div className="palette">
-      <div className="palette-grid">
+      <div className="palette-row">
         {stickers.map((sticker) => (
           <div key={sticker.id} className="palette-item">
             <Sticker

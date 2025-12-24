@@ -65,6 +65,7 @@ const initialState = {
   placements: {},
   selectedColor: paletteColors[0],
   nailColors: initialTaskColors,
+  activeToolTab: 'colors',
   showHints: false,
   showTemplate: false,
   lockCorrect: false,
@@ -97,6 +98,18 @@ function computePlacementCorrectness(task, stickerId, placement) {
   return { placement: { ...target.targetTransform, isCorrect: true }, isCorrect: true };
 }
 
+function isTaskComplete(task, placements, nailColors) {
+  if (!task) return false;
+  const stickerTargets = task.targets ?? [];
+  const allStickersPlaced = stickerTargets.every(
+    (target) => placements[target.stickerId]?.isCorrect
+  );
+  const allNailsPainted = Object.entries(task.nailTargets ?? {}).every(
+    ([nail, color]) => nailColors[nail] === color
+  );
+  return allStickersPlaced && allNailsPainted;
+}
+
 function appReducer(state, action) {
   switch (action.type) {
     case 'setTask': {
@@ -107,6 +120,7 @@ function appReducer(state, action) {
         placements: {},
         nailColors: nextTask?.nailTargets ?? state.nailColors,
         selectedColor: paletteColors[0],
+        activeToolTab: 'colors',
         showHints: false,
         showTemplate: false,
         lockCorrect: false,
@@ -133,6 +147,9 @@ function appReducer(state, action) {
         placements: nextPlacements,
         status: 'editing'
       };
+    }
+    case 'setToolTab': {
+      return { ...state, activeToolTab: action.payload };
     }
     case 'finalizePlacement': {
       const { stickerId, taskId } = action.payload;
@@ -161,6 +178,7 @@ function appReducer(state, action) {
         placements: {},
         nailColors: task?.nailTargets ?? state.nailColors,
         selectedColor: paletteColors[0],
+        activeToolTab: 'colors',
         elapsedMs: 0,
         timerRunning: true,
         showHints: false,
@@ -192,6 +210,7 @@ function appReducer(state, action) {
         placements: {},
         nailColors: tasks.find((t) => t.id === nextId)?.nailTargets ?? state.nailColors,
         selectedColor: paletteColors[0],
+        activeToolTab: 'colors',
         elapsedMs: 0,
         timerRunning: true
       };
@@ -242,7 +261,7 @@ function useAppState() {
   );
 }
 
-function TopBar({ app }) {
+function TopBar({ app, completionMap }) {
   const elapsedSec = Math.round(app.state.elapsedMs / 1000);
   const totalTargets = app.currentTask?.targets?.length ?? 0;
   const correctCount = Object.values(app.state.placements).filter((p) => p?.isCorrect).length;
@@ -255,6 +274,32 @@ function TopBar({ app }) {
       <div className="brand-block">
         <div className="brand">Nail Art Match</div>
         <div className="subtitle">Nail salon puzzle pre dievčatá</div>
+      </div>
+      <div className="level-bar" aria-label="Level navigation">
+        {app.tasks.map((task, index) => {
+          const locked = index > 0 && !completionMap[app.tasks[index - 1].id];
+          const active = task.id === app.state.currentTaskId;
+          const completed = completionMap[task.id];
+          return (
+            <button
+              key={task.id}
+              className={`level-chip ${active ? 'active' : ''} ${locked ? 'locked' : ''} ${completed ? 'completed' : ''}`}
+              onClick={() => {
+                if (locked) return;
+                app.dispatch({ type: 'setTask', payload: task.id });
+              }}
+              disabled={locked}
+              aria-label={`Level ${index + 1} ${task.title} ${locked ? 'locked' : 'playable'}`}
+            >
+              <span className="level-index">Lv {index + 1}</span>
+              <span className="level-name">{task.title ?? task.name}</span>
+              <span className="level-meta">{task.difficulty}</span>
+              <span className="level-state" aria-hidden>
+                {locked ? '🔒' : completed ? '✔' : '▶'}
+              </span>
+            </button>
+          );
+        })}
       </div>
       <div className="top-progress">
         <span className="pill">{app.currentTask?.title ?? app.currentTask?.name}</span>
@@ -272,40 +317,53 @@ function TopBar({ app }) {
 function Toolbelt({ app, boardRef }) {
   return (
     <div className="toolbelt panel">
-      <div className="tool-section color-section">
-        <div className="section-heading">Paleta lakov</div>
-        <p className="muted">Potiahni lakový nechtík na ruky alebo len klikni na konkrétny necht.</p>
-        <div className="color-shelf">
-          {app.paletteColors.map((color) => (
-            <button
-              key={color}
-              className={`swatch nail-chip ${app.state.selectedColor === color ? 'active' : ''}`}
-              onPointerDown={() => app.dispatch({ type: 'setColor', payload: color })}
-              onClick={() => app.dispatch({ type: 'setColor', payload: color })}
-              aria-label={`Select ${color}`}
-            >
-              <span className="nail-cap" style={{ backgroundColor: color }} />
-              <span className="nail-bed" style={{ backgroundColor: color }} />
-            </button>
-          ))}
-        </div>
+      <div className="tool-tabs">
+        <button
+          className={`tab-button ${app.state.activeToolTab === 'colors' ? 'active' : ''}`}
+          onClick={() => app.dispatch({ type: 'setToolTab', payload: 'colors' })}
+        >
+          🎨 Farby
+        </button>
+        <button
+          className={`tab-button ${app.state.activeToolTab === 'stickers' ? 'active' : ''}`}
+          onClick={() => app.dispatch({ type: 'setToolTab', payload: 'stickers' })}
+        >
+          ✨ Nálepky
+        </button>
       </div>
-      <div className="tool-section sticker-section">
-        <div className="section-heading">Box s nálepkami</div>
-        <p className="muted">Potiahni nálepku na nechty, klepnutie ju otočí o 15°.</p>
-        <Palette
-          boardRef={boardRef}
-          stickers={app.currentTask?.stickers ?? []}
-          placements={app.state.placements}
-          dispatch={app.dispatch}
-          lockCorrect={app.state.lockCorrect}
-        />
+      <div className="tool-strip">
+        {app.state.activeToolTab === 'colors' ? (
+          <div className="color-shelf scroll-row" aria-label="Color palette">
+            {app.paletteColors.map((color) => (
+              <button
+                key={color}
+                className={`swatch nail-chip ${app.state.selectedColor === color ? 'active' : ''}`}
+                onPointerDown={() => app.dispatch({ type: 'setColor', payload: color })}
+                onClick={() => app.dispatch({ type: 'setColor', payload: color })}
+                aria-label={`Select ${color}`}
+              >
+                <span className="nail-cap" style={{ backgroundColor: color }} />
+                <span className="nail-bed" style={{ backgroundColor: color }} />
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="scroll-row sticker-row" aria-label="Sticker box">
+            <Palette
+              boardRef={boardRef}
+              stickers={app.currentTask?.stickers ?? []}
+              placements={app.state.placements}
+              dispatch={app.dispatch}
+              lockCorrect={app.state.lockCorrect}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-function RightPanel({ app }) {
+function RightPanel({ app, completionMap }) {
   const plannedCoverage = clamp(
     Math.round((Object.keys(app.state.placements).length / 5) * 100),
     0,
@@ -319,6 +377,12 @@ function RightPanel({ app }) {
     ([key, target]) => app.state.nailColors[key] === target
   ).length;
 
+  const requirements = app.currentTask?.clientRequirements ?? [];
+  const currentIndex = app.tasks.findIndex((task) => task.id === app.state.currentTaskId);
+  const currentComplete = completionMap[app.state.currentTaskId];
+  const hasNext = currentIndex >= 0 && currentIndex < app.tasks.length - 1;
+  const nextLocked = hasNext && !currentComplete;
+
   return (
     <aside className="panel right-panel">
       <h2>Popis & návod</h2>
@@ -331,7 +395,15 @@ function RightPanel({ app }) {
       </div>
       <div className="client-brief">
         <h3>Klientsky request</h3>
-        <p>{app.currentTask?.clientRequest}</p>
+        {requirements.length ? (
+          <ul className="client-steps">
+            {requirements.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        ) : (
+          <p>{app.currentTask?.clientRequest}</p>
+        )}
       </div>
       <div className="stat-grid">
         <div className="stat">
@@ -357,7 +429,9 @@ function RightPanel({ app }) {
       </div>
       <div className="control-row">
         <button onClick={() => app.dispatch({ type: 'restart' })}>Reštart</button>
-        <button onClick={() => app.dispatch({ type: 'nextLevel' })}>Ďalšia</button>
+        <button onClick={() => app.dispatch({ type: 'nextLevel' })} disabled={!hasNext || nextLocked}>
+          Ďalšia
+        </button>
       </div>
       <div className="control-row">
         <button onClick={() => app.dispatch({ type: 'toggleHints' })}>
@@ -379,17 +453,6 @@ function RightPanel({ app }) {
         </button>
         <button onClick={() => app.dispatch({ type: 'toggleStats' })}>Štatistiky</button>
       </div>
-      <h3>Výber levelu</h3>
-      <ul className="task-list">
-        {app.tasks.map((task) => (
-          <li key={task.id} className={task.id === app.state.currentTaskId ? 'active' : ''}>
-            <button onClick={() => app.dispatch({ type: 'setTask', payload: task.id })}>
-              <span className="task-name">{task.title ?? task.name}</span>
-              <span className="task-desc">{task.difficulty}</span>
-            </button>
-          </li>
-        ))}
-      </ul>
     </aside>
   );
 }
@@ -397,17 +460,38 @@ function RightPanel({ app }) {
 export default function App() {
   const app = useAppState();
   const boardRef = useRef(null);
+  const completionMap = useMemo(
+    () =>
+      app.tasks.reduce((acc, task) => {
+        acc[task.id] = Boolean(app.state.stats?.[task.id]?.completed);
+        return acc;
+      }, {}),
+    [app.state.stats, app.tasks]
+  );
+
+  useEffect(() => {
+    if (!app.currentTask) return;
+    const done = isTaskComplete(app.currentTask, app.state.placements, app.state.nailColors);
+    const alreadyDone = app.state.stats?.[app.currentTask.id]?.completed;
+    if (done && !alreadyDone) {
+      app.dispatch({
+        type: 'stats:update',
+        taskId: app.currentTask.id,
+        payload: { ...(app.state.stats?.[app.currentTask.id] ?? {}), completed: true, completedAt: Date.now() }
+      });
+    }
+  }, [app.currentTask, app.state.placements, app.state.nailColors, app.state.stats, app.dispatch]);
 
   return (
     <AppStateContext.Provider value={app}>
       <div className="app-shell">
-        <TopBar app={app} />
+        <TopBar app={app} completionMap={completionMap} />
         <div className="layout">
           <div className="main-column">
             <Board ref={boardRef} app={app} stickers={app.currentTask?.stickers ?? []} />
             <Toolbelt app={app} boardRef={boardRef} />
           </div>
-          <RightPanel app={app} />
+          <RightPanel app={app} completionMap={completionMap} />
         </div>
         {app.state.showStats ? (
           <div className="modal-backdrop" role="dialog" aria-modal>
