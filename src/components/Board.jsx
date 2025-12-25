@@ -1,27 +1,27 @@
 import React, { forwardRef, useMemo, useRef } from 'react';
 import Sticker from './Sticker.jsx';
 
-const VIEWBOX = { width: 472, height: 591 };
+const VIEWBOX = { width: 800, height: 600 };
 const NAILS = [
   {
     id: 'thumb',
-    shape: { cx: 115, cy: 420, rx: 55, ry: 80, rotation: -20 }
+    shape: { cx: 360, cy: 300, rx: 38, ry: 55, rotation: -12 }
   },
   {
     id: 'index',
-    shape: { cx: 205, cy: 280, rx: 44, ry: 88, rotation: -14 }
+    shape: { cx: 455, cy: 215, rx: 28, ry: 45, rotation: -8 }
   },
   {
     id: 'middle',
-    shape: { cx: 275, cy: 245, rx: 46, ry: 95, rotation: -8 }
+    shape: { cx: 515, cy: 195, rx: 30, ry: 48, rotation: -4 }
   },
   {
     id: 'ring',
-    shape: { cx: 350, cy: 260, rx: 44, ry: 90, rotation: -4 }
+    shape: { cx: 565, cy: 210, rx: 28, ry: 45, rotation: -2 }
   },
   {
     id: 'pinky',
-    shape: { cx: 420, cy: 315, rx: 36, ry: 78, rotation: 10 }
+    shape: { cx: 615, cy: 245, rx: 24, ry: 40, rotation: 6 }
   }
 ];
 
@@ -29,7 +29,7 @@ const Board = forwardRef(function Board({ app, stickers, hoveredNailId }, boardR
   const { selectedColor, placements, showHints, showTemplate, nailColors } = app.state;
   const activeTask = app.currentTask;
   const nailRefs = useRef({});
-  const overlayRef = useRef(null);
+  const hitmapRef = useRef(null);
   const paintingRef = useRef({ active: false });
 
   const placedStickers = useMemo(
@@ -44,20 +44,11 @@ const Board = forwardRef(function Board({ app, stickers, hoveredNailId }, boardR
   }
 
   function nailFromPoint(clientX, clientY) {
-    if (!overlayRef.current) return null;
-    const point = overlayRef.current.createSVGPoint();
-    point.x = clientX;
-    point.y = clientY;
-    for (const [nailId, node] of Object.entries(nailRefs.current)) {
-      if (!node) continue;
-      const ctm = node.getScreenCTM();
-      if (!ctm) continue;
-      const localPoint = point.matrixTransform(ctm.inverse());
-      if (node.isPointInFill(localPoint)) {
-        return { id: nailId, rect: node.getBoundingClientRect() };
-      }
-    }
-    return null;
+    const target = document.elementFromPoint(clientX, clientY)?.closest('.nail-hit');
+    if (!target) return null;
+    const id = target.dataset.nailId;
+    const rect = target.getBoundingClientRect();
+    return { id, rect };
   }
 
   function handlePaintPointerDown(event) {
@@ -98,112 +89,115 @@ const Board = forwardRef(function Board({ app, stickers, hoveredNailId }, boardR
         />
         <img className="board-hand" src="/hand.png" alt="Hand with nails" />
 
-        <div
-          className="nails-clip"
+        <svg
+          className="nail-mask"
+          viewBox={`0 0 ${VIEWBOX.width} ${VIEWBOX.height}`}
+          preserveAspectRatio="xMidYMid meet"
         >
-          <div
-            className="paint-layer"
-            aria-label="Nail polish layer"
-          >
-            <svg
-              ref={overlayRef}
-              className="nail-overlay"
-              viewBox={`0 0 ${VIEWBOX.width} ${VIEWBOX.height}`}
-              preserveAspectRatio="xMidYMid meet"
-            >
-              <defs>
-                {NAILS.map((nail) => (
-                  <ellipse
-                    key={`${nail.id}-shape`}
-                    id={`nail-${nail.id}`}
-                    cx={nail.shape.cx}
-                    cy={nail.shape.cy}
-                    rx={nail.shape.rx}
-                    ry={nail.shape.ry}
-                    transform={`rotate(${nail.shape.rotation} ${nail.shape.cx} ${nail.shape.cy})`}
-                  />
-                ))}
-                {NAILS.map((nail) => (
-                  <clipPath key={`${nail.id}-clip`} id={`clip-${nail.id}`}>
-                    <use href={`#nail-${nail.id}`} />
-                  </clipPath>
-                ))}
-              </defs>
+          <defs>
+            {NAILS.map((nail) => (
+              <ellipse
+                key={`${nail.id}-mask`}
+                id={`nail-${nail.id}`}
+                cx={nail.shape.cx}
+                cy={nail.shape.cy}
+                rx={nail.shape.rx}
+                ry={nail.shape.ry}
+                transform={`rotate(${nail.shape.rotation} ${nail.shape.cx} ${nail.shape.cy})`}
+              />
+            ))}
+            {NAILS.map((nail) => (
+              <clipPath key={`${nail.id}-clip`} id={`clip-${nail.id}`}>
+                <use href={`#nail-${nail.id}`} />
+              </clipPath>
+            ))}
+          </defs>
+          {NAILS.map((nail) => (
+            <g key={`${nail.id}-fill`} clipPath={`url(#clip-${nail.id})`}>
+              <rect width="100%" height="100%" fill={nailColors[nail.id] ?? selectedColor} />
+            </g>
+          ))}
+        </svg>
 
-              {NAILS.map((nail) => (
-                <g key={`${nail.id}-paint`} clipPath={`url(#clip-${nail.id})`}>
-                  <rect width="100%" height="100%" fill={nailColors[nail.id] ?? selectedColor} />
-                </g>
-              ))}
+        <svg
+          ref={hitmapRef}
+          className="nail-hitmap"
+          viewBox={`0 0 ${VIEWBOX.width} ${VIEWBOX.height}`}
+          preserveAspectRatio="xMidYMid meet"
+          onPointerDown={handlePaintPointerDown}
+          onPointerMove={handlePaintPointerMove}
+          onPointerUp={handlePaintPointerUp}
+          onPointerCancel={handlePaintPointerUp}
+        >
+          {NAILS.map((nail) => (
+            <ellipse
+              key={`${nail.id}-hit`}
+              className={`nail-hit ${hoveredNailId === nail.id ? 'is-hovered' : ''}`}
+              data-nail-id={nail.id}
+              cx={nail.shape.cx}
+              cy={nail.shape.cy}
+              rx={nail.shape.rx}
+              ry={nail.shape.ry}
+              transform={`rotate(${nail.shape.rotation} ${nail.shape.cx} ${nail.shape.cy})`}
+              ref={(node) => {
+                if (node) {
+                  nailRefs.current[nail.id] = node;
+                } else {
+                  delete nailRefs.current[nail.id];
+                }
+              }}
+            />
+          ))}
+        </svg>
 
-              {NAILS.map((nail) => (
-                <use
-                  key={`${nail.id}-outline`}
-                  href={`#nail-${nail.id}`}
-                  className={`nail-shape ${hoveredNailId === nail.id ? 'is-hovered' : ''}`}
-                  data-nail-id={nail.id}
-                  ref={(node) => {
-                    if (node) {
-                      nailRefs.current[nail.id] = node;
-                    } else {
-                      delete nailRefs.current[nail.id];
-                    }
-                  }}
-                />
-              ))}
-            </svg>
-
-            <div className="sticker-layer">
-              {placedStickers.map((sticker) => (
-                <Sticker
-                  key={sticker.id}
-                  sticker={sticker}
-                  placement={placements[sticker.id]}
-                  boardRef={boardRef}
-                  dispatch={app.dispatch}
-                  variant="board"
-                  taskId={activeTask?.id}
-                  lockCorrect={app.state.lockCorrect}
-                  nailHitTest={nailFromPoint}
-                  getNailRect={(id) => nailRefs.current[id]?.getBoundingClientRect()}
-                />
-              ))}
-            </div>
-          </div>
-
-          {showHints ? (
-            <div className="board-hints" aria-hidden>
-              {templateTargets.map((hint) => (
-                <span
-                  key={`${hint.stickerId}-${hint.targetTransform.x}-${hint.targetTransform.y}`}
-                  className="hint-dot"
-                  style={{
-                    left: `${hint.targetTransform.x * 100}%`,
-                    top: `${hint.targetTransform.y * 100}%`
-                  }}
-                />
-              ))}
-            </div>
-          ) : null}
-
-          {showTemplate ? (
-            <div className="template-overlay" aria-hidden>
-              {templateTargets.map((target) => (
-                <div
-                  key={target.stickerId}
-                  className="template-ghost"
-                  style={{
-                    left: `${target.targetTransform.x * 100}%`,
-                    top: `${target.targetTransform.y * 100}%`,
-                    transform: `translate(-50%, -50%) rotate(${target.targetTransform.rotation}deg) scale(${target.targetTransform.scale})`
-                  }}
-                >
-                  <span>{target.nailName}</span>
-                </div>
-              ))}
-            </div>
-          ) : null}
+        <div className="sticker-layer">
+          {placedStickers.map((sticker) => (
+            <Sticker
+              key={sticker.id}
+              sticker={sticker}
+              placement={placements[sticker.id]}
+              boardRef={boardRef}
+              dispatch={app.dispatch}
+              variant="board"
+              taskId={activeTask?.id}
+              lockCorrect={app.state.lockCorrect}
+              nailHitTest={nailFromPoint}
+            />
+          ))}
         </div>
+
+        {showHints ? (
+          <div className="board-hints" aria-hidden>
+            {templateTargets.map((hint) => (
+              <span
+                key={`${hint.stickerId}-${hint.targetTransform.x}-${hint.targetTransform.y}`}
+                className="hint-dot"
+                style={{
+                  left: `${hint.targetTransform.x * 100}%`,
+                  top: `${hint.targetTransform.y * 100}%`
+                }}
+              />
+            ))}
+          </div>
+        ) : null}
+
+        {showTemplate ? (
+          <div className="template-overlay" aria-hidden>
+            {templateTargets.map((target) => (
+              <div
+                key={target.stickerId}
+                className="template-ghost"
+                style={{
+                  left: `${target.targetTransform.x * 100}%`,
+                  top: `${target.targetTransform.y * 100}%`,
+                  transform: `translate(-50%, -50%) rotate(${target.targetTransform.rotation}deg) scale(${target.targetTransform.scale})`
+                }}
+              >
+                <span>{target.nailName}</span>
+              </div>
+            ))}
+          </div>
+        ) : null}
       </div>
       <div className="board-footer">
         <div className="tag">Aktívny level: {activeTask?.title ?? activeTask?.name ?? 'none'}</div>
