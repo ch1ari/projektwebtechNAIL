@@ -731,6 +731,20 @@ body {
   border: 2px solid rgba(255, 255, 255, 0.8);
 }
 
+.brush-ghost {
+  position: fixed;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  opacity: 0.85;
+  transition: opacity 0.1s ease;
+}
+
 @media (max-width: 980px) {
   .layout {
     grid-template-columns: 1fr;

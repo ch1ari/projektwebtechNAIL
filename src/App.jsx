@@ -75,7 +75,8 @@ const initialState = {
   timerRunning: true,
   elapsedMs: 0,
   queue: loadQueue(),
-  stats: loadStats()
+  stats: loadStats(),
+  dragState: null
 };
 
 function taskTargets(task) {
@@ -234,6 +235,36 @@ function appReducer(state, action) {
       const { taskId, payload } = action;
       return { ...state, stats: { ...state.stats, [taskId]: payload } };
     }
+    case 'startColorDrag': {
+      const { color, colorName, startX, startY } = action.payload;
+      return {
+        ...state,
+        dragState: {
+          isDragging: true,
+          color,
+          colorName,
+          startX,
+          startY,
+          currentX: startX,
+          currentY: startY
+        }
+      };
+    }
+    case 'updateColorDrag': {
+      if (!state.dragState) return state;
+      const { currentX, currentY } = action.payload;
+      return {
+        ...state,
+        dragState: {
+          ...state.dragState,
+          currentX,
+          currentY
+        }
+      };
+    }
+    case 'endColorDrag': {
+      return { ...state, dragState: null };
+    }
     default:
       return state;
   }
@@ -322,12 +353,55 @@ function TopBar({ app, completionMap }) {
   );
 }
 
-function Toolbelt({ app }) {
+function Toolbelt({ app, boardRef }) {
   const selectColor = (color) => app.dispatch({ type: 'setColor', payload: color });
-  const handleColorDragStart = (event, color) => {
-    event.dataTransfer.setData('application/nail-color', color.value);
-    event.dataTransfer.effectAllowed = 'copy';
+
+  const handlePointerDown = (event, color) => {
+    const target = event.currentTarget;
+    target.setPointerCapture(event.pointerId);
+
+    app.dispatch({
+      type: 'startColorDrag',
+      payload: {
+        color: color.value,
+        colorName: color.name,
+        startX: event.clientX,
+        startY: event.clientY
+      }
+    });
     selectColor(color);
+  };
+
+  const handlePointerMove = (event) => {
+    if (!app.state.dragState) return;
+
+    app.dispatch({
+      type: 'updateColorDrag',
+      payload: {
+        currentX: event.clientX,
+        currentY: event.clientY
+      }
+    });
+  };
+
+  const handlePointerUp = (event) => {
+    if (!app.state.dragState) return;
+
+    const { startX, startY, currentX, currentY, color } = app.state.dragState;
+    const dx = currentX - startX;
+    const dy = currentY - startY;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    // If moved less than 6px, treat as click (already selected)
+    if (distance >= 6 && boardRef?.current) {
+      // Hit-test nails
+      const hit = nailHitTest(boardRef.current, currentX, currentY);
+      if (hit) {
+        app.dispatch({ type: 'paintNail', payload: { nail: hit.id, color } });
+      }
+    }
+
+    app.dispatch({ type: 'endColorDrag' });
   };
 
   return (
@@ -355,8 +429,9 @@ function Toolbelt({ app }) {
                   key={color.value}
                   className={`swatch nail-chip ${app.state.selectedColor === color.value ? 'active' : ''}`}
                   onClick={() => selectColor(color)}
-                  draggable
-                  onDragStart={(event) => handleColorDragStart(event, color)}
+                  onPointerDown={(event) => handlePointerDown(event, color)}
+                  onPointerMove={handlePointerMove}
+                  onPointerUp={handlePointerUp}
                   aria-label={`Vybrať farbu ${color.name}`}
                 >
                   <span className="nail-cap" style={{ backgroundColor: color.value }} />
@@ -383,6 +458,36 @@ function Toolbelt({ app }) {
       </div>
     </div>
   );
+}
+
+// Nail hit-test function (duplicated from Board for use in Toolbelt)
+const NAILS = [
+  { id: 'thumb', shape: { cx: 122, cy: 290, rx: 50, ry: 55, rotation: -8 } },
+  { id: 'index', shape: { cx: 220, cy: 235, rx: 48, ry: 60, rotation: -5 } },
+  { id: 'middle', shape: { cx: 307, cy: 215, rx: 52, ry: 64, rotation: 0 } },
+  { id: 'ring', shape: { cx: 402, cy: 225, rx: 48, ry: 60, rotation: 5 } },
+  { id: 'pinky', shape: { cx: 495, cy: 255, rx: 40, ry: 55, rotation: 10 } }
+];
+
+const VIEWBOX = { width: 612, height: 408 };
+
+function nailHitTest(boardElement, clientX, clientY) {
+  const nailMapSvg = boardElement.querySelector('.nail-map');
+  if (!nailMapSvg) return null;
+
+  const rect = nailMapSvg.getBoundingClientRect();
+  const x = ((clientX - rect.left) / rect.width) * VIEWBOX.width;
+  const y = ((clientY - rect.top) / rect.height) * VIEWBOX.height;
+
+  for (const nail of NAILS) {
+    const { cx, cy, rx, ry } = nail.shape;
+    const dx = (x - cx) / rx;
+    const dy = (y - cy) / ry;
+    if (dx * dx + dy * dy <= 1) {
+      return { id: nail.id };
+    }
+  }
+  return null;
 }
 
 function RightPanel({ app, completionMap }) {
@@ -515,7 +620,7 @@ export default function App() {
               app={app}
               stickers={app.currentTask?.stickers ?? []}
             />
-            <Toolbelt app={app} />
+            <Toolbelt app={app} boardRef={boardRef} />
           </div>
           <RightPanel app={app} completionMap={completionMap} />
         </div>
@@ -543,6 +648,16 @@ export default function App() {
               <button onClick={() => app.dispatch({ type: 'toggleStats' })}>Close</button>
             </div>
           </div>
+        ) : null}
+        {app.state.dragState ? (
+          <div
+            className="brush-ghost"
+            style={{
+              left: `${app.state.dragState.currentX}px`,
+              top: `${app.state.dragState.currentY}px`,
+              backgroundColor: app.state.dragState.color
+            }}
+          />
         ) : null}
       </div>
     </AppStateContext.Provider>
