@@ -120,41 +120,46 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
           style={{ position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none' }}
         >
           <defs>
-            {/* Individual gradients for each nail - natural shading from center to edges */}
-            <radialGradient id="thumb-gradient" cx="40%" cy="45%">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.4)" />
-              <stop offset="50%" stopColor="rgba(0,0,0,0)" />
-              <stop offset="100%" stopColor="rgba(0,0,0,0.25)" />
-            </radialGradient>
-
-            <radialGradient id="index-gradient" cx="45%" cy="40%">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.5)" />
-              <stop offset="50%" stopColor="rgba(0,0,0,0)" />
+            {/* Linear gradients for realistic 3D - light from top, shadow at bottom near skin */}
+            <linearGradient id="thumb-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="rgba(255,255,255,0.35)" />
+              <stop offset="30%" stopColor="rgba(255,255,255,0.15)" />
+              <stop offset="70%" stopColor="rgba(0,0,0,0)" />
               <stop offset="100%" stopColor="rgba(0,0,0,0.3)" />
-            </radialGradient>
+            </linearGradient>
 
-            <radialGradient id="middle-gradient" cx="45%" cy="35%">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.5)" />
-              <stop offset="50%" stopColor="rgba(0,0,0,0)" />
-              <stop offset="100%" stopColor="rgba(0,0,0,0.3)" />
-            </radialGradient>
-
-            <radialGradient id="ring-gradient" cx="42%" cy="40%">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.5)" />
-              <stop offset="50%" stopColor="rgba(0,0,0,0)" />
-              <stop offset="100%" stopColor="rgba(0,0,0,0.28)" />
-            </radialGradient>
-
-            <radialGradient id="pinky-gradient" cx="40%" cy="45%">
+            <linearGradient id="index-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="rgba(255,255,255,0.4)" />
-              <stop offset="50%" stopColor="rgba(0,0,0,0)" />
-              <stop offset="100%" stopColor="rgba(0,0,0,0.25)" />
-            </radialGradient>
+              <stop offset="25%" stopColor="rgba(255,255,255,0.2)" />
+              <stop offset="70%" stopColor="rgba(0,0,0,0)" />
+              <stop offset="100%" stopColor="rgba(0,0,0,0.35)" />
+            </linearGradient>
 
-            {/* Subtle glossy highlight */}
-            <radialGradient id="nail-highlight" cx="35%" cy="25%">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.6)" />
-              <stop offset="40%" stopColor="rgba(255,255,255,0.1)" />
+            <linearGradient id="middle-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="rgba(255,255,255,0.4)" />
+              <stop offset="25%" stopColor="rgba(255,255,255,0.2)" />
+              <stop offset="70%" stopColor="rgba(0,0,0,0)" />
+              <stop offset="100%" stopColor="rgba(0,0,0,0.35)" />
+            </linearGradient>
+
+            <linearGradient id="ring-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="rgba(255,255,255,0.4)" />
+              <stop offset="25%" stopColor="rgba(255,255,255,0.2)" />
+              <stop offset="70%" stopColor="rgba(0,0,0,0)" />
+              <stop offset="100%" stopColor="rgba(0,0,0,0.35)" />
+            </linearGradient>
+
+            <linearGradient id="pinky-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="rgba(255,255,255,0.35)" />
+              <stop offset="30%" stopColor="rgba(255,255,255,0.15)" />
+              <stop offset="70%" stopColor="rgba(0,0,0,0)" />
+              <stop offset="100%" stopColor="rgba(0,0,0,0.3)" />
+            </linearGradient>
+
+            {/* Glossy shine spot */}
+            <radialGradient id="nail-shine" cx="40%" cy="20%">
+              <stop offset="0%" stopColor="rgba(255,255,255,0.5)" />
+              <stop offset="50%" stopColor="rgba(255,255,255,0.1)" />
               <stop offset="100%" stopColor="rgba(255,255,255,0)" />
             </radialGradient>
 
@@ -220,7 +225,7 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
                     mask={`url(#${nail.id}-mask)`}
                     className="nail-polish-svg"
                   />
-                  {/* Natural gradient - lighter center, darker edges near skin */}
+                  {/* 3D gradient - light at top (fingertip), shadow at bottom (near skin) */}
                   <rect
                     x="0"
                     y="0"
@@ -231,16 +236,16 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
                     className="nail-polish-svg"
                     style={{ pointerEvents: 'none' }}
                   />
-                  {/* Subtle glossy highlight */}
+                  {/* Glossy shine spot for realism */}
                   <rect
                     x="0"
                     y="0"
                     width={VIEWBOX.width}
                     height={VIEWBOX.height}
-                    fill="url(#nail-highlight)"
+                    fill="url(#nail-shine)"
                     mask={`url(#${nail.id}-mask)`}
                     className="nail-polish-svg"
-                    style={{ pointerEvents: 'none', mixBlendMode: 'soft-light' }}
+                    style={{ pointerEvents: 'none', mixBlendMode: 'overlay' }}
                   />
                 </g>
               );
