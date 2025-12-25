@@ -118,6 +118,26 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
           style={{ position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none' }}
         >
           <defs>
+            {/* Gradient for nail shading - creates 3D effect */}
+            <radialGradient id="nail-gradient">
+              <stop offset="0%" stopColor="rgba(255,255,255,0.3)" />
+              <stop offset="70%" stopColor="rgba(255,255,255,0)" />
+              <stop offset="100%" stopColor="rgba(0,0,0,0.08)" />
+            </radialGradient>
+
+            {/* Subtle shadow filter for depth */}
+            <filter id="nail-shadow">
+              <feGaussianBlur in="SourceAlpha" stdDeviation="1" />
+              <feOffset dx="0" dy="1" result="offsetblur" />
+              <feComponentTransfer>
+                <feFuncA type="linear" slope="0.15" />
+              </feComponentTransfer>
+              <feMerge>
+                <feMergeNode />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+
             {/* Mask for thumb nail */}
             <mask id="thumb-mask">
               <path
@@ -169,16 +189,30 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
             if (nail.id === 'thumb' || nail.id === 'index' || nail.id === 'middle' || nail.id === 'ring' || nail.id === 'pinky') {
               // All nails use SVG masks with exact shapes
               return (
-                <rect
-                  key={`${nail.id}-polish`}
-                  x="0"
-                  y="0"
-                  width={VIEWBOX.width}
-                  height={VIEWBOX.height}
-                  fill={nailColors[nail.id] ?? '#F5E6D3'}
-                  mask={`url(#${nail.id}-mask)`}
-                  className="nail-polish-svg"
-                />
+                <g key={`${nail.id}-polish`}>
+                  {/* Base color with shadow */}
+                  <rect
+                    x="0"
+                    y="0"
+                    width={VIEWBOX.width}
+                    height={VIEWBOX.height}
+                    fill={nailColors[nail.id] ?? '#F5E6D3'}
+                    mask={`url(#${nail.id}-mask)`}
+                    filter="url(#nail-shadow)"
+                    className="nail-polish-svg"
+                  />
+                  {/* Gradient overlay for 3D effect */}
+                  <rect
+                    x="0"
+                    y="0"
+                    width={VIEWBOX.width}
+                    height={VIEWBOX.height}
+                    fill="url(#nail-gradient)"
+                    mask={`url(#${nail.id}-mask)`}
+                    className="nail-polish-svg"
+                    style={{ pointerEvents: 'none' }}
+                  />
+                </g>
               );
             } else {
               // Other nails use ellipses for now
