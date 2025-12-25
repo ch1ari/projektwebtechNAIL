@@ -109,7 +109,7 @@ function computePlacementCorrectness(task, stickerId, placement) {
     dscale <= (target.tolerance.scale ?? 0.05);
 
   if (!within) return { placement, isCorrect: false };
-  return { placement: { ...target.targetTransform, isCorrect: true, nailId: target.nailName }, isCorrect: true };
+  return { placement: { ...placement, isCorrect: true }, isCorrect: true };
 }
 
 function isTaskComplete(task, placements, nailColors) {
