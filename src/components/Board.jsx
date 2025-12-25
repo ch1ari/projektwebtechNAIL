@@ -4,12 +4,14 @@ import Sticker from './Sticker.jsx';
 
 const VIEWBOX = { width: 612, height: 408 };
 
+// Hit detection areas (larger for easier interaction)
+// Note: Visual nails use SVG masks, these are only for hit testing
 const NAILS = [
-  { id: 'thumb', shape: { cx: 229, cy: 130, rx: 12, ry: 27, rotation: -8 } },
-  { id: 'index', shape: { cx: 315, cy: 78, rx: 17, ry: 26, rotation: -5 } },
-  { id: 'middle', shape: { cx: 369, cy: 72, rx: 18, ry: 25, rotation: 0 } },
-  { id: 'ring', shape: { cx: 397, cy: 106, rx: 20, ry: 27, rotation: 5 } },
-  { id: 'pinky', shape: { cx: 409, cy: 167, rx: 18, ry: 21, rotation: 10 } }
+  { id: 'thumb', shape: { cx: 229, cy: 130, rx: 15, ry: 30, rotation: -8 } },
+  { id: 'index', shape: { cx: 315, cy: 78, rx: 20, ry: 30, rotation: -5 } },
+  { id: 'middle', shape: { cx: 369, cy: 72, rx: 22, ry: 30, rotation: 0 } },
+  { id: 'ring', shape: { cx: 397, cy: 106, rx: 24, ry: 32, rotation: 5 } },
+  { id: 'pinky', shape: { cx: 409, cy: 167, rx: 22, ry: 26, rotation: 10 } }
 ];
 
 const Board = forwardRef(function Board({ app, stickers }, boardRef) {
@@ -73,7 +75,7 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
       boardX,
       boardY,
       rotation: basePlacement.rotation ?? 0,
-      scale: basePlacement.scale ?? sticker.scale ?? 1
+      scale: basePlacement.scale ?? sticker.scale ?? 0.35
     };
 
     app.dispatch({
@@ -118,25 +120,54 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
           style={{ position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none' }}
         >
           <defs>
-            {/* Gradient for nail shading - creates 3D effect */}
-            <radialGradient id="nail-gradient">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.3)" />
-              <stop offset="70%" stopColor="rgba(255,255,255,0)" />
-              <stop offset="100%" stopColor="rgba(0,0,0,0.08)" />
-            </radialGradient>
+            {/* Individual gradients oriented for each nail's direction */}
 
-            {/* Subtle shadow filter for depth */}
-            <filter id="nail-shadow">
-              <feGaussianBlur in="SourceAlpha" stdDeviation="1" />
-              <feOffset dx="0" dy="1" result="offsetblur" />
-              <feComponentTransfer>
-                <feFuncA type="linear" slope="0.15" />
-              </feComponentTransfer>
-              <feMerge>
-                <feMergeNode />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
+            {/* Thumb - angled from bottom-right to top-left */}
+            <linearGradient id="thumb-gradient" x1="85%" y1="95%" x2="20%" y2="10%">
+              <stop offset="0%" stopColor="rgba(0,0,0,0.5)" />
+              <stop offset="35%" stopColor="rgba(0,0,0,0)" />
+              <stop offset="65%" stopColor="rgba(255,255,255,0.2)" />
+              <stop offset="100%" stopColor="rgba(255,255,255,0.6)" />
+            </linearGradient>
+
+            {/* Index - from bottom to top, slightly angled right */}
+            <linearGradient id="index-gradient" x1="40%" y1="100%" x2="50%" y2="0%">
+              <stop offset="0%" stopColor="rgba(0,0,0,0.5)" />
+              <stop offset="30%" stopColor="rgba(0,0,0,0)" />
+              <stop offset="65%" stopColor="rgba(255,255,255,0.2)" />
+              <stop offset="100%" stopColor="rgba(255,255,255,0.6)" />
+            </linearGradient>
+
+            {/* Middle - straight from bottom to top */}
+            <linearGradient id="middle-gradient" x1="50%" y1="100%" x2="50%" y2="0%">
+              <stop offset="0%" stopColor="rgba(0,0,0,0.5)" />
+              <stop offset="30%" stopColor="rgba(0,0,0,0)" />
+              <stop offset="65%" stopColor="rgba(255,255,255,0.2)" />
+              <stop offset="100%" stopColor="rgba(255,255,255,0.6)" />
+            </linearGradient>
+
+            {/* Ring - from bottom-left to top-right */}
+            <linearGradient id="ring-gradient" x1="35%" y1="100%" x2="60%" y2="0%">
+              <stop offset="0%" stopColor="rgba(0,0,0,0.5)" />
+              <stop offset="30%" stopColor="rgba(0,0,0,0)" />
+              <stop offset="65%" stopColor="rgba(255,255,255,0.2)" />
+              <stop offset="100%" stopColor="rgba(255,255,255,0.6)" />
+            </linearGradient>
+
+            {/* Pinky - angled from bottom-left to top-right */}
+            <linearGradient id="pinky-gradient" x1="30%" y1="100%" x2="65%" y2="0%">
+              <stop offset="0%" stopColor="rgba(0,0,0,0.5)" />
+              <stop offset="35%" stopColor="rgba(0,0,0,0)" />
+              <stop offset="65%" stopColor="rgba(255,255,255,0.2)" />
+              <stop offset="100%" stopColor="rgba(255,255,255,0.6)" />
+            </linearGradient>
+
+            {/* Strong glossy shine - visible on all colors */}
+            <radialGradient id="nail-shine" cx="40%" cy="20%">
+              <stop offset="0%" stopColor="rgba(255,255,255,0.7)" />
+              <stop offset="40%" stopColor="rgba(255,255,255,0.2)" />
+              <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+            </radialGradient>
 
             {/* Mask for thumb nail */}
             <mask id="thumb-mask">
@@ -190,7 +221,7 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
               // All nails use SVG masks with exact shapes
               return (
                 <g key={`${nail.id}-polish`}>
-                  {/* Base color with shadow */}
+                  {/* Base nail color */}
                   <rect
                     x="0"
                     y="0"
@@ -198,19 +229,29 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
                     height={VIEWBOX.height}
                     fill={nailColors[nail.id] ?? '#F5E6D3'}
                     mask={`url(#${nail.id}-mask)`}
-                    filter="url(#nail-shadow)"
                     className="nail-polish-svg"
                   />
-                  {/* Gradient overlay for 3D effect */}
+                  {/* 3D gradient - light at top (fingertip), shadow at bottom (near skin) */}
                   <rect
                     x="0"
                     y="0"
                     width={VIEWBOX.width}
                     height={VIEWBOX.height}
-                    fill="url(#nail-gradient)"
+                    fill={`url(#${nail.id}-gradient)`}
                     mask={`url(#${nail.id}-mask)`}
                     className="nail-polish-svg"
                     style={{ pointerEvents: 'none' }}
+                  />
+                  {/* Glossy shine spot for realism */}
+                  <rect
+                    x="0"
+                    y="0"
+                    width={VIEWBOX.width}
+                    height={VIEWBOX.height}
+                    fill="url(#nail-shine)"
+                    mask={`url(#${nail.id}-mask)`}
+                    className="nail-polish-svg"
+                    style={{ pointerEvents: 'none', mixBlendMode: 'overlay' }}
                   />
                 </g>
               );

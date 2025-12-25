@@ -15,13 +15,17 @@ export default function Sticker({
 }) {
   const nodeRef = useRef(null);
 
-  const baseScale = placement?.scale ?? sticker.startTransform?.scale ?? sticker.scale ?? 0.6;
   const rotation = placement?.rotation ?? sticker.startTransform?.rotation ?? 0;
   const isBoardPlacement = Boolean(placement) && variant === 'board';
 
+  // Separate scales: large for palette, small for board
+  const baseScale = isBoardPlacement
+    ? (placement?.scale ?? sticker.startTransform?.scale ?? sticker.scale ?? 0.35)
+    : 1.0; // Palette stickers are large and visible
+
   function handleDragStart(event) {
     event.dataTransfer.setData('application/sticker-id', sticker.id);
-    event.dataTransfer.effectAllowed = isBoardPlacement ? 'move' : 'copy';
+    event.dataTransfer.effectAllowed = 'copyMove';
   }
 
   function handleClick() {
@@ -51,11 +55,24 @@ export default function Sticker({
         left: `${placement.x * 100}%`,
         top: `${placement.y * 100}%`,
         transform: `translate(-50%, -50%) rotate(${rotation}deg) scale(${baseScale})`,
-        clipPath: placement.nailId ? `url(#clip-${placement.nailId})` : undefined
+        cursor: 'grab',
+        pointerEvents: 'auto',
+        zIndex: 10
       }
     : {
-        transform: `rotate(${rotation}deg) scale(${baseScale})`
+        transform: `rotate(${rotation}deg) scale(${baseScale})`,
+        cursor: 'grab',
+        pointerEvents: 'auto'
       };
+
+  function handleDragEnd(event) {
+    event.currentTarget.style.cursor = 'grab';
+  }
+
+  function handleDragStartWithCursor(event) {
+    event.currentTarget.style.cursor = 'grabbing';
+    handleDragStart(event);
+  }
 
   return (
     <div
@@ -64,8 +81,9 @@ export default function Sticker({
       style={style}
       role="img"
       aria-label={sticker.name}
-      draggable
-      onDragStart={handleDragStart}
+      draggable={true}
+      onDragStart={handleDragStartWithCursor}
+      onDragEnd={handleDragEnd}
       onClick={handleClick}
     >
       <img src={sticker.img ?? sticker.src} alt={sticker.name} draggable="false" />
