@@ -120,7 +120,7 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
           <defs>
             <mask id="nails-mask">
               <image
-                href="/mask_nails.png"
+                href="/nails_mask.svg"
                 x="0"
                 y="0"
                 width={VIEWBOX.width}
