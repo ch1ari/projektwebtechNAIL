@@ -153,12 +153,21 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
                 transform="scale(0.3984375)"
               />
             </mask>
+
+            {/* Mask for pinky finger */}
+            <mask id="pinky-mask">
+              <path
+                d="m 982.79045,457.57729 c -15.65272,-3.76465 -20.45995,-21.84174 -10.851,-40.80408 8.43373,-16.64316 35.99355,-42.15725 59.37565,-54.96837 7.1414,-3.91278 22.1893,-10.25938 24.3252,-10.25938 2.5438,0 -0.6288,17.87255 -6.0393,34.0217 -8.3224,24.84081 -28.6336,56.86365 -41.4719,65.38527 -8.72591,5.7919 -18.34511,8.30688 -25.33865,6.62486 z"
+                fill="white"
+                transform="scale(0.3984375)"
+              />
+            </mask>
           </defs>
 
           {/* Render nail polish */}
           {NAILS.map((nail) => {
-            if (nail.id === 'thumb' || nail.id === 'index' || nail.id === 'middle' || nail.id === 'ring') {
-              // Thumb and index use SVG masks
+            if (nail.id === 'thumb' || nail.id === 'index' || nail.id === 'middle' || nail.id === 'ring' || nail.id === 'pinky') {
+              // All nails use SVG masks with exact shapes
               return (
                 <rect
                   key={`${nail.id}-polish`}
