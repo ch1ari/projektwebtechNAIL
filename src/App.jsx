@@ -482,7 +482,7 @@ const NAILS = [
   { id: 'thumb', shape: { cx: 229, cy: 130, rx: 12, ry: 27, rotation: -8 } },
   { id: 'index', shape: { cx: 315, cy: 78, rx: 17, ry: 26, rotation: -5 } },
   { id: 'middle', shape: { cx: 369, cy: 72, rx: 18, ry: 25, rotation: 0 } },
-  { id: 'ring', shape: { cx: 402, cy: 225, rx: 48, ry: 60, rotation: 5 } },
+  { id: 'ring', shape: { cx: 397, cy: 106, rx: 20, ry: 27, rotation: 5 } },
   { id: 'pinky', shape: { cx: 495, cy: 255, rx: 40, ry: 55, rotation: 10 } }
 ];
 
