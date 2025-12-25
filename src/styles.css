@@ -277,16 +277,22 @@ body {
 .nails-clip {
   position: absolute;
   inset: 0;
-  z-index: 3;
+  z-index: 4;
   pointer-events: none;
-  mask: url('/mask_nails.png') center/contain no-repeat;
-  -webkit-mask: url('/mask_nails.png') center/contain no-repeat;
 }
 
 .nail-polish {
   position: absolute;
   pointer-events: none;
   border-radius: 50%;
+}
+
+.nail-polish-svg {
+  pointer-events: none;
+}
+
+.nail-hitbox {
+  pointer-events: none;
 }
 
 .nail-hitmap {
