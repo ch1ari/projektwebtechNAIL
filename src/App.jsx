@@ -94,6 +94,13 @@ function computePlacementCorrectness(task, stickerId, placement) {
 
   // Check if sticker is on the correct nail
   const onCorrectNail = placement.nailId === target.nailName;
+  console.log('[Sticker Check]', {
+    stickerId,
+    placementNailId: placement.nailId,
+    targetNailName: target.nailName,
+    onCorrectNail,
+    placement
+  });
   if (!onCorrectNail) return { placement, isCorrect: false };
 
   const xPos = placement.boardX ?? placement.x ?? 0;
@@ -108,6 +115,7 @@ function computePlacementCorrectness(task, stickerId, placement) {
     drot <= (target.tolerance.rotation ?? 10) &&
     dscale <= (target.tolerance.scale ?? 0.05);
 
+  console.log('[Position Check]', { dx, dy, drot, dscale, within });
   if (!within) return { placement, isCorrect: false };
   return { placement: { ...target.targetTransform, isCorrect: true, nailId: target.nailName }, isCorrect: true };
 }
