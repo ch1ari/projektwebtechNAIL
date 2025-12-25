@@ -27,13 +27,13 @@
         "stickerId": "berry-cherry",
         "nailName": "middle",
         "targetTransform": { "x": 0.5, "y": 0.52, "rotation": 15, "scale": 0.35 },
-        "tolerance": { "x": 0.15, "y": 0.15, "rotation": 30, "scale": 0.35 }
+        "tolerance": { "x": 0.35, "y": 0.35, "rotation": 45, "scale": 0.5 }
       },
       {
         "stickerId": "berry-diamond",
         "nailName": "thumb",
         "targetTransform": { "x": 0.25, "y": 0.6, "rotation": 0, "scale": 0.35 },
-        "tolerance": { "x": 0.15, "y": 0.15, "rotation": 30, "scale": 0.35 }
+        "tolerance": { "x": 0.35, "y": 0.35, "rotation": 45, "scale": 0.5 }
       }
     ]
   },
@@ -65,13 +65,13 @@
         "stickerId": "rainbow-arc",
         "nailName": "index",
         "targetTransform": { "x": 0.38, "y": 0.5, "rotation": 0, "scale": 0.35 },
-        "tolerance": { "x": 0.15, "y": 0.15, "rotation": 30, "scale": 0.35 }
+        "tolerance": { "x": 0.35, "y": 0.35, "rotation": 45, "scale": 0.5 }
       },
       {
         "stickerId": "rainbow-star",
         "nailName": "ring",
         "targetTransform": { "x": 0.62, "y": 0.55, "rotation": 30, "scale": 0.35 },
-        "tolerance": { "x": 0.15, "y": 0.15, "rotation": 30, "scale": 0.35 }
+        "tolerance": { "x": 0.35, "y": 0.35, "rotation": 45, "scale": 0.5 }
       }
     ]
   },
@@ -103,13 +103,13 @@
         "stickerId": "bloom-rose",
         "nailName": "thumb",
         "targetTransform": { "x": 0.28, "y": 0.6, "rotation": -15, "scale": 0.35 },
-        "tolerance": { "x": 0.15, "y": 0.15, "rotation": 30, "scale": 0.35 }
+        "tolerance": { "x": 0.35, "y": 0.35, "rotation": 45, "scale": 0.5 }
       },
       {
         "stickerId": "bloom-sun",
         "nailName": "ring",
         "targetTransform": { "x": 0.64, "y": 0.57, "rotation": 0, "scale": 0.35 },
-        "tolerance": { "x": 0.15, "y": 0.15, "rotation": 30, "scale": 0.35 }
+        "tolerance": { "x": 0.35, "y": 0.35, "rotation": 45, "scale": 0.5 }
       }
     ]
   },
