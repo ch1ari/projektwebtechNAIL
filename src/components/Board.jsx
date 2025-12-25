@@ -6,7 +6,7 @@ const VIEWBOX = { width: 612, height: 408 };
 
 const NAILS = [
   { id: 'thumb', shape: { cx: 229, cy: 130, rx: 12, ry: 27, rotation: -8 } },
-  { id: 'index', shape: { cx: 220, cy: 235, rx: 48, ry: 60, rotation: -5 } },
+  { id: 'index', shape: { cx: 315, cy: 78, rx: 17, ry: 26, rotation: -5 } },
   { id: 'middle', shape: { cx: 307, cy: 215, rx: 52, ry: 64, rotation: 0 } },
   { id: 'ring', shape: { cx: 402, cy: 225, rx: 48, ry: 60, rotation: 5 } },
   { id: 'pinky', shape: { cx: 495, cy: 255, rx: 40, ry: 55, rotation: 10 } }
