@@ -75,7 +75,7 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
       boardX,
       boardY,
       rotation: basePlacement.rotation ?? 0,
-      scale: basePlacement.scale ?? sticker.scale ?? 0.10
+      scale: basePlacement.scale ?? sticker.scale ?? 0.05
     };
 
     app.dispatch({
