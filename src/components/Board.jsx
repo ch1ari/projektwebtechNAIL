@@ -306,19 +306,22 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
 
           {showTemplate ? (
             <div className="template-overlay" aria-hidden style={{ pointerEvents: 'none' }}>
-              {templateTargets.map((target) => (
-                <div
-                  key={target.stickerId}
-                  className="template-ghost"
-                  style={{
-                    left: `${target.targetTransform.x * 100}%`,
-                    top: `${target.targetTransform.y * 100}%`,
-                    transform: `translate(-50%, -50%) rotate(${target.targetTransform.rotation}deg) scale(${target.targetTransform.scale})`
-                  }}
-                >
-                  <span>{target.nailName}</span>
-                </div>
-              ))}
+              {templateTargets.map((target) => {
+                const sticker = activeTask?.stickers?.find(s => s.id === target.stickerId);
+                return (
+                  <div
+                    key={target.stickerId}
+                    className="template-ghost"
+                    style={{
+                      left: `${target.targetTransform.x * 100}%`,
+                      top: `${target.targetTransform.y * 100}%`,
+                      transform: `translate(-50%, -50%) rotate(${target.targetTransform.rotation}deg) scale(${target.targetTransform.scale})`
+                    }}
+                  >
+                    {sticker && <img src={sticker.img ?? sticker.src} alt={sticker.name} style={{ width: '100%', height: '100%', objectFit: 'contain', opacity: 0.5 }} />}
+                  </div>
+                );
+              })}
             </div>
           ) : null}
         </div>
