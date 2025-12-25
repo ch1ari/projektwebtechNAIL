@@ -12,7 +12,7 @@ const NAILS = [
 ];
 
 const Board = forwardRef(function Board({ app, stickers }, boardRef) {
-  const { placements, showHints, showTemplate, nailColors, selectedColor } = app.state;
+  const { placements, showHints, showTemplate, nailColors } = app.state;
   const activeTask = app.currentTask;
   const nailMapRef = useRef(null);
 
@@ -40,10 +40,23 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
     return null;
   }
 
-  function handleNailClick(event) {
-    const hit = nailHitTest(event.clientX, event.clientY);
-    if (!hit) return;
-    app.dispatch({ type: 'paintNail', payload: { nail: hit.id, color: selectedColor } });
+  function handleDragOver(event) {
+    event.preventDefault();
+    const color = event.dataTransfer.types.includes('application/nail-color');
+    if (color) {
+      event.dataTransfer.dropEffect = 'copy';
+    }
+  }
+
+  function handleDrop(event) {
+    event.preventDefault();
+    const color = event.dataTransfer.getData('application/nail-color');
+
+    if (color) {
+      const hit = nailHitTest(event.clientX, event.clientY);
+      if (!hit) return;
+      app.dispatch({ type: 'paintNail', payload: { nail: hit.id, color } });
+    }
   }
 
   return (
@@ -52,6 +65,8 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
         className="board"
         aria-label="Nail art workspace"
         ref={boardRef}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
       >
         <div
           className="board-surface"
@@ -66,7 +81,6 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
             className="nail-map"
             viewBox={`0 0 ${VIEWBOX.width} ${VIEWBOX.height}`}
             preserveAspectRatio="xMidYMid meet"
-            onClick={handleNailClick}
           >
             {NAILS.map((nail) => (
               <ellipse
@@ -79,7 +93,6 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
                 fill={nailColors[nail.id] ?? '#f5c1d8'}
                 stroke="rgba(255,255,255,0.3)"
                 strokeWidth="2"
-                style={{ cursor: 'pointer' }}
               />
             ))}
           </svg>
