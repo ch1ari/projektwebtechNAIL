@@ -117,50 +117,21 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
           preserveAspectRatio="xMidYMid meet"
           style={{ position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none' }}
         >
-          <defs>
-            <mask id="nails-mask">
-              {/* Pinky */}
-              <path fill="white" d="M 384.5,20.5 C 385.117,20.6107 385.617,20.944 386,21.5C 386.518,38.4501 381.852,53.7834 372,67.5C 367.037,72.7152 361.203,74.2152 354.5,72C 351.5,69.3333 349.833,66 349.5,62C 350.06,57.9855 351.227,54.1521 353,50.5C 357.358,43.2447 362.524,36.7447 368.5,31C 373.727,27.2276 379.061,23.7276 384.5,20.5 Z"/>
-              {/* Ring */}
-              <path fill="white" d="M 329.5,24.5 C 330.722,27.0616 331.389,29.8949 331.5,33C 331.286,38.5649 330.62,44.0649 329.5,49.5C 328.269,60.8005 323.269,69.9672 314.5,77C 304.656,80.1796 299.323,76.5129 298.5,66C 303.12,47.9385 313.453,34.1052 329.5,24.5 Z"/>
-              {/* Middle */}
-              <path fill="white" d="M 399.5,97.5 C 397.897,96.3228 396.564,96.4894 395.5,98C 395.957,98.414 396.291,98.914 396.5,99.5C 393.731,101.096 391.397,103.096 389.5,105.5C 384.284,108.385 379.784,107.385 376,102.5C 375.333,98.1667 375.333,93.8333 376,89.5C 384.5,73.6667 396.667,61.5 412.5,53C 413.833,52.3333 415.167,52.3333 416.5,53C 415.157,69.5835 409.49,84.4168 399.5,97.5 Z"/>
-              {/* Index */}
-              <path fill="white" d="M 235.5,77.5 C 237.136,78.7489 238.303,80.4156 239,82.5C 243.199,94.4894 244.532,106.823 243,119.5C 242.068,127.066 238.068,132.066 231,134.5C 223.04,133.371 218.54,128.705 217.5,120.5C 218.848,104.098 224.848,89.7644 235.5,77.5 Z"/>
-              {/* Thumb */}
-              <path fill="white" d="M 422.5,121.5 C 423.5,121.5 424.5,121.5 425.5,121.5C 425.448,125.198 425.114,128.865 424.5,132.5C 421.695,144.273 415.695,153.94 406.5,161.5C 401.33,163.093 396.33,162.76 391.5,160.5C 390.778,160.082 390.278,159.416 390,158.5C 389.05,152.066 390.716,146.4 395,141.5C 402.342,132.325 411.508,125.658 422.5,121.5 Z"/>
-            </mask>
-          </defs>
-
-          {/* Hitboxes for pointer events */}
+          {/* Render nail polish as colored ellipses */}
           {NAILS.map((nail) => (
             <ellipse
-              key={`${nail.id}-hitbox`}
+              key={`${nail.id}-polish`}
               cx={nail.shape.cx}
               cy={nail.shape.cy}
               rx={nail.shape.rx}
               ry={nail.shape.ry}
               transform={`rotate(${nail.shape.rotation} ${nail.shape.cx} ${nail.shape.cy})`}
-              fill="transparent"
-              className="nail-hitbox"
+              fill={nailColors[nail.id] ?? '#f5c1d8'}
+              stroke="rgba(255,255,255,0.4)"
+              strokeWidth="2"
+              className="nail-polish-svg"
             />
           ))}
-
-          {/* Nail polish layer with mask applied */}
-          <g mask="url(#nails-mask)">
-            {NAILS.map((nail) => (
-              <ellipse
-                key={`${nail.id}-polish`}
-                cx={nail.shape.cx}
-                cy={nail.shape.cy}
-                rx={nail.shape.rx}
-                ry={nail.shape.ry}
-                transform={`rotate(${nail.shape.rotation} ${nail.shape.cx} ${nail.shape.cy})`}
-                fill={nailColors[nail.id] ?? '#f5c1d8'}
-                className="nail-polish-svg"
-              />
-            ))}
-          </g>
         </svg>
 
         <div className="nails-clip">{/* Keep for stickers */}
