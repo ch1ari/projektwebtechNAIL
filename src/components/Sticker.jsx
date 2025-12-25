@@ -5,7 +5,17 @@ function normalizeRotation(value) {
   return ((value % 360) + 360) % 360;
 }
 
-export default function Sticker({ sticker, placement, boardRef, dispatch, variant, taskId, lockCorrect }) {
+export default function Sticker({
+  sticker,
+  placement,
+  boardRef,
+  dispatch,
+  variant,
+  taskId,
+  lockCorrect,
+  nailHitTest,
+  getNailRect
+}) {
   const nodeRef = useRef(null);
   const dragState = useRef(null);
 
@@ -36,10 +46,10 @@ export default function Sticker({ sticker, placement, boardRef, dispatch, varian
   function handlePointerMove(event) {
     if (!dragState.current || !boardRef?.current) return;
 
-    const nailEl = document.elementFromPoint(event.clientX, event.clientY)?.closest('.nail');
-    if (!nailEl) return;
+    const hit = nailHitTest ? nailHitTest(event.clientX, event.clientY) : null;
+    if (!hit?.id || !hit.rect) return;
     const boardRect = boardRef.current.getBoundingClientRect();
-    const nailRect = nailEl.getBoundingClientRect();
+    const nailRect = hit.rect;
     const targetCenterX = event.clientX - dragState.current.offsetX;
     const targetCenterY = event.clientY - dragState.current.offsetY;
     const xNorm = (targetCenterX - nailRect.left) / nailRect.width;
@@ -54,7 +64,7 @@ export default function Sticker({ sticker, placement, boardRef, dispatch, varian
       payload: {
         stickerId: sticker.id,
         position: {
-          nailId: nailEl.dataset.nailId,
+          nailId: hit.id,
           x: xNorm,
           y: yNorm,
           boardX,
@@ -73,8 +83,8 @@ export default function Sticker({ sticker, placement, boardRef, dispatch, varian
       event.currentTarget.releasePointerCapture(event.pointerId);
     }
 
-    const nailEl = document.elementFromPoint(event.clientX, event.clientY)?.closest('.nail');
-    const nailRect = nailEl?.getBoundingClientRect();
+    const hit = nailHitTest ? nailHitTest(event.clientX, event.clientY) : null;
+    const nailRect = hit?.rect;
     const distance = Math.hypot(
       event.clientX - dragState.current.startX,
       event.clientY - dragState.current.startY
@@ -99,7 +109,7 @@ export default function Sticker({ sticker, placement, boardRef, dispatch, varian
       return;
     }
 
-    if (!nailRect || !nailEl) {
+    if (!nailRect || !hit?.id) {
       dispatch({ type: 'removeSticker', payload: sticker.id });
       dragState.current = null;
       return;
@@ -135,7 +145,7 @@ export default function Sticker({ sticker, placement, boardRef, dispatch, varian
       payload: {
         stickerId: sticker.id,
         position: {
-          nailId: nailEl.dataset.nailId,
+          nailId: hit.id,
           x: clamp(xNorm, marginX, 1 - marginX),
           y: clamp(yNorm, marginY, 1 - marginY),
           boardX: clamp(boardX, 0, 1),
@@ -161,7 +171,8 @@ export default function Sticker({ sticker, placement, boardRef, dispatch, varian
     ? {
         left: `${placement.x * 100}%`,
         top: `${placement.y * 100}%`,
-        transform: `translate(-50%, -50%) rotate(${rotation}deg) scale(${baseScale})`
+        transform: `translate(-50%, -50%) rotate(${rotation}deg) scale(${baseScale})`,
+        clipPath: placement.nailId ? `url(#clip-${placement.nailId})` : undefined
       }
     : {
         transform: `rotate(${rotation}deg) scale(${baseScale})`
