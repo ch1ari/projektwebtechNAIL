@@ -79,10 +79,6 @@ const Board = forwardRef(function Board({ app, stickers, hoveredNailId }, boardR
 
         <div
           className="nails-clip"
-          style={{
-            maskImage: "url('/mask_nails.png')",
-            WebkitMaskImage: "url('/mask_nails.png')"
-          }}
         >
           <div
             className="paint-layer"

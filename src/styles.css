@@ -262,12 +262,6 @@ body {
 .nails-clip {
   position: absolute;
   inset: 0;
-  mask-repeat: no-repeat;
-  mask-size: contain;
-  mask-position: center;
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-size: contain;
-  -webkit-mask-position: center;
   pointer-events: auto;
   display: grid;
   place-items: center;
@@ -284,7 +278,7 @@ body {
 .nail {
   position: absolute;
   pointer-events: auto;
-  z-index: 5;
+  z-index: 6;
   overflow: hidden;
   clip-path: polygon(
     20% 0%,
