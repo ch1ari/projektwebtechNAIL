@@ -118,10 +118,19 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
           style={{ position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none' }}
         >
           <defs>
-            {/* Mask for thumb nail - aligned position */}
+            {/* Mask for thumb nail */}
             <mask id="thumb-mask">
               <path
                 d="m 563.68026,393.93875 c -9.07989,-2.95233 -17.07105,-14.47192 -19.19709,-27.67339 -1.68895,-10.48745 2.20513,-32.69433 9.21661,-52.5598 6.28083,-17.79534 18.20385,-38.65979 28.77294,-50.35062 l 4.94457,-5.46936 2.96558,6.5 c 10.54064,23.1031 15.88502,56.48461 13.2883,83 -1.4921,15.23591 -2.81514,21.48064 -5.8263,27.5 -7.89454,15.78132 -21.27592,23.24394 -34.16461,19.05317 z"
+                fill="white"
+                transform="scale(0.3984375)"
+              />
+            </mask>
+
+            {/* Mask for index finger */}
+            <mask id="index-mask">
+              <path
+                d="m 743.70825,257.70957 c -11.273,-3.64629 -16.71411,-11.36552 -17.70222,-25.11395 -0.70261,-9.77593 1.2347,-17.28036 7.84052,-30.37128 10.01071,-19.83844 21.4297,-35.17381 38.26592,-51.39 13.54162,-13.04292 31.43364,-25.735 33.44916,-23.72787 0.35921,0.35771 0.80506,5.81891 0.99078,12.13601 0.83959,28.55716 -7.53699,63.28849 -22.15335,91.85314 -5.01462,9.80004 -14.69967,19.95444 -22.68433,23.78364 -5.95846,2.8575 -14.00984,4.12304 -18.00648,2.83031 z"
                 fill="white"
                 transform="scale(0.3984375)"
               />
@@ -130,8 +139,8 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
 
           {/* Render nail polish */}
           {NAILS.map((nail) => {
-            if (nail.id === 'thumb') {
-              // Thumb uses SVG mask with exact shape
+            if (nail.id === 'thumb' || nail.id === 'index') {
+              // Thumb and index use SVG masks
               return (
                 <rect
                   key={`${nail.id}-polish`}
@@ -140,7 +149,7 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
                   width={VIEWBOX.width}
                   height={VIEWBOX.height}
                   fill={nailColors[nail.id] ?? '#f5c1d8'}
-                  mask="url(#thumb-mask)"
+                  mask={`url(#${nail.id}-mask)`}
                   className="nail-polish-svg"
                 />
               );
