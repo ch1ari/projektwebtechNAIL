@@ -879,12 +879,22 @@ body {
   box-shadow: 0 6px 16px rgba(217, 70, 181, 0.4);
 }
 
+
 .btn-secondary {
-  background: white;
-  color: #d946b5;
-  border: 2px solid #ffd0e5;
+  background: linear-gradient(135deg, #d946b5, #f472b6);
+  color: white;
+  box-shadow: 0 4px 12px rgba(217, 70, 181, 0.3);
 }
 
 .btn-secondary:hover {
-  background: #fff5fb;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(217, 70, 181, 0.4);
 }
+
+
+
+
+
+
+
+
