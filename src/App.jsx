@@ -479,7 +479,7 @@ function Toolbelt({ app, boardRef }) {
 
 // Nail hit-test function (duplicated from Board for use in Toolbelt)
 const NAILS = [
-  { id: 'thumb', shape: { cx: 122, cy: 290, rx: 50, ry: 55, rotation: -8 } },
+  { id: 'thumb', shape: { cx: 229, cy: 130, rx: 12, ry: 27, rotation: -8 } },
   { id: 'index', shape: { cx: 220, cy: 235, rx: 48, ry: 60, rotation: -5 } },
   { id: 'middle', shape: { cx: 307, cy: 215, rx: 52, ry: 64, rotation: 0 } },
   { id: 'ring', shape: { cx: 402, cy: 225, rx: 48, ry: 60, rotation: 5 } },
