@@ -266,11 +266,27 @@ body {
   pointer-events: none;
 }
 
+.nails-clip {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: auto;
+  mask-image: url('/mask_nails.png');
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-image: url('/mask_nails.png');
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+}
+
 .nail-map {
   position: absolute;
   inset: 0;
   z-index: 2;
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 .nail-hitmap {
@@ -350,7 +366,7 @@ body {
 .board-hints {
   position: absolute;
   inset: 0;
-  z-index: 3;
+  z-index: 10;
   pointer-events: none;
 }
 
@@ -367,7 +383,7 @@ body {
 .template-overlay {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 10;
   pointer-events: none;
 }
 
@@ -538,6 +554,11 @@ body {
   cursor: grab;
   user-select: none;
   touch-action: none;
+}
+
+.sticker.is-dragging {
+  cursor: grabbing;
+  z-index: 999;
 }
 
 .sticker img {

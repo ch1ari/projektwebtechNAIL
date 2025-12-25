@@ -324,11 +324,6 @@ function TopBar({ app, completionMap }) {
 
 function Toolbelt({ app }) {
   const selectColor = (color) => app.dispatch({ type: 'setColor', payload: color });
-  const handleColorDragStart = (event, color) => {
-    event.dataTransfer.setData('application/nail-color', color.value);
-    event.dataTransfer.effectAllowed = 'copy';
-    selectColor(color);
-  };
 
   return (
     <div className="toolbelt panel">
@@ -355,8 +350,6 @@ function Toolbelt({ app }) {
                   key={color.value}
                   className={`swatch nail-chip ${app.state.selectedColor === color.value ? 'active' : ''}`}
                   onClick={() => selectColor(color)}
-                  draggable
-                  onDragStart={(event) => handleColorDragStart(event, color)}
                   aria-label={`Vybrať farbu ${color.name}`}
                 >
                   <span className="nail-cap" style={{ backgroundColor: color.value }} />

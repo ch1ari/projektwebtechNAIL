@@ -1,5 +1,4 @@
 import React, { forwardRef, useMemo, useRef } from 'react';
-import { clamp } from '../lib/geometry.js';
 import Sticker from './Sticker.jsx';
 
 const VIEWBOX = { width: 612, height: 408 };
@@ -13,7 +12,7 @@ const NAILS = [
 ];
 
 const Board = forwardRef(function Board({ app, stickers }, boardRef) {
-  const { placements, showHints, showTemplate, nailColors } = app.state;
+  const { placements, showHints, showTemplate, nailColors, selectedColor } = app.state;
   const activeTask = app.currentTask;
   const nailMapRef = useRef(null);
 
@@ -41,49 +40,10 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
     return null;
   }
 
-  function handleDragOver(event) {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = 'copy';
-  }
-
-  function handleDrop(event) {
-    event.preventDefault();
+  function handleNailClick(event) {
     const hit = nailHitTest(event.clientX, event.clientY);
-    const color = event.dataTransfer.getData('application/nail-color');
-    const stickerId = event.dataTransfer.getData('application/sticker-id');
-
-    if (color) {
-      if (!hit) return;
-      app.dispatch({ type: 'paintNail', payload: { nail: hit.id, color } });
-      return;
-    }
-
-    if (!stickerId || !hit || !boardRef?.current) return;
-    const sticker = stickers.find((item) => item.id === stickerId);
-    if (!sticker) return;
-
-    const boardRect = boardRef.current.getBoundingClientRect();
-    const boardX = clamp((event.clientX - boardRect.left) / boardRect.width, 0, 1);
-    const boardY = clamp((event.clientY - boardRect.top) / boardRect.height, 0, 1);
-    const basePlacement = placements[stickerId] ?? sticker.startTransform ?? {};
-    const position = {
-      nailId: hit.id,
-      x: boardX,
-      y: boardY,
-      boardX,
-      boardY,
-      rotation: basePlacement.rotation ?? 0,
-      scale: basePlacement.scale ?? sticker.scale ?? 1
-    };
-
-    app.dispatch({
-      type: 'placeSticker',
-      payload: { stickerId: sticker.id, position }
-    });
-
-    if (activeTask?.id) {
-      app.dispatch({ type: 'finalizePlacement', payload: { stickerId: sticker.id, taskId: activeTask.id } });
-    }
+    if (!hit) return;
+    app.dispatch({ type: 'paintNail', payload: { nail: hit.id, color: selectedColor } });
   }
 
   return (
@@ -92,8 +52,6 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
         className="board"
         aria-label="Nail art workspace"
         ref={boardRef}
-        onDragOver={handleDragOver}
-        onDrop={handleDrop}
       >
         <div
           className="board-surface"
@@ -102,39 +60,44 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
         />
         <img className="board-hand" src="/hand.png" alt="Hand with nails" />
 
-        <svg
-          ref={nailMapRef}
-          className="nail-map"
-          viewBox={`0 0 ${VIEWBOX.width} ${VIEWBOX.height}`}
-          preserveAspectRatio="xMidYMid meet"
-        >
-          {NAILS.map((nail) => (
-            <ellipse
-              key={`${nail.id}-fill`}
-              cx={nail.shape.cx}
-              cy={nail.shape.cy}
-              rx={nail.shape.rx}
-              ry={nail.shape.ry}
-              transform={`rotate(${nail.shape.rotation} ${nail.shape.cx} ${nail.shape.cy})`}
-              fill={nailColors[nail.id] ?? '#f5c1d8'}
-              stroke="rgba(255,255,255,0.3)"
-              strokeWidth="2"
-            />
-          ))}
-        </svg>
+        <div className="nails-clip">
+          <svg
+            ref={nailMapRef}
+            className="nail-map"
+            viewBox={`0 0 ${VIEWBOX.width} ${VIEWBOX.height}`}
+            preserveAspectRatio="xMidYMid meet"
+            onClick={handleNailClick}
+          >
+            {NAILS.map((nail) => (
+              <ellipse
+                key={`${nail.id}-fill`}
+                cx={nail.shape.cx}
+                cy={nail.shape.cy}
+                rx={nail.shape.rx}
+                ry={nail.shape.ry}
+                transform={`rotate(${nail.shape.rotation} ${nail.shape.cx} ${nail.shape.cy})`}
+                fill={nailColors[nail.id] ?? '#f5c1d8'}
+                stroke="rgba(255,255,255,0.3)"
+                strokeWidth="2"
+                style={{ cursor: 'pointer' }}
+              />
+            ))}
+          </svg>
 
-        <div className="sticker-layer">
-          {placedStickers.map((sticker) => (
-            <Sticker
-              key={sticker.id}
-              sticker={sticker}
-              placement={placements[sticker.id]}
-              dispatch={app.dispatch}
-              variant="board"
-              taskId={activeTask?.id}
-              lockCorrect={app.state.lockCorrect}
-            />
-          ))}
+          <div className="sticker-layer">
+            {placedStickers.map((sticker) => (
+              <Sticker
+                key={sticker.id}
+                sticker={sticker}
+                placement={placements[sticker.id]}
+                dispatch={app.dispatch}
+                variant="board"
+                taskId={activeTask?.id}
+                lockCorrect={app.state.lockCorrect}
+                boardRef={boardRef}
+              />
+            ))}
+          </div>
         </div>
 
         {showHints ? (
