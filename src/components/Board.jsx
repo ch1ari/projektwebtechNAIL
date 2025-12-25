@@ -4,12 +4,14 @@ import Sticker from './Sticker.jsx';
 
 const VIEWBOX = { width: 612, height: 408 };
 
+// Hit detection areas (larger for easier interaction)
+// Note: Visual nails use SVG masks, these are only for hit testing
 const NAILS = [
-  { id: 'thumb', shape: { cx: 229, cy: 130, rx: 8, ry: 18, rotation: -8 } },
-  { id: 'index', shape: { cx: 315, cy: 78, rx: 11, ry: 17, rotation: -5 } },
-  { id: 'middle', shape: { cx: 369, cy: 72, rx: 12, ry: 16, rotation: 0 } },
-  { id: 'ring', shape: { cx: 397, cy: 106, rx: 13, ry: 18, rotation: 5 } },
-  { id: 'pinky', shape: { cx: 409, cy: 167, rx: 12, ry: 14, rotation: 10 } }
+  { id: 'thumb', shape: { cx: 229, cy: 130, rx: 15, ry: 30, rotation: -8 } },
+  { id: 'index', shape: { cx: 315, cy: 78, rx: 20, ry: 30, rotation: -5 } },
+  { id: 'middle', shape: { cx: 369, cy: 72, rx: 22, ry: 30, rotation: 0 } },
+  { id: 'ring', shape: { cx: 397, cy: 106, rx: 24, ry: 32, rotation: 5 } },
+  { id: 'pinky', shape: { cx: 409, cy: 167, rx: 22, ry: 26, rotation: 10 } }
 ];
 
 const Board = forwardRef(function Board({ app, stickers }, boardRef) {
