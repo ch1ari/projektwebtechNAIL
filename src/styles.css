@@ -257,6 +257,7 @@ body {
   object-fit: contain;
   object-position: center;
   pointer-events: none;
+  z-index: 1;
 }
 
 .nail-mask {
@@ -270,6 +271,27 @@ body {
   position: absolute;
   inset: 0;
   z-index: 2;
+  pointer-events: none;
+}
+
+.nails-clip {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.nail-polish {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+.nail-polish-svg {
+  pointer-events: none;
+}
+
+.nail-hitbox {
   pointer-events: none;
 }
 
@@ -345,6 +367,17 @@ body {
   inset: 0;
   pointer-events: auto;
   z-index: 5;
+}
+
+.nails-clip .sticker,
+.nails-clip .board-hints,
+.nails-clip .template-overlay {
+  pointer-events: auto;
+}
+
+.nails-clip .board-hints *,
+.nails-clip .template-overlay * {
+  pointer-events: none;
 }
 
 .board-hints {
@@ -729,6 +762,20 @@ body {
   z-index: 9999;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+.brush-ghost {
+  position: fixed;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  opacity: 0.85;
+  transition: opacity 0.1s ease;
 }
 
 @media (max-width: 980px) {

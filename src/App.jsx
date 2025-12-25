@@ -6,6 +6,16 @@ import { clamp, rotationDeltaDegrees } from './lib/geometry.js';
 
 export const AppStateContext = createContext();
 
+// Natural nail color - default for all nails
+const NATURAL_NAIL_COLOR = '#F5E6D3';
+const DEFAULT_NAIL_COLORS = {
+  thumb: NATURAL_NAIL_COLOR,
+  index: NATURAL_NAIL_COLOR,
+  middle: NATURAL_NAIL_COLOR,
+  ring: NATURAL_NAIL_COLOR,
+  pinky: NATURAL_NAIL_COLOR
+};
+
 const paletteColors = [
   { name: 'Horúca ružová', value: '#f06292' },
   { name: 'Lesklá ružová', value: '#f48fb1' },
@@ -52,13 +62,8 @@ const loadStats = () => {
   return {};
 };
 
-const initialTaskColors = tasks.find((task) => task.id === firstTaskId)?.nailTargets ?? {
-  thumb: '#f5c1d8',
-  index: '#f5c1d8',
-  middle: '#f5c1d8',
-  ring: '#f5c1d8',
-  pinky: '#f5c1d8'
-};
+// Always start with natural nail color
+const initialTaskColors = DEFAULT_NAIL_COLORS;
 
 const initialState = {
   currentTaskId: firstTaskId,
@@ -75,7 +80,8 @@ const initialState = {
   timerRunning: true,
   elapsedMs: 0,
   queue: loadQueue(),
-  stats: loadStats()
+  stats: loadStats(),
+  dragState: null
 };
 
 function taskTargets(task) {
@@ -121,7 +127,7 @@ function appReducer(state, action) {
         ...state,
         currentTaskId: nextTask?.id ?? null,
         placements: {},
-        nailColors: nextTask?.nailTargets ?? state.nailColors,
+        nailColors: DEFAULT_NAIL_COLORS,
         selectedColor: paletteColors[0].value,
         selectedColorName: paletteColors[0].name,
         activeToolTab: 'colors',
@@ -180,7 +186,7 @@ function appReducer(state, action) {
       return {
         ...state,
         placements: {},
-        nailColors: task?.nailTargets ?? state.nailColors,
+        nailColors: DEFAULT_NAIL_COLORS,
         selectedColor: paletteColors[0].value,
         selectedColorName: paletteColors[0].name,
         activeToolTab: 'colors',
@@ -213,7 +219,7 @@ function appReducer(state, action) {
         queue,
         currentTaskId: nextId,
         placements: {},
-        nailColors: tasks.find((t) => t.id === nextId)?.nailTargets ?? state.nailColors,
+        nailColors: DEFAULT_NAIL_COLORS,
         selectedColor: paletteColors[0].value,
         selectedColorName: paletteColors[0].name,
         activeToolTab: 'colors',
@@ -233,6 +239,36 @@ function appReducer(state, action) {
     case 'stats:update': {
       const { taskId, payload } = action;
       return { ...state, stats: { ...state.stats, [taskId]: payload } };
+    }
+    case 'startColorDrag': {
+      const { color, colorName, startX, startY } = action.payload;
+      return {
+        ...state,
+        dragState: {
+          isDragging: true,
+          color,
+          colorName,
+          startX,
+          startY,
+          currentX: startX,
+          currentY: startY
+        }
+      };
+    }
+    case 'updateColorDrag': {
+      if (!state.dragState) return state;
+      const { currentX, currentY } = action.payload;
+      return {
+        ...state,
+        dragState: {
+          ...state.dragState,
+          currentX,
+          currentY
+        }
+      };
+    }
+    case 'endColorDrag': {
+      return { ...state, dragState: null };
     }
     default:
       return state;
@@ -322,12 +358,71 @@ function TopBar({ app, completionMap }) {
   );
 }
 
-function Toolbelt({ app }) {
+function Toolbelt({ app, boardRef }) {
   const selectColor = (color) => app.dispatch({ type: 'setColor', payload: color });
-  const handleColorDragStart = (event, color) => {
-    event.dataTransfer.setData('application/nail-color', color.value);
-    event.dataTransfer.effectAllowed = 'copy';
+
+  const handlePointerDown = (event, color) => {
+    const target = event.currentTarget;
+    target.setPointerCapture(event.pointerId);
+
+    app.dispatch({
+      type: 'startColorDrag',
+      payload: {
+        color: color.value,
+        colorName: color.name,
+        startX: event.clientX,
+        startY: event.clientY
+      }
+    });
     selectColor(color);
+  };
+
+  const handlePointerMove = (event) => {
+    if (!app.state.dragState) return;
+
+    app.dispatch({
+      type: 'updateColorDrag',
+      payload: {
+        currentX: event.clientX,
+        currentY: event.clientY
+      }
+    });
+  };
+
+  const handlePointerUp = (event) => {
+    if (!app.state.dragState) return;
+
+    const target = event.currentTarget;
+    if (target.hasPointerCapture(event.pointerId)) {
+      target.releasePointerCapture(event.pointerId);
+    }
+
+    const { startX, startY, currentX, currentY, color } = app.state.dragState;
+    const dx = currentX - startX;
+    const dy = currentY - startY;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    // If moved less than 6px, treat as click (already selected)
+    if (distance >= 6 && boardRef?.current) {
+      // Hit-test nails
+      const hit = nailHitTest(boardRef.current, currentX, currentY);
+      if (hit) {
+        app.dispatch({ type: 'paintNail', payload: { nail: hit.id, color } });
+      }
+    }
+
+    app.dispatch({ type: 'endColorDrag' });
+  };
+
+  const handlePointerCancel = (event) => {
+    if (!app.state.dragState) return;
+
+    const target = event.currentTarget;
+    if (target.hasPointerCapture(event.pointerId)) {
+      target.releasePointerCapture(event.pointerId);
+    }
+
+    app.dispatch({ type: 'endColorDrag' });
   };
 
   return (
@@ -355,8 +450,10 @@ function Toolbelt({ app }) {
                   key={color.value}
                   className={`swatch nail-chip ${app.state.selectedColor === color.value ? 'active' : ''}`}
                   onClick={() => selectColor(color)}
-                  draggable
-                  onDragStart={(event) => handleColorDragStart(event, color)}
+                  onPointerDown={(event) => handlePointerDown(event, color)}
+                  onPointerMove={handlePointerMove}
+                  onPointerUp={handlePointerUp}
+                  onPointerCancel={handlePointerCancel}
                   aria-label={`Vybrať farbu ${color.name}`}
                 >
                   <span className="nail-cap" style={{ backgroundColor: color.value }} />
@@ -383,6 +480,36 @@ function Toolbelt({ app }) {
       </div>
     </div>
   );
+}
+
+// Nail hit-test function (duplicated from Board for use in Toolbelt)
+const NAILS = [
+  { id: 'thumb', shape: { cx: 229, cy: 130, rx: 12, ry: 27, rotation: -8 } },
+  { id: 'index', shape: { cx: 315, cy: 78, rx: 17, ry: 26, rotation: -5 } },
+  { id: 'middle', shape: { cx: 369, cy: 72, rx: 18, ry: 25, rotation: 0 } },
+  { id: 'ring', shape: { cx: 397, cy: 106, rx: 20, ry: 27, rotation: 5 } },
+  { id: 'pinky', shape: { cx: 409, cy: 167, rx: 18, ry: 21, rotation: 10 } }
+];
+
+const VIEWBOX = { width: 612, height: 408 };
+
+function nailHitTest(boardElement, clientX, clientY) {
+  const nailMapSvg = boardElement.querySelector('.nail-map');
+  if (!nailMapSvg) return null;
+
+  const rect = nailMapSvg.getBoundingClientRect();
+  const x = ((clientX - rect.left) / rect.width) * VIEWBOX.width;
+  const y = ((clientY - rect.top) / rect.height) * VIEWBOX.height;
+
+  for (const nail of NAILS) {
+    const { cx, cy, rx, ry } = nail.shape;
+    const dx = (x - cx) / rx;
+    const dy = (y - cy) / ry;
+    if (dx * dx + dy * dy <= 1) {
+      return { id: nail.id };
+    }
+  }
+  return null;
 }
 
 function RightPanel({ app, completionMap }) {
@@ -515,7 +642,7 @@ export default function App() {
               app={app}
               stickers={app.currentTask?.stickers ?? []}
             />
-            <Toolbelt app={app} />
+            <Toolbelt app={app} boardRef={boardRef} />
           </div>
           <RightPanel app={app} completionMap={completionMap} />
         </div>
@@ -543,6 +670,16 @@ export default function App() {
               <button onClick={() => app.dispatch({ type: 'toggleStats' })}>Close</button>
             </div>
           </div>
+        ) : null}
+        {app.state.dragState ? (
+          <div
+            className="brush-ghost"
+            style={{
+              left: `${app.state.dragState.currentX}px`,
+              top: `${app.state.dragState.currentY}px`,
+              backgroundColor: app.state.dragState.color
+            }}
+          />
         ) : null}
       </div>
     </AppStateContext.Provider>
