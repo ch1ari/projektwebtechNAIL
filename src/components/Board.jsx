@@ -117,6 +117,13 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
           preserveAspectRatio="xMidYMid meet"
           style={{ position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none' }}
         >
+          <defs>
+            {/* ClipPath for thumb - scaled from 1536x1024 to 612x408 */}
+            <clipPath id="thumb-clip" transform="scale(0.3984375)">
+              <path d="m 955.50518,823.52086 c -15.65272,-3.76465 -20.45995,-21.84174 -10.851,-40.80408 8.43373,-16.64316 35.99354,-42.15725 59.37562,-54.96837 7.1414,-3.91278 22.1893,-10.25938 24.3252,-10.25938 2.5438,0 -0.6288,17.87255 -6.0393,34.0217 -8.3224,24.84081 -28.63358,56.86365 -41.47188,65.38527 -8.7259,5.7919 -18.3451,8.30688 -25.33864,6.62486 z" />
+            </clipPath>
+          </defs>
+
           {/* Render nail polish as colored ellipses */}
           {NAILS.map((nail) => (
             <ellipse
@@ -130,6 +137,7 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
               stroke="rgba(255,255,255,0.4)"
               strokeWidth="2"
               className="nail-polish-svg"
+              clipPath={nail.id === 'thumb' ? 'url(#thumb-clip)' : undefined}
             />
           ))}
         </svg>
