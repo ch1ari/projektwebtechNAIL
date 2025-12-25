@@ -3,7 +3,14 @@
     "id": "easy-berry",
     "title": "Sladká jahoda",
     "difficulty": "easy",
-    "clientRequest": "Chcem sladkú atmosféru ako na jahodovej limonáde, všetky nechty jemne ružové s jedným akcentom. Pridaj malú čerešňu na prostredník a drobné diamanty na palec, nech sa to trbliece.",
+    "clientRequest": "Rýchly berry briefing: sladké ružové nechty s čerešňou a diamantovým leskom.",
+    "clientRequirements": [
+      "Palec: Lesklá ružová a malý diamant presne do stredu nechtu.",
+      "Ukazovák: Bavlnená ružová, bez nálepiek.",
+      "Prostredník: Lesklá ružová a čerešňa šikmo k špičke.",
+      "Prstenník: Púdrová ružová bez ozdoby.",
+      "Malíček: Jahodová ako akcent, bez nálepky."
+    ],
     "nailTargets": {
       "thumb": "#f48fb1",
       "index": "#f5c1d8",
@@ -34,7 +41,14 @@
     "id": "easy-rainbow",
     "title": "Pastelový dúhový deň",
     "difficulty": "easy",
-    "clientRequest": "Ráno som sa zobudila do pastelového neba, nechty chcem v jemných broskyňových a mentolových tónoch. Na ukazovák polož malú dúhu a na prstenník hviezdičku, nech sa to ligotá.",
+    "clientRequest": "Pastelový briefing: jemné tóny s dúhou na ukazováku a hviezdou na prstenníku.",
+    "clientRequirements": [
+      "Palec: Zlatá broskyňa a nechať čistý.",
+      "Ukazovák: Tyrkysová s malou dúhou cez stred nechtu.",
+      "Prostredník: Púdrová ružová bez nálepky.",
+      "Prstenník: Broskyňová a hviezda šikmo smerom nahor.",
+      "Malíček: Mentolová bez ozdoby."
+    ],
     "nailTargets": {
       "thumb": "#ffd6a5",
       "index": "#7ae0c5",
@@ -65,7 +79,14 @@
     "id": "easy-bloom",
     "title": "Jarný kvet",
     "difficulty": "easy",
-    "clientRequest": "Chcem cítiť jarný vánok – jemná zelenkavá s ružovým detailom. Palec nech má veľký kvet a prstenník posyp malé slnko, aby sa leskol.",
+    "clientRequest": "Jarný briefing: svieže farby, ruža na palec a slnko na prstenník.",
+    "clientRequirements": [
+      "Palec: Tyrkysová a veľká ruža uprostred nechtu.",
+      "Ukazovák: Bavlnená ružová bez ozdoby.",
+      "Prostredník: Nebesky modrá bez nálepky.",
+      "Prstenník: Zlatá broskyňa so slnečnou nálepkou v strede.",
+      "Malíček: Púdrová ružová ako čistý finiš."
+    ],
     "nailTargets": {
       "thumb": "#7ae0c5",
       "index": "#f5c1d8",
@@ -96,7 +117,14 @@
     "id": "medium-ice",
     "title": "Ľadové sklo",
     "difficulty": "medium",
-    "clientRequest": "Priprav ma na tanečný večer, nechty chcem ako ľadové sklo s jemným modrým nádychom. Na ukazováku nech žiari diamant a na prostredníku sa chcem pochváliť dúhou z odrazu svetla.",
+    "clientRequest": "Ľadový briefing: čisté modré tóny, diamant na ukazováku a dúha na prostredníku.",
+    "clientRequirements": [
+      "Palec: Ľadová modrá bez ozdoby.",
+      "Ukazovák: Nebesky modrá a diamant v strede nechtu.",
+      "Prostredník: Mentolová a dúha mierne otočená doprava.",
+      "Prstenník: Púdrová ružová bez nálepky.",
+      "Malíček: Candy ružová, žiadna nálepka."
+    ],
     "nailTargets": {
       "thumb": "#bde0fe",
       "index": "#7ad6ff",
@@ -127,7 +155,14 @@
     "id": "medium-fiesta",
     "title": "Letná fiesta",
     "difficulty": "medium",
-    "clientRequest": "Idem na plážovú párty, nálada musí byť tropická. Palec nech žiari slnkom, prstenník potrebuje čerešne a na malíček chcem malú hviezdu ako iskru.",
+    "clientRequest": "Fiesta briefing: tropické farby, slnko na palci, čerešne na prstenníku a hviezda na malíčku.",
+    "clientRequirements": [
+      "Palec: Broskyňová a veľká slnečná nálepka v strede.",
+      "Ukazovák: Jahodová bez ozdoby.",
+      "Prostredník: Bavlnená ružová, nech zostane čistá.",
+      "Prstenník: Zlatá broskyňa s čerešňami šikmo do stredu nechtu.",
+      "Malíček: Nebesky modrá a hviezda smerujúca k špičke."
+    ],
     "nailTargets": {
       "thumb": "#ffcc80",
       "index": "#f28cb0",
@@ -165,7 +200,14 @@
     "id": "medium-romance",
     "title": "Večerná romantika",
     "difficulty": "medium",
-    "clientRequest": "Čaká ma večera pri sviečkach, chcem pudrové tóny a veľkú ružu na prstenníku. Palec ozdob drobným diamantom a nechaj prostredník s malou hviezdou.",
+    "clientRequest": "Romantický briefing: pudrové tóny, ruža na prstenníku, diamant na palci a hviezda na prostredníku.",
+    "clientRequirements": [
+      "Palec: Púdrová ružová a drobný diamant v strede.",
+      "Ukazovák: Bavlnená ružová bez ozdoby.",
+      "Prostredník: Candy ružová a malá hviezda mierne k špičke.",
+      "Prstenník: Lesklá ružová a veľká ruža stredom.",
+      "Malíček: Zlatá broskyňa bez nálepky."
+    ],
     "nailTargets": {
       "thumb": "#fce4ec",
       "index": "#f5c1d8",
@@ -203,7 +245,14 @@
     "id": "hard-neon",
     "title": "Nočný neon",
     "difficulty": "hard",
-    "clientRequest": "Klientka chce odvážny neonový vzhľad do klubu, nechty kombinujú tyrkys a horúcu ružovú. Hviezda má sedieť presne na malíčku, diamant na ukazováku a čerešne na prostredníku, všetko pod presným uhlom.",
+    "clientRequest": "Neon briefing: žiarivé farby, hviezda na malíčku, diamant na ukazováku a čerešne na prostredníku.",
+    "clientRequirements": [
+      "Palec: Tyrkysová, nech je čistý.",
+      "Ukazovák: Horúca ružová s diamantom v strede, mierne natočeným doľava.",
+      "Prostredník: Candy ružová s čerešňami v strede, šikmo k špičke.",
+      "Prstenník: Nebesky modrá bez nálepky.",
+      "Malíček: Lesklá ružová s hviezdou presne na stred špičky."
+    ],
     "nailTargets": {
       "thumb": "#7ae0c5",
       "index": "#f06292",
@@ -241,7 +290,14 @@
     "id": "hard-breakup",
     "title": "Drama queen",
     "difficulty": "hard",
-    "clientRequest": "Potrebujem extravagantný dizajn na rozlúčkový večierok. Tmavšia ružová s modrým leskom a nálepka break-up musí sedieť presne na palci, slnko na strede a ruža na prstenníku.",
+    "clientRequest": "Drama briefing: výrazné farby, break-up nálepka na palci, slnko na strede a ruža na prstenníku.",
+    "clientRequirements": [
+      "Palec: Horúca ružová a nálepka break-up presne do stredu.",
+      "Ukazovák: Nebesky modrá, nech ostane čistý.",
+      "Prostredník: Jahodová s veľkým slnkom otočeným rovno.",
+      "Prstenník: Lesklá ružová s ružou mierne k špičke.",
+      "Malíček: Bavlnená ružová bez ozdoby."
+    ],
     "nailTargets": {
       "thumb": "#f06292",
       "index": "#7ad6ff",
