@@ -175,7 +175,7 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
                   y="0"
                   width={VIEWBOX.width}
                   height={VIEWBOX.height}
-                  fill={nailColors[nail.id] ?? '#f5c1d8'}
+                  fill={nailColors[nail.id] ?? '#F5E6D3'}
                   mask={`url(#${nail.id}-mask)`}
                   className="nail-polish-svg"
                 />
@@ -190,7 +190,7 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
                   rx={nail.shape.rx}
                   ry={nail.shape.ry}
                   transform={`rotate(${nail.shape.rotation} ${nail.shape.cx} ${nail.shape.cy})`}
-                  fill={nailColors[nail.id] ?? '#f5c1d8'}
+                  fill={nailColors[nail.id] ?? '#F5E6D3'}
                   stroke="rgba(255,255,255,0.4)"
                   strokeWidth="2"
                   className="nail-polish-svg"
@@ -250,7 +250,7 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
       </div>
       <div className="board-footer">
         <div className="tag">Aktívny level: {activeTask?.title ?? activeTask?.name ?? 'none'}</div>
-        <div className="tag tone" style={{ backgroundColor: nailColors.thumb ?? '#f5c1d8' }}>
+        <div className="tag tone" style={{ backgroundColor: nailColors.thumb ?? '#F5E6D3' }}>
           Vybraná farba
         </div>
       </div>

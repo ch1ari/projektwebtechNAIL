@@ -53,11 +53,11 @@ const loadStats = () => {
 };
 
 const initialTaskColors = tasks.find((task) => task.id === firstTaskId)?.nailTargets ?? {
-  thumb: '#f5c1d8',
-  index: '#f5c1d8',
-  middle: '#f5c1d8',
-  ring: '#f5c1d8',
-  pinky: '#f5c1d8'
+  thumb: '#F5E6D3',
+  index: '#F5E6D3',
+  middle: '#F5E6D3',
+  ring: '#F5E6D3',
+  pinky: '#F5E6D3'
 };
 
 const initialState = {
