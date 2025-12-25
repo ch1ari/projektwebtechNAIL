@@ -120,46 +120,46 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
           style={{ position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none' }}
         >
           <defs>
-            {/* Linear gradients for realistic 3D - light from top, shadow at bottom near skin */}
+            {/* Strong linear gradients - visible on ALL colors including light ones */}
             <linearGradient id="thumb-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.35)" />
-              <stop offset="30%" stopColor="rgba(255,255,255,0.15)" />
-              <stop offset="70%" stopColor="rgba(0,0,0,0)" />
-              <stop offset="100%" stopColor="rgba(0,0,0,0.3)" />
+              <stop offset="0%" stopColor="rgba(255,255,255,0.6)" />
+              <stop offset="35%" stopColor="rgba(255,255,255,0.2)" />
+              <stop offset="65%" stopColor="rgba(0,0,0,0)" />
+              <stop offset="100%" stopColor="rgba(0,0,0,0.5)" />
             </linearGradient>
 
             <linearGradient id="index-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.4)" />
-              <stop offset="25%" stopColor="rgba(255,255,255,0.2)" />
-              <stop offset="70%" stopColor="rgba(0,0,0,0)" />
-              <stop offset="100%" stopColor="rgba(0,0,0,0.35)" />
+              <stop offset="0%" stopColor="rgba(255,255,255,0.6)" />
+              <stop offset="30%" stopColor="rgba(255,255,255,0.2)" />
+              <stop offset="65%" stopColor="rgba(0,0,0,0)" />
+              <stop offset="100%" stopColor="rgba(0,0,0,0.5)" />
             </linearGradient>
 
             <linearGradient id="middle-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.4)" />
-              <stop offset="25%" stopColor="rgba(255,255,255,0.2)" />
-              <stop offset="70%" stopColor="rgba(0,0,0,0)" />
-              <stop offset="100%" stopColor="rgba(0,0,0,0.35)" />
+              <stop offset="0%" stopColor="rgba(255,255,255,0.6)" />
+              <stop offset="30%" stopColor="rgba(255,255,255,0.2)" />
+              <stop offset="65%" stopColor="rgba(0,0,0,0)" />
+              <stop offset="100%" stopColor="rgba(0,0,0,0.5)" />
             </linearGradient>
 
             <linearGradient id="ring-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.4)" />
-              <stop offset="25%" stopColor="rgba(255,255,255,0.2)" />
-              <stop offset="70%" stopColor="rgba(0,0,0,0)" />
-              <stop offset="100%" stopColor="rgba(0,0,0,0.35)" />
+              <stop offset="0%" stopColor="rgba(255,255,255,0.6)" />
+              <stop offset="30%" stopColor="rgba(255,255,255,0.2)" />
+              <stop offset="65%" stopColor="rgba(0,0,0,0)" />
+              <stop offset="100%" stopColor="rgba(0,0,0,0.5)" />
             </linearGradient>
 
             <linearGradient id="pinky-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.35)" />
-              <stop offset="30%" stopColor="rgba(255,255,255,0.15)" />
-              <stop offset="70%" stopColor="rgba(0,0,0,0)" />
-              <stop offset="100%" stopColor="rgba(0,0,0,0.3)" />
+              <stop offset="0%" stopColor="rgba(255,255,255,0.6)" />
+              <stop offset="35%" stopColor="rgba(255,255,255,0.2)" />
+              <stop offset="65%" stopColor="rgba(0,0,0,0)" />
+              <stop offset="100%" stopColor="rgba(0,0,0,0.5)" />
             </linearGradient>
 
-            {/* Glossy shine spot */}
+            {/* Strong glossy shine - visible on all colors */}
             <radialGradient id="nail-shine" cx="40%" cy="20%">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.5)" />
-              <stop offset="50%" stopColor="rgba(255,255,255,0.1)" />
+              <stop offset="0%" stopColor="rgba(255,255,255,0.7)" />
+              <stop offset="40%" stopColor="rgba(255,255,255,0.2)" />
               <stop offset="100%" stopColor="rgba(255,255,255,0)" />
             </radialGradient>
 
