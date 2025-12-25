@@ -19,21 +19,21 @@
       "pinky": "#f28cb0"
     },
     "stickers": [
-      { "id": "berry-cherry", "name": "Cherry", "img": "/stickers/cherry.png", "startTransform": { "x": 0.12, "y": 0.8, "rotation": 0, "scale": 0.25 } },
-      { "id": "berry-diamond", "name": "Diamant", "img": "/stickers/diamond.png", "startTransform": { "x": 0.2, "y": 0.7, "rotation": 0, "scale": 0.25 } }
+      { "id": "berry-cherry", "name": "Cherry", "img": "/stickers/cherry.png", "startTransform": { "x": 0.12, "y": 0.8, "rotation": 0, "scale": 0.35 } },
+      { "id": "berry-diamond", "name": "Diamant", "img": "/stickers/diamond.png", "startTransform": { "x": 0.2, "y": 0.7, "rotation": 0, "scale": 0.35 } }
     ],
     "targets": [
       {
         "stickerId": "berry-cherry",
         "nailName": "middle",
-        "targetTransform": { "x": 0.5, "y": 0.52, "rotation": 15, "scale": 0.25 },
-        "tolerance": { "x": 0.05, "y": 0.05, "rotation": 20, "scale": 0.25 }
+        "targetTransform": { "x": 0.5, "y": 0.52, "rotation": 15, "scale": 0.35 },
+        "tolerance": { "x": 0.05, "y": 0.05, "rotation": 20, "scale": 0.35 }
       },
       {
         "stickerId": "berry-diamond",
         "nailName": "thumb",
-        "targetTransform": { "x": 0.25, "y": 0.6, "rotation": 0, "scale": 0.25 },
-        "tolerance": { "x": 0.05, "y": 0.05, "rotation": 20, "scale": 0.25 }
+        "targetTransform": { "x": 0.25, "y": 0.6, "rotation": 0, "scale": 0.35 },
+        "tolerance": { "x": 0.05, "y": 0.05, "rotation": 20, "scale": 0.35 }
       }
     ]
   },
@@ -57,21 +57,21 @@
       "pinky": "#9bf6e6"
     },
     "stickers": [
-      { "id": "rainbow-arc", "name": "Dúha", "img": "/stickers/rainbow.png", "startTransform": { "x": 0.82, "y": 0.8, "rotation": 0, "scale": 0.25 } },
-      { "id": "rainbow-star", "name": "Hviezda", "img": "/stickers/shooting-star.png", "startTransform": { "x": 0.88, "y": 0.7, "rotation": -15, "scale": 0.25 } }
+      { "id": "rainbow-arc", "name": "Dúha", "img": "/stickers/rainbow.png", "startTransform": { "x": 0.82, "y": 0.8, "rotation": 0, "scale": 0.35 } },
+      { "id": "rainbow-star", "name": "Hviezda", "img": "/stickers/shooting-star.png", "startTransform": { "x": 0.88, "y": 0.7, "rotation": -15, "scale": 0.35 } }
     ],
     "targets": [
       {
         "stickerId": "rainbow-arc",
         "nailName": "index",
-        "targetTransform": { "x": 0.38, "y": 0.5, "rotation": 0, "scale": 0.25 },
-        "tolerance": { "x": 0.05, "y": 0.05, "rotation": 20, "scale": 0.25 }
+        "targetTransform": { "x": 0.38, "y": 0.5, "rotation": 0, "scale": 0.35 },
+        "tolerance": { "x": 0.05, "y": 0.05, "rotation": 20, "scale": 0.35 }
       },
       {
         "stickerId": "rainbow-star",
         "nailName": "ring",
-        "targetTransform": { "x": 0.62, "y": 0.55, "rotation": 30, "scale": 0.25 },
-        "tolerance": { "x": 0.05, "y": 0.05, "rotation": 20, "scale": 0.25 }
+        "targetTransform": { "x": 0.62, "y": 0.55, "rotation": 30, "scale": 0.35 },
+        "tolerance": { "x": 0.05, "y": 0.05, "rotation": 20, "scale": 0.35 }
       }
     ]
   },
@@ -95,21 +95,21 @@
       "pinky": "#fce4ec"
     },
     "stickers": [
-      { "id": "bloom-rose", "name": "Ruže", "img": "/stickers/rose.png", "startTransform": { "x": 0.15, "y": 0.82, "rotation": -15, "scale": 0.25 } },
-      { "id": "bloom-sun", "name": "Slnko", "img": "/stickers/sunflower.png", "startTransform": { "x": 0.25, "y": 0.7, "rotation": 0, "scale": 0.25 } }
+      { "id": "bloom-rose", "name": "Ruže", "img": "/stickers/rose.png", "startTransform": { "x": 0.15, "y": 0.82, "rotation": -15, "scale": 0.35 } },
+      { "id": "bloom-sun", "name": "Slnko", "img": "/stickers/sunflower.png", "startTransform": { "x": 0.25, "y": 0.7, "rotation": 0, "scale": 0.35 } }
     ],
     "targets": [
       {
         "stickerId": "bloom-rose",
         "nailName": "thumb",
-        "targetTransform": { "x": 0.28, "y": 0.6, "rotation": -15, "scale": 0.25 },
-        "tolerance": { "x": 0.05, "y": 0.05, "rotation": 20, "scale": 0.25 }
+        "targetTransform": { "x": 0.28, "y": 0.6, "rotation": -15, "scale": 0.35 },
+        "tolerance": { "x": 0.05, "y": 0.05, "rotation": 20, "scale": 0.35 }
       },
       {
         "stickerId": "bloom-sun",
         "nailName": "ring",
-        "targetTransform": { "x": 0.64, "y": 0.57, "rotation": 0, "scale": 0.25 },
-        "tolerance": { "x": 0.05, "y": 0.05, "rotation": 20, "scale": 0.25 }
+        "targetTransform": { "x": 0.64, "y": 0.57, "rotation": 0, "scale": 0.35 },
+        "tolerance": { "x": 0.05, "y": 0.05, "rotation": 20, "scale": 0.35 }
       }
     ]
   },
@@ -133,21 +133,21 @@
       "pinky": "#ffb3c1"
     },
     "stickers": [
-      { "id": "ice-diamond", "name": "Diamant", "img": "/stickers/diamond.png", "startTransform": { "x": 0.84, "y": 0.75, "rotation": 0, "scale": 0.25 } },
-      { "id": "ice-rainbow", "name": "Dúha", "img": "/stickers/rainbow.png", "startTransform": { "x": 0.86, "y": 0.82, "rotation": 15, "scale": 0.25 } }
+      { "id": "ice-diamond", "name": "Diamant", "img": "/stickers/diamond.png", "startTransform": { "x": 0.84, "y": 0.75, "rotation": 0, "scale": 0.35 } },
+      { "id": "ice-rainbow", "name": "Dúha", "img": "/stickers/rainbow.png", "startTransform": { "x": 0.86, "y": 0.82, "rotation": 15, "scale": 0.35 } }
     ],
     "targets": [
       {
         "stickerId": "ice-diamond",
         "nailName": "index",
-        "targetTransform": { "x": 0.42, "y": 0.53, "rotation": -15, "scale": 0.25 },
-        "tolerance": { "x": 0.035, "y": 0.035, "rotation": 15, "scale": 0.25 }
+        "targetTransform": { "x": 0.42, "y": 0.53, "rotation": -15, "scale": 0.35 },
+        "tolerance": { "x": 0.035, "y": 0.035, "rotation": 15, "scale": 0.35 }
       },
       {
         "stickerId": "ice-rainbow",
         "nailName": "middle",
-        "targetTransform": { "x": 0.54, "y": 0.46, "rotation": 30, "scale": 0.25 },
-        "tolerance": { "x": 0.035, "y": 0.035, "rotation": 15, "scale": 0.25 }
+        "targetTransform": { "x": 0.54, "y": 0.46, "rotation": 30, "scale": 0.35 },
+        "tolerance": { "x": 0.035, "y": 0.035, "rotation": 15, "scale": 0.35 }
       }
     ]
   },
@@ -171,28 +171,28 @@
       "pinky": "#7ad6ff"
     },
     "stickers": [
-      { "id": "fiesta-sun", "name": "Slnečnica", "img": "/stickers/sunflower.png", "startTransform": { "x": 0.18, "y": 0.78, "rotation": 0, "scale": 0.25 } },
-      { "id": "fiesta-cherry", "name": "Čerešne", "img": "/stickers/cherry.png", "startTransform": { "x": 0.2, "y": 0.68, "rotation": -15, "scale": 0.25 } },
-      { "id": "fiesta-star", "name": "Hviezda", "img": "/stickers/shooting-star.png", "startTransform": { "x": 0.3, "y": 0.84, "rotation": 0, "scale": 0.25 } }
+      { "id": "fiesta-sun", "name": "Slnečnica", "img": "/stickers/sunflower.png", "startTransform": { "x": 0.18, "y": 0.78, "rotation": 0, "scale": 0.35 } },
+      { "id": "fiesta-cherry", "name": "Čerešne", "img": "/stickers/cherry.png", "startTransform": { "x": 0.2, "y": 0.68, "rotation": -15, "scale": 0.35 } },
+      { "id": "fiesta-star", "name": "Hviezda", "img": "/stickers/shooting-star.png", "startTransform": { "x": 0.3, "y": 0.84, "rotation": 0, "scale": 0.35 } }
     ],
     "targets": [
       {
         "stickerId": "fiesta-sun",
         "nailName": "thumb",
-        "targetTransform": { "x": 0.24, "y": 0.62, "rotation": 0, "scale": 0.25 },
-        "tolerance": { "x": 0.035, "y": 0.035, "rotation": 15, "scale": 0.25 }
+        "targetTransform": { "x": 0.24, "y": 0.62, "rotation": 0, "scale": 0.35 },
+        "tolerance": { "x": 0.035, "y": 0.035, "rotation": 15, "scale": 0.35 }
       },
       {
         "stickerId": "fiesta-cherry",
         "nailName": "ring",
-        "targetTransform": { "x": 0.63, "y": 0.55, "rotation": 15, "scale": 0.25 },
-        "tolerance": { "x": 0.035, "y": 0.035, "rotation": 15, "scale": 0.25 }
+        "targetTransform": { "x": 0.63, "y": 0.55, "rotation": 15, "scale": 0.35 },
+        "tolerance": { "x": 0.035, "y": 0.035, "rotation": 15, "scale": 0.35 }
       },
       {
         "stickerId": "fiesta-star",
         "nailName": "pinky",
-        "targetTransform": { "x": 0.8, "y": 0.62, "rotation": -30, "scale": 0.25 },
-        "tolerance": { "x": 0.035, "y": 0.035, "rotation": 15, "scale": 0.25 }
+        "targetTransform": { "x": 0.8, "y": 0.62, "rotation": -30, "scale": 0.35 },
+        "tolerance": { "x": 0.035, "y": 0.035, "rotation": 15, "scale": 0.35 }
       }
     ]
   },
@@ -216,28 +216,28 @@
       "pinky": "#ffd6a5"
     },
     "stickers": [
-      { "id": "romance-rose", "name": "Ruže", "img": "/stickers/rose.png", "startTransform": { "x": 0.78, "y": 0.82, "rotation": -15, "scale": 0.25 } },
-      { "id": "romance-diamond", "name": "Diamant", "img": "/stickers/diamond.png", "startTransform": { "x": 0.86, "y": 0.7, "rotation": 0, "scale": 0.25 } },
-      { "id": "romance-star", "name": "Hviezda", "img": "/stickers/shooting-star.png", "startTransform": { "x": 0.84, "y": 0.9, "rotation": 30, "scale": 0.25 } }
+      { "id": "romance-rose", "name": "Ruže", "img": "/stickers/rose.png", "startTransform": { "x": 0.78, "y": 0.82, "rotation": -15, "scale": 0.35 } },
+      { "id": "romance-diamond", "name": "Diamant", "img": "/stickers/diamond.png", "startTransform": { "x": 0.86, "y": 0.7, "rotation": 0, "scale": 0.35 } },
+      { "id": "romance-star", "name": "Hviezda", "img": "/stickers/shooting-star.png", "startTransform": { "x": 0.84, "y": 0.9, "rotation": 30, "scale": 0.35 } }
     ],
     "targets": [
       {
         "stickerId": "romance-rose",
         "nailName": "ring",
-        "targetTransform": { "x": 0.6, "y": 0.52, "rotation": -30, "scale": 0.25 },
-        "tolerance": { "x": 0.035, "y": 0.035, "rotation": 15, "scale": 0.25 }
+        "targetTransform": { "x": 0.6, "y": 0.52, "rotation": -30, "scale": 0.35 },
+        "tolerance": { "x": 0.035, "y": 0.035, "rotation": 15, "scale": 0.35 }
       },
       {
         "stickerId": "romance-diamond",
         "nailName": "thumb",
-        "targetTransform": { "x": 0.27, "y": 0.64, "rotation": 0, "scale": 0.25 },
-        "tolerance": { "x": 0.035, "y": 0.035, "rotation": 15, "scale": 0.25 }
+        "targetTransform": { "x": 0.27, "y": 0.64, "rotation": 0, "scale": 0.35 },
+        "tolerance": { "x": 0.035, "y": 0.035, "rotation": 15, "scale": 0.35 }
       },
       {
         "stickerId": "romance-star",
         "nailName": "middle",
-        "targetTransform": { "x": 0.5, "y": 0.44, "rotation": 45, "scale": 0.25 },
-        "tolerance": { "x": 0.035, "y": 0.035, "rotation": 15, "scale": 0.25 }
+        "targetTransform": { "x": 0.5, "y": 0.44, "rotation": 45, "scale": 0.35 },
+        "tolerance": { "x": 0.035, "y": 0.035, "rotation": 15, "scale": 0.35 }
       }
     ]
   },
@@ -261,28 +261,28 @@
       "pinky": "#f48fb1"
     },
     "stickers": [
-      { "id": "neon-star", "name": "Hviezda", "img": "/stickers/shooting-star.png", "startTransform": { "x": 0.16, "y": 0.74, "rotation": -45, "scale": 0.25 } },
-      { "id": "neon-diamond", "name": "Diamant", "img": "/stickers/diamond.png", "startTransform": { "x": 0.22, "y": 0.82, "rotation": 0, "scale": 0.25 } },
-      { "id": "neon-cherry", "name": "Čerešne", "img": "/stickers/cherry.png", "startTransform": { "x": 0.12, "y": 0.88, "rotation": -15, "scale": 0.25 } }
+      { "id": "neon-star", "name": "Hviezda", "img": "/stickers/shooting-star.png", "startTransform": { "x": 0.16, "y": 0.74, "rotation": -45, "scale": 0.35 } },
+      { "id": "neon-diamond", "name": "Diamant", "img": "/stickers/diamond.png", "startTransform": { "x": 0.22, "y": 0.82, "rotation": 0, "scale": 0.35 } },
+      { "id": "neon-cherry", "name": "Čerešne", "img": "/stickers/cherry.png", "startTransform": { "x": 0.12, "y": 0.88, "rotation": -15, "scale": 0.35 } }
     ],
     "targets": [
       {
         "stickerId": "neon-star",
         "nailName": "pinky",
-        "targetTransform": { "x": 0.82, "y": 0.6, "rotation": -45, "scale": 0.25 },
-        "tolerance": { "x": 0.02, "y": 0.02, "rotation": 12, "scale": 0.25 }
+        "targetTransform": { "x": 0.82, "y": 0.6, "rotation": -45, "scale": 0.35 },
+        "tolerance": { "x": 0.02, "y": 0.02, "rotation": 12, "scale": 0.35 }
       },
       {
         "stickerId": "neon-diamond",
         "nailName": "index",
-        "targetTransform": { "x": 0.38, "y": 0.5, "rotation": 15, "scale": 0.25 },
-        "tolerance": { "x": 0.02, "y": 0.02, "rotation": 12, "scale": 0.25 }
+        "targetTransform": { "x": 0.38, "y": 0.5, "rotation": 15, "scale": 0.35 },
+        "tolerance": { "x": 0.02, "y": 0.02, "rotation": 12, "scale": 0.35 }
       },
       {
         "stickerId": "neon-cherry",
         "nailName": "middle",
-        "targetTransform": { "x": 0.55, "y": 0.46, "rotation": 30, "scale": 0.25 },
-        "tolerance": { "x": 0.02, "y": 0.02, "rotation": 12, "scale": 0.25 }
+        "targetTransform": { "x": 0.55, "y": 0.46, "rotation": 30, "scale": 0.35 },
+        "tolerance": { "x": 0.02, "y": 0.02, "rotation": 12, "scale": 0.35 }
       }
     ]
   },
@@ -306,28 +306,28 @@
       "pinky": "#f5c1d8"
     },
     "stickers": [
-      { "id": "drama-broken", "name": "Break up", "img": "/stickers/break-up.png", "startTransform": { "x": 0.82, "y": 0.8, "rotation": 0, "scale": 0.25 } },
-      { "id": "drama-sun", "name": "Slnko", "img": "/stickers/sunflower.png", "startTransform": { "x": 0.76, "y": 0.88, "rotation": -15, "scale": 0.25 } },
-      { "id": "drama-rose", "name": "Ruže", "img": "/stickers/rose.png", "startTransform": { "x": 0.9, "y": 0.72, "rotation": 30, "scale": 0.25 } }
+      { "id": "drama-broken", "name": "Break up", "img": "/stickers/break-up.png", "startTransform": { "x": 0.82, "y": 0.8, "rotation": 0, "scale": 0.35 } },
+      { "id": "drama-sun", "name": "Slnko", "img": "/stickers/sunflower.png", "startTransform": { "x": 0.76, "y": 0.88, "rotation": -15, "scale": 0.35 } },
+      { "id": "drama-rose", "name": "Ruže", "img": "/stickers/rose.png", "startTransform": { "x": 0.9, "y": 0.72, "rotation": 30, "scale": 0.35 } }
     ],
     "targets": [
       {
         "stickerId": "drama-broken",
         "nailName": "thumb",
-        "targetTransform": { "x": 0.23, "y": 0.58, "rotation": -15, "scale": 0.25 },
-        "tolerance": { "x": 0.02, "y": 0.02, "rotation": 10, "scale": 0.25 }
+        "targetTransform": { "x": 0.23, "y": 0.58, "rotation": -15, "scale": 0.35 },
+        "tolerance": { "x": 0.02, "y": 0.02, "rotation": 10, "scale": 0.35 }
       },
       {
         "stickerId": "drama-sun",
         "nailName": "middle",
-        "targetTransform": { "x": 0.52, "y": 0.46, "rotation": 0, "scale": 0.25 },
-        "tolerance": { "x": 0.02, "y": 0.02, "rotation": 10, "scale": 0.25 }
+        "targetTransform": { "x": 0.52, "y": 0.46, "rotation": 0, "scale": 0.35 },
+        "tolerance": { "x": 0.02, "y": 0.02, "rotation": 10, "scale": 0.35 }
       },
       {
         "stickerId": "drama-rose",
         "nailName": "ring",
-        "targetTransform": { "x": 0.66, "y": 0.54, "rotation": 45, "scale": 0.25 },
-        "tolerance": { "x": 0.02, "y": 0.02, "rotation": 10, "scale": 0.25 }
+        "targetTransform": { "x": 0.66, "y": 0.54, "rotation": 45, "scale": 0.35 },
+        "tolerance": { "x": 0.02, "y": 0.02, "rotation": 10, "scale": 0.35 }
       }
     ]
   }
