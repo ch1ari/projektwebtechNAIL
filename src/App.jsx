@@ -6,6 +6,16 @@ import { clamp, rotationDeltaDegrees } from './lib/geometry.js';
 
 export const AppStateContext = createContext();
 
+// Natural nail color - default for all nails
+const NATURAL_NAIL_COLOR = '#F5E6D3';
+const DEFAULT_NAIL_COLORS = {
+  thumb: NATURAL_NAIL_COLOR,
+  index: NATURAL_NAIL_COLOR,
+  middle: NATURAL_NAIL_COLOR,
+  ring: NATURAL_NAIL_COLOR,
+  pinky: NATURAL_NAIL_COLOR
+};
+
 const paletteColors = [
   { name: 'Horúca ružová', value: '#f06292' },
   { name: 'Lesklá ružová', value: '#f48fb1' },
@@ -52,13 +62,8 @@ const loadStats = () => {
   return {};
 };
 
-const initialTaskColors = tasks.find((task) => task.id === firstTaskId)?.nailTargets ?? {
-  thumb: '#F5E6D3',
-  index: '#F5E6D3',
-  middle: '#F5E6D3',
-  ring: '#F5E6D3',
-  pinky: '#F5E6D3'
-};
+// Always start with natural nail color
+const initialTaskColors = DEFAULT_NAIL_COLORS;
 
 const initialState = {
   currentTaskId: firstTaskId,
@@ -122,7 +127,7 @@ function appReducer(state, action) {
         ...state,
         currentTaskId: nextTask?.id ?? null,
         placements: {},
-        nailColors: nextTask?.nailTargets ?? state.nailColors,
+        nailColors: DEFAULT_NAIL_COLORS,
         selectedColor: paletteColors[0].value,
         selectedColorName: paletteColors[0].name,
         activeToolTab: 'colors',
@@ -181,7 +186,7 @@ function appReducer(state, action) {
       return {
         ...state,
         placements: {},
-        nailColors: task?.nailTargets ?? state.nailColors,
+        nailColors: DEFAULT_NAIL_COLORS,
         selectedColor: paletteColors[0].value,
         selectedColorName: paletteColors[0].name,
         activeToolTab: 'colors',
@@ -214,7 +219,7 @@ function appReducer(state, action) {
         queue,
         currentTaskId: nextId,
         placements: {},
-        nailColors: tasks.find((t) => t.id === nextId)?.nailTargets ?? state.nailColors,
+        nailColors: DEFAULT_NAIL_COLORS,
         selectedColor: paletteColors[0].value,
         selectedColorName: paletteColors[0].name,
         activeToolTab: 'colors',
