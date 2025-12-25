@@ -21,7 +21,7 @@ export default function Sticker({
 
   function handleDragStart(event) {
     event.dataTransfer.setData('application/sticker-id', sticker.id);
-    event.dataTransfer.effectAllowed = isBoardPlacement ? 'move' : 'copy';
+    event.dataTransfer.effectAllowed = 'copyMove';
   }
 
   function handleClick() {
