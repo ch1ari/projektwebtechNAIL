@@ -322,7 +322,7 @@ function TopBar({ app, completionMap }) {
   );
 }
 
-function Toolbelt({ app, boardRef }) {
+function Toolbelt({ app }) {
   const selectColor = (color) => app.dispatch({ type: 'setColor', payload: color });
 
   return (
@@ -365,11 +365,11 @@ function Toolbelt({ app, boardRef }) {
         ) : (
           <div className="scroll-row sticker-row" aria-label="Sticker box">
             <Palette
-              boardRef={boardRef}
               stickers={app.currentTask?.stickers ?? []}
               placements={app.state.placements}
               dispatch={app.dispatch}
               lockCorrect={app.state.lockCorrect}
+              currentTask={app.currentTask}
             />
           </div>
         )}
@@ -501,24 +501,14 @@ export default function App() {
     <AppStateContext.Provider value={app}>
       <div className="app-shell">
         <TopBar app={app} completionMap={completionMap} />
-          <div className="layout">
-            <div className="main-column">
+        <div className="layout">
+          <div className="main-column">
             <Board
               ref={boardRef}
               app={app}
               stickers={app.currentTask?.stickers ?? []}
-              hoveredNailId={hoveredNailId}
             />
-            <Toolbelt
-              app={app}
-              boardRef={boardRef}
-              startDragColor={(event, color) => {
-                event.preventDefault();
-                setDragColor(color);
-                setDragPos({ x: event.clientX, y: event.clientY });
-                app.dispatch({ type: 'setColor', payload: color });
-              }}
-            />
+            <Toolbelt app={app} />
           </div>
           <RightPanel app={app} completionMap={completionMap} />
         </div>

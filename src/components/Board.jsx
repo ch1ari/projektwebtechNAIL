@@ -1,4 +1,4 @@
-import React, { forwardRef, useMemo, useRef } from 'react';
+import React, { forwardRef, useMemo } from 'react';
 import Sticker from './Sticker.jsx';
 
 const VIEWBOX = { width: 612, height: 408 };
@@ -25,12 +25,9 @@ const NAIL_PATHS = [
   }
 ];
 
-const Board = forwardRef(function Board({ app, stickers, hoveredNailId }, boardRef) {
+const Board = forwardRef(function Board({ app, stickers }, boardRef) {
   const { selectedColor, placements, showHints, showTemplate, nailColors } = app.state;
   const activeTask = app.currentTask;
-  const nailRefs = useRef({});
-  const hitmapRef = useRef(null);
-  const paintingRef = useRef({ active: false });
 
   const placedStickers = useMemo(
     () => stickers.filter((sticker) => placements[sticker.id]),
@@ -41,42 +38,6 @@ const Board = forwardRef(function Board({ app, stickers, hoveredNailId }, boardR
 
   function handlePaint(nailId) {
     app.dispatch({ type: 'paintNail', payload: { nail: nailId, color: selectedColor } });
-  }
-
-  function nailFromPoint(clientX, clientY) {
-    const target = document.elementFromPoint(clientX, clientY)?.closest('.nail-hit');
-    if (!target) return null;
-    const id = target.dataset.nailId;
-    const rect = target.getBoundingClientRect();
-    return { id, rect };
-  }
-
-  function handlePaintPointerDown(event) {
-    if (!boardRef?.current) return;
-    paintingRef.current = { active: true, pointerId: event.pointerId };
-    event.currentTarget.setPointerCapture(event.pointerId);
-    const hit = nailFromPoint(event.clientX, event.clientY);
-    if (hit?.id) handlePaint(hit.id);
-  }
-
-  function handlePaintPointerMove(event) {
-    const shouldPaint = paintingRef.current.active || event.buttons === 1;
-    if (!shouldPaint) return;
-
-    if (!paintingRef.current.active) {
-      paintingRef.current = { active: true, pointerId: event.pointerId };
-      event.currentTarget.setPointerCapture(event.pointerId);
-    }
-
-    const hit = nailFromPoint(event.clientX, event.clientY);
-    if (hit?.id) handlePaint(hit.id);
-  }
-
-  function handlePaintPointerUp(event) {
-    if (paintingRef.current.pointerId && event.currentTarget.hasPointerCapture(paintingRef.current.pointerId)) {
-      event.currentTarget.releasePointerCapture(paintingRef.current.pointerId);
-    }
-    paintingRef.current = { active: false };
   }
 
   return (
@@ -120,32 +81,21 @@ const Board = forwardRef(function Board({ app, stickers, hoveredNailId }, boardR
         </svg>
 
         <svg
-          ref={hitmapRef}
           className="nail-hitmap"
           viewBox={`0 0 ${VIEWBOX.width} ${VIEWBOX.height}`}
           preserveAspectRatio="xMidYMid meet"
-          onPointerDown={handlePaintPointerDown}
-          onPointerMove={handlePaintPointerMove}
-          onPointerUp={handlePaintPointerUp}
-          onPointerCancel={handlePaintPointerUp}
         >
           {NAILS.map((nail) => (
             <ellipse
               key={`${nail.id}-hit`}
-              className={`nail-hit ${hoveredNailId === nail.id ? 'is-hovered' : ''}`}
+              className="nail-hit"
               data-nail-id={nail.id}
               cx={nail.shape.cx}
               cy={nail.shape.cy}
               rx={nail.shape.rx}
               ry={nail.shape.ry}
               transform={`rotate(${nail.shape.rotation} ${nail.shape.cx} ${nail.shape.cy})`}
-              ref={(node) => {
-                if (node) {
-                  nailRefs.current[nail.id] = node;
-                } else {
-                  delete nailRefs.current[nail.id];
-                }
-              }}
+              onClick={() => handlePaint(nail.id)}
             />
           ))}
         </svg>
@@ -156,12 +106,10 @@ const Board = forwardRef(function Board({ app, stickers, hoveredNailId }, boardR
               key={sticker.id}
               sticker={sticker}
               placement={placements[sticker.id]}
-              boardRef={boardRef}
               dispatch={app.dispatch}
               variant="board"
               taskId={activeTask?.id}
               lockCorrect={app.state.lockCorrect}
-              nailHitTest={nailFromPoint}
             />
           ))}
         </div>
