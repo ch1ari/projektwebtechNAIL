@@ -76,6 +76,7 @@ const initialState = {
   showTemplate: false,
   lockCorrect: false,
   showStats: false,
+  showCompletionModal: false,
   status: 'idle',
   timerRunning: true,
   elapsedMs: 0,
@@ -236,6 +237,10 @@ function appReducer(state, action) {
       return { ...state, queue: action.payload };
     case 'toggleStats':
       return { ...state, showStats: !state.showStats };
+    case 'showCompletionModal':
+      return { ...state, showCompletionModal: true, timerRunning: false };
+    case 'hideCompletionModal':
+      return { ...state, showCompletionModal: false };
     case 'timer:tick':
       if (!state.timerRunning) return state;
       return { ...state, elapsedMs: state.elapsedMs + (action.deltaMs ?? 0) };
@@ -632,10 +637,14 @@ export default function App() {
       app.dispatch({
         type: 'stats:update',
         taskId: app.currentTask.id,
-        payload: { ...(app.state.stats?.[app.currentTask.id] ?? {}), completed: true, completedAt: Date.now() }
+        payload: { ...(app.state.stats?.[app.currentTask.id] ?? {}), completed: true, completedAt: Date.now(), timeMs: app.state.elapsedMs }
       });
+      // Show completion modal
+      setTimeout(() => {
+        app.dispatch({ type: 'showCompletionModal' });
+      }, 500);
     }
-  }, [app.currentTask, app.state.placements, app.state.nailColors, app.state.stats, app.dispatch]);
+  }, [app.currentTask, app.state.placements, app.state.nailColors, app.state.stats, app.state.elapsedMs, app.dispatch]);
 
   return (
     <AppStateContext.Provider value={app}>
@@ -652,6 +661,45 @@ export default function App() {
           </div>
           <RightPanel app={app} completionMap={completionMap} />
         </div>
+        {app.state.showCompletionModal ? (
+          <div className="modal-backdrop" role="dialog" aria-modal>
+            <div className="modal completion-modal">
+              <h2>🎉 Výborne!</h2>
+              <p className="completion-message">Dokončil si level <strong>{app.currentTask?.title}</strong>!</p>
+              <div className="completion-stats">
+                <div className="stat">
+                  <span className="label">⏱ Čas</span>
+                  <span className="value">{Math.round(app.state.elapsedMs / 1000)}s</span>
+                </div>
+                <div className="stat">
+                  <span className="label">✨ Nálepky</span>
+                  <span className="value">{app.currentTask?.targets?.length ?? 0}/{app.currentTask?.targets?.length ?? 0}</span>
+                </div>
+                <div className="stat">
+                  <span className="label">🎨 Nechty</span>
+                  <span className="value">5/5</span>
+                </div>
+              </div>
+              <div className="completion-buttons">
+                <button
+                  className="btn-primary"
+                  onClick={() => {
+                    app.dispatch({ type: 'hideCompletionModal' });
+                    app.dispatch({ type: 'nextLevel' });
+                  }}
+                >
+                  Ďalší level →
+                </button>
+                <button
+                  className="btn-secondary"
+                  onClick={() => app.dispatch({ type: 'hideCompletionModal' })}
+                >
+                  Zostať tu
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
         {app.state.showStats ? (
           <div className="modal-backdrop" role="dialog" aria-modal>
             <div className="modal">
