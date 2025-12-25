@@ -483,7 +483,7 @@ const NAILS = [
   { id: 'index', shape: { cx: 315, cy: 78, rx: 17, ry: 26, rotation: -5 } },
   { id: 'middle', shape: { cx: 369, cy: 72, rx: 18, ry: 25, rotation: 0 } },
   { id: 'ring', shape: { cx: 397, cy: 106, rx: 20, ry: 27, rotation: 5 } },
-  { id: 'pinky', shape: { cx: 495, cy: 255, rx: 40, ry: 55, rotation: 10 } }
+  { id: 'pinky', shape: { cx: 409, cy: 167, rx: 18, ry: 21, rotation: 10 } }
 ];
 
 const VIEWBOX = { width: 612, height: 408 };
