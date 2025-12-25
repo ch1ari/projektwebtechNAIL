@@ -120,19 +120,19 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
           style={{ position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none' }}
         >
           <defs>
-            {/* Enhanced gradient for nail shading - creates stronger 3D effect */}
-            <radialGradient id="nail-gradient" cx="40%" cy="30%">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.5)" />
-              <stop offset="50%" stopColor="rgba(255,255,255,0.1)" />
-              <stop offset="100%" stopColor="rgba(0,0,0,0.15)" />
+            {/* Very visible gradient for nail shading - dramatic 3D effect */}
+            <radialGradient id="nail-gradient" cx="35%" cy="25%">
+              <stop offset="0%" stopColor="rgba(255,255,255,0.8)" />
+              <stop offset="40%" stopColor="rgba(255,255,255,0.3)" />
+              <stop offset="100%" stopColor="rgba(0,0,0,0.3)" />
             </radialGradient>
 
-            {/* Enhanced shadow filter for 3D depth */}
-            <filter id="nail-shadow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur in="SourceAlpha" stdDeviation="2" />
-              <feOffset dx="1" dy="2" result="offsetblur" />
+            {/* Very strong shadow filter for dramatic 3D depth */}
+            <filter id="nail-shadow" x="-100%" y="-100%" width="300%" height="300%">
+              <feGaussianBlur in="SourceAlpha" stdDeviation="4" />
+              <feOffset dx="2" dy="4" result="offsetblur" />
               <feComponentTransfer>
-                <feFuncA type="linear" slope="0.3" />
+                <feFuncA type="linear" slope="0.6" />
               </feComponentTransfer>
               <feMerge>
                 <feMergeNode />
@@ -140,10 +140,10 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
               </feMerge>
             </filter>
 
-            {/* Additional highlight for glossy effect */}
-            <radialGradient id="nail-highlight" cx="35%" cy="25%">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.6)" />
-              <stop offset="30%" stopColor="rgba(255,255,255,0.2)" />
+            {/* Very bright highlight for strong glossy effect */}
+            <radialGradient id="nail-highlight" cx="30%" cy="20%">
+              <stop offset="0%" stopColor="rgba(255,255,255,0.9)" />
+              <stop offset="25%" stopColor="rgba(255,255,255,0.5)" />
               <stop offset="100%" stopColor="rgba(255,255,255,0)" />
             </radialGradient>
 
