@@ -118,40 +118,47 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
           style={{ position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none' }}
         >
           <defs>
-            {NAILS.map((nail) => (
-              <clipPath key={`clip-${nail.id}`} id={`clip-${nail.id}`}>
-                <ellipse
-                  cx={nail.shape.cx}
-                  cy={nail.shape.cy}
-                  rx={nail.shape.rx}
-                  ry={nail.shape.ry}
-                  transform={`rotate(${nail.shape.rotation} ${nail.shape.cx} ${nail.shape.cy})`}
-                />
-              </clipPath>
-            ))}
+            <mask id="nails-mask">
+              <image
+                href="/mask_nails.png"
+                x="0"
+                y="0"
+                width={VIEWBOX.width}
+                height={VIEWBOX.height}
+                preserveAspectRatio="xMidYMid meet"
+              />
+            </mask>
           </defs>
+
+          {/* Hitboxes for pointer events */}
           {NAILS.map((nail) => (
-            <g key={nail.id}>
+            <ellipse
+              key={`${nail.id}-hitbox`}
+              cx={nail.shape.cx}
+              cy={nail.shape.cy}
+              rx={nail.shape.rx}
+              ry={nail.shape.ry}
+              transform={`rotate(${nail.shape.rotation} ${nail.shape.cx} ${nail.shape.cy})`}
+              fill="transparent"
+              className="nail-hitbox"
+            />
+          ))}
+
+          {/* Nail polish layer with mask applied */}
+          <g mask="url(#nails-mask)">
+            {NAILS.map((nail) => (
               <ellipse
+                key={`${nail.id}-polish`}
                 cx={nail.shape.cx}
                 cy={nail.shape.cy}
                 rx={nail.shape.rx}
                 ry={nail.shape.ry}
                 transform={`rotate(${nail.shape.rotation} ${nail.shape.cx} ${nail.shape.cy})`}
-                fill="transparent"
-                className="nail-hitbox"
-              />
-              <rect
-                x={0}
-                y={0}
-                width={VIEWBOX.width}
-                height={VIEWBOX.height}
                 fill={nailColors[nail.id] ?? '#f5c1d8'}
-                clipPath={`url(#clip-${nail.id})`}
                 className="nail-polish-svg"
               />
-            </g>
-          ))}
+            ))}
+          </g>
         </svg>
 
         <div className="nails-clip">{/* Keep for stickers */}
