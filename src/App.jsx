@@ -91,6 +91,11 @@ function taskTargets(task) {
 function computePlacementCorrectness(task, stickerId, placement) {
   const target = taskTargets(task).find((t) => t.stickerId === stickerId);
   if (!target || !placement) return { placement, isCorrect: false };
+
+  // Check if sticker is on the correct nail
+  const onCorrectNail = placement.nailId === target.nailName;
+  if (!onCorrectNail) return { placement, isCorrect: false };
+
   const xPos = placement.boardX ?? placement.x ?? 0;
   const yPos = placement.boardY ?? placement.y ?? 0;
   const dx = Math.abs(xPos - target.targetTransform.x);
@@ -104,7 +109,7 @@ function computePlacementCorrectness(task, stickerId, placement) {
     dscale <= (target.tolerance.scale ?? 0.05);
 
   if (!within) return { placement, isCorrect: false };
-  return { placement: { ...target.targetTransform, isCorrect: true }, isCorrect: true };
+  return { placement: { ...target.targetTransform, isCorrect: true, nailId: target.nailName }, isCorrect: true };
 }
 
 function isTaskComplete(task, placements, nailColors) {
