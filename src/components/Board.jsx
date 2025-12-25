@@ -120,25 +120,32 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
           style={{ position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none' }}
         >
           <defs>
-            {/* Gradient for nail shading - creates 3D effect */}
-            <radialGradient id="nail-gradient">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.3)" />
-              <stop offset="70%" stopColor="rgba(255,255,255,0)" />
-              <stop offset="100%" stopColor="rgba(0,0,0,0.08)" />
+            {/* Enhanced gradient for nail shading - creates stronger 3D effect */}
+            <radialGradient id="nail-gradient" cx="40%" cy="30%">
+              <stop offset="0%" stopColor="rgba(255,255,255,0.5)" />
+              <stop offset="50%" stopColor="rgba(255,255,255,0.1)" />
+              <stop offset="100%" stopColor="rgba(0,0,0,0.15)" />
             </radialGradient>
 
-            {/* Subtle shadow filter for depth */}
-            <filter id="nail-shadow">
-              <feGaussianBlur in="SourceAlpha" stdDeviation="1" />
-              <feOffset dx="0" dy="1" result="offsetblur" />
+            {/* Enhanced shadow filter for 3D depth */}
+            <filter id="nail-shadow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur in="SourceAlpha" stdDeviation="2" />
+              <feOffset dx="1" dy="2" result="offsetblur" />
               <feComponentTransfer>
-                <feFuncA type="linear" slope="0.15" />
+                <feFuncA type="linear" slope="0.3" />
               </feComponentTransfer>
               <feMerge>
                 <feMergeNode />
                 <feMergeNode in="SourceGraphic" />
               </feMerge>
             </filter>
+
+            {/* Additional highlight for glossy effect */}
+            <radialGradient id="nail-highlight" cx="35%" cy="25%">
+              <stop offset="0%" stopColor="rgba(255,255,255,0.6)" />
+              <stop offset="30%" stopColor="rgba(255,255,255,0.2)" />
+              <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+            </radialGradient>
 
             {/* Mask for thumb nail */}
             <mask id="thumb-mask">
@@ -192,7 +199,7 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
               // All nails use SVG masks with exact shapes
               return (
                 <g key={`${nail.id}-polish`}>
-                  {/* Base color with shadow */}
+                  {/* Base color with enhanced shadow */}
                   <rect
                     x="0"
                     y="0"
@@ -203,7 +210,7 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
                     filter="url(#nail-shadow)"
                     className="nail-polish-svg"
                   />
-                  {/* Gradient overlay for 3D effect */}
+                  {/* Gradient overlay for 3D shading */}
                   <rect
                     x="0"
                     y="0"
@@ -213,6 +220,17 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
                     mask={`url(#${nail.id}-mask)`}
                     className="nail-polish-svg"
                     style={{ pointerEvents: 'none' }}
+                  />
+                  {/* Glossy highlight for realistic effect */}
+                  <rect
+                    x="0"
+                    y="0"
+                    width={VIEWBOX.width}
+                    height={VIEWBOX.height}
+                    fill="url(#nail-highlight)"
+                    mask={`url(#${nail.id}-mask)`}
+                    className="nail-polish-svg"
+                    style={{ pointerEvents: 'none', mixBlendMode: 'overlay' }}
                   />
                 </g>
               );
