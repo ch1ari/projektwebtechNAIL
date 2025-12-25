@@ -494,18 +494,34 @@ export default function App() {
     [app.state.stats, app.tasks]
   );
 
+  const nailsCorrect = Object.entries(app.currentTask?.nailTargets ?? {}).filter(
+    ([key, target]) => app.state.nailColors[key] === target
+  ).length;
+
   useEffect(() => {
     if (!app.currentTask) return;
     const done = isTaskComplete(app.currentTask, app.state.placements, app.state.nailColors);
-    const alreadyDone = app.state.stats?.[app.currentTask.id]?.completed;
+    const currentStats = app.state.stats?.[app.currentTask.id] ?? {};
+    const alreadyDone = currentStats?.completed;
+
     if (done && !alreadyDone) {
+      const currentTime = app.state.elapsedMs;
+      const attempts = (currentStats.attempts ?? 0) + 1;
+      const bestTime = currentStats.bestTime ? Math.min(currentStats.bestTime, currentTime) : currentTime;
+
       app.dispatch({
         type: 'stats:update',
         taskId: app.currentTask.id,
-        payload: { ...(app.state.stats?.[app.currentTask.id] ?? {}), completed: true, completedAt: Date.now() }
+        payload: {
+          completed: true,
+          completedAt: Date.now(),
+          attempts,
+          bestTime,
+          lastPlayed: Date.now()
+        }
       });
     }
-  }, [app.currentTask, app.state.placements, app.state.nailColors, app.state.stats, app.dispatch]);
+  }, [app.currentTask, app.state.placements, app.state.nailColors, app.state.stats, app.state.elapsedMs, app.dispatch]);
 
   return (
     <AppStateContext.Provider value={app}>
@@ -525,25 +541,41 @@ export default function App() {
         {app.state.showStats ? (
           <div className="modal-backdrop" role="dialog" aria-modal>
             <div className="modal">
-              <h3>Progress</h3>
+              <h3>Štatistiky</h3>
               <div className="stat-grid">
                 <div className="stat">
-                  <span className="label">Task</span>
+                  <span className="label">Úloha</span>
                   <span className="value">{app.currentTask?.title ?? app.currentTask?.name}</span>
                 </div>
                 <div className="stat">
-                  <span className="label">Elapsed</span>
+                  <span className="label">Aktuálny čas</span>
                   <span className="value">{Math.round(app.state.elapsedMs / 1000)}s</span>
                 </div>
                 <div className="stat">
-                  <span className="label">Stickers correct</span>
+                  <span className="label">Najrýchlejší čas</span>
+                  <span className="value">
+                    {app.state.stats?.[app.currentTask?.id]?.bestTime
+                      ? `${Math.round(app.state.stats[app.currentTask.id].bestTime / 1000)}s`
+                      : '—'}
+                  </span>
+                </div>
+                <div className="stat">
+                  <span className="label">Počet pokusov</span>
+                  <span className="value">{app.state.stats?.[app.currentTask?.id]?.attempts ?? 0}</span>
+                </div>
+                <div className="stat">
+                  <span className="label">Nálepky správne</span>
                   <span className="value">
                     {Object.values(app.state.placements).filter((p) => p?.isCorrect).length}/
                     {app.currentTask?.targets?.length ?? 0}
                   </span>
                 </div>
+                <div className="stat">
+                  <span className="label">Nechty správne</span>
+                  <span className="value">{nailsCorrect}/5</span>
+                </div>
               </div>
-              <button onClick={() => app.dispatch({ type: 'toggleStats' })}>Close</button>
+              <button onClick={() => app.dispatch({ type: 'toggleStats' })}>Zavrieť</button>
             </div>
           </div>
         ) : null}

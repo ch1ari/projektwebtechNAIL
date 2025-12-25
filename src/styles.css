@@ -780,3 +780,58 @@ body {
     order: 0;
   }
 }
+
+@media print {
+  body {
+    background: white;
+  }
+
+  .top-bar,
+  .board-shell,
+  .toolbelt,
+  .control-row,
+  .modal-backdrop,
+  .level-bar {
+    display: none !important;
+  }
+
+  .layout {
+    display: block;
+  }
+
+  .right-panel {
+    position: static;
+    max-height: none;
+    padding: 1rem;
+    box-shadow: none;
+    background: white;
+    border: 1px solid #ddd;
+  }
+
+  .right-panel h2,
+  .right-panel h3 {
+    color: #000;
+    page-break-after: avoid;
+  }
+
+  .helper-card,
+  .client-brief {
+    background: white;
+    border: 1px solid #ddd;
+    page-break-inside: avoid;
+  }
+
+  .helper-card ul,
+  .client-steps {
+    color: #000;
+  }
+
+  .stat-grid {
+    display: none;
+  }
+
+  a {
+    color: #000;
+    text-decoration: underline;
+  }
+}
