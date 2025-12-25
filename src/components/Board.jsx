@@ -107,21 +107,38 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
           className="nail-map"
           viewBox={`0 0 ${VIEWBOX.width} ${VIEWBOX.height}`}
           preserveAspectRatio="xMidYMid meet"
+          style={{ opacity: 0, pointerEvents: 'none' }}
         >
           {NAILS.map((nail) => (
             <ellipse
-              key={`${nail.id}-fill`}
+              key={`${nail.id}-hitbox`}
               cx={nail.shape.cx}
               cy={nail.shape.cy}
               rx={nail.shape.rx}
               ry={nail.shape.ry}
               transform={`rotate(${nail.shape.rotation} ${nail.shape.cx} ${nail.shape.cy})`}
-              fill={nailColors[nail.id] ?? '#f5c1d8'}
-              stroke="rgba(255,255,255,0.3)"
-              strokeWidth="2"
+              fill="transparent"
             />
           ))}
         </svg>
+
+        <div className="nails-clip">
+          {NAILS.map((nail) => (
+            <div
+              key={`${nail.id}-polish`}
+              className="nail-polish"
+              data-nail={nail.id}
+              style={{
+                left: `${(nail.shape.cx / VIEWBOX.width) * 100}%`,
+                top: `${(nail.shape.cy / VIEWBOX.height) * 100}%`,
+                width: `${(nail.shape.rx * 2 / VIEWBOX.width) * 100}%`,
+                height: `${(nail.shape.ry * 2 / VIEWBOX.height) * 100}%`,
+                backgroundColor: nailColors[nail.id] ?? '#f5c1d8',
+                transform: `translate(-50%, -50%) rotate(${nail.shape.rotation}deg)`
+              }}
+            />
+          ))}
+        </div>
 
         <div className="sticker-layer">
           {placedStickers.map((sticker) => (

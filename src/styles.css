@@ -273,6 +273,27 @@ body {
   pointer-events: none;
 }
 
+.nails-clip {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  -webkit-mask-image: url('/mask_nails.png');
+  mask-image: url('/mask_nails.png');
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
+.nail-polish {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+}
+
 .nail-hitmap {
   position: absolute;
   inset: 0;

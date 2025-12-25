@@ -387,6 +387,11 @@ function Toolbelt({ app, boardRef }) {
   const handlePointerUp = (event) => {
     if (!app.state.dragState) return;
 
+    const target = event.currentTarget;
+    if (target.hasPointerCapture(event.pointerId)) {
+      target.releasePointerCapture(event.pointerId);
+    }
+
     const { startX, startY, currentX, currentY, color } = app.state.dragState;
     const dx = currentX - startX;
     const dy = currentY - startY;
@@ -399,6 +404,17 @@ function Toolbelt({ app, boardRef }) {
       if (hit) {
         app.dispatch({ type: 'paintNail', payload: { nail: hit.id, color } });
       }
+    }
+
+    app.dispatch({ type: 'endColorDrag' });
+  };
+
+  const handlePointerCancel = (event) => {
+    if (!app.state.dragState) return;
+
+    const target = event.currentTarget;
+    if (target.hasPointerCapture(event.pointerId)) {
+      target.releasePointerCapture(event.pointerId);
     }
 
     app.dispatch({ type: 'endColorDrag' });
@@ -432,6 +448,7 @@ function Toolbelt({ app, boardRef }) {
                   onPointerDown={(event) => handlePointerDown(event, color)}
                   onPointerMove={handlePointerMove}
                   onPointerUp={handlePointerUp}
+                  onPointerCancel={handlePointerCancel}
                   aria-label={`Vybrať farbu ${color.name}`}
                 >
                   <span className="nail-cap" style={{ backgroundColor: color.value }} />
