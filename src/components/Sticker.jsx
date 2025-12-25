@@ -19,6 +19,9 @@ export default function Sticker({
   const rotation = placement?.rotation ?? sticker.startTransform?.rotation ?? 0;
   const isBoardPlacement = Boolean(placement) && variant === 'board';
 
+  // Nails-clip bounds relative to board
+  const CLIP_BOUNDS = { left: 0.18, top: 0.22, width: 0.64, height: 0.46 };
+
   function handleDragStart(event) {
     event.dataTransfer.setData('application/sticker-id', sticker.id);
     event.dataTransfer.effectAllowed = isBoardPlacement ? 'move' : 'copy';
@@ -46,10 +49,21 @@ export default function Sticker({
     }
   }
 
+  // Convert absolute board coordinates to nails-clip relative coordinates
+  const getClipPosition = () => {
+    if (!isBoardPlacement) return null;
+    const absX = placement.x;
+    const absY = placement.y;
+    const relX = (absX - CLIP_BOUNDS.left) / CLIP_BOUNDS.width;
+    const relY = (absY - CLIP_BOUNDS.top) / CLIP_BOUNDS.height;
+    return { x: relX * 100, y: relY * 100 };
+  };
+
+  const clipPos = getClipPosition();
   const style = isBoardPlacement
     ? {
-        left: `${placement.x * 100}%`,
-        top: `${placement.y * 100}%`,
+        left: `${clipPos.x}%`,
+        top: `${clipPos.y}%`,
         transform: `translate(-50%, -50%) rotate(${rotation}deg) scale(${baseScale})`,
         clipPath: placement.nailId ? `url(#clip-${placement.nailId})` : undefined
       }

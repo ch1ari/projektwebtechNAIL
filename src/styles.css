@@ -275,17 +275,14 @@ body {
 
 .nails-clip {
   position: absolute;
-  inset: 0;
+  left: 18%;
+  top: 22%;
+  width: 64%;
+  height: 46%;
   z-index: 2;
-  pointer-events: none;
-  -webkit-mask-image: url('/mask_nails.png');
-  mask-image: url('/mask_nails.png');
-  -webkit-mask-size: contain;
-  mask-size: contain;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
+  pointer-events: auto;
+  mask: url('/mask_nails.png') center/contain no-repeat;
+  -webkit-mask: url('/mask_nails.png') center/contain no-repeat;
 }
 
 .nail-polish {
@@ -366,6 +363,10 @@ body {
   inset: 0;
   pointer-events: auto;
   z-index: 5;
+}
+
+.nails-clip .sticker {
+  pointer-events: auto;
 }
 
 .board-hints {
