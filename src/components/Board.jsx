@@ -1,27 +1,27 @@
 import React, { forwardRef, useMemo, useRef } from 'react';
 import Sticker from './Sticker.jsx';
 
-const VIEWBOX = { width: 800, height: 600 };
-const NAILS = [
+const VIEWBOX = { width: 612, height: 408 };
+const NAIL_PATHS = [
   {
     id: 'thumb',
-    shape: { cx: 360, cy: 300, rx: 38, ry: 55, rotation: -12 }
+    d: 'M 218 119 L 219 110 L 220 106 L 221 103 L 224 95 L 229 86 L 231 83 L 236 78 L 237 79 L 239 83 L 241 89 L 242 93 L 243 98 L 243 119 L 242 123 L 239 129 L 236 132 L 234 133 L 231 134 L 225 133 L 223 132 L 220 128 L 219 126 L 218 122 Z'
   },
   {
     id: 'index',
-    shape: { cx: 455, cy: 215, rx: 28, ry: 45, rotation: -8 }
+    d: 'M 299 63 L 300 60 L 302 55 L 304 51 L 310 42 L 322 30 L 326 27 L 329 25 L 332 25 L 332 41 L 331 46 L 329 54 L 328 57 L 325 64 L 323 68 L 321 71 L 317 75 L 314 77 L 312 78 L 306 78 L 304 77 L 301 74 L 300 72 L 299 69 Z'
   },
   {
     id: 'middle',
-    shape: { cx: 515, cy: 195, rx: 30, ry: 48, rotation: -4 }
+    d: 'M 350 59 L 351 56 L 353 51 L 358 43 L 361 39 L 369 31 L 374 27 L 379 24 L 385 21 L 386 22 L 386 29 L 384 42 L 383 45 L 380 53 L 376 61 L 372 67 L 370 69 L 367 71 L 365 72 L 362 73 L 357 73 L 355 72 L 352 69 L 350 65 Z'
   },
   {
     id: 'ring',
-    shape: { cx: 565, cy: 210, rx: 28, ry: 45, rotation: -2 }
+    d: 'M 376 90 L 378 86 L 384 77 L 388 72 L 394 66 L 400 61 L 409 55 L 413 53 L 416 53 L 415 64 L 411 77 L 407 86 L 406 88 L 403 93 L 399 99 L 395 103 L 392 105 L 389 106 L 385 107 L 383 107 L 380 106 L 378 105 L 376 102 Z'
   },
   {
     id: 'pinky',
-    shape: { cx: 615, cy: 245, rx: 24, ry: 40, rotation: 6 }
+    d: 'M 390 151 L 392 146 L 395 142 L 400 136 L 401 135 L 408 129 L 413 126 L 423 121 L 427 121 L 427 124 L 426 129 L 423 138 L 419 147 L 415 153 L 411 158 L 409 160 L 406 162 L 402 164 L 396 164 L 394 163 L 391 160 L 390 158 Z'
   }
 ];
 
