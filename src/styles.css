@@ -266,6 +266,13 @@ body {
   pointer-events: none;
 }
 
+.nail-map {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
 .nail-hitmap {
   position: absolute;
   inset: 0;

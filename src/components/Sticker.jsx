@@ -19,6 +19,11 @@ export default function Sticker({
   const rotation = placement?.rotation ?? sticker.startTransform?.rotation ?? 0;
   const isBoardPlacement = Boolean(placement) && variant === 'board';
 
+  function handleDragStart(event) {
+    event.dataTransfer.setData('application/sticker-id', sticker.id);
+    event.dataTransfer.effectAllowed = isBoardPlacement ? 'move' : 'copy';
+  }
+
   function handleClick() {
     if (variant === 'palette') {
       onSelect?.(sticker);
@@ -59,6 +64,8 @@ export default function Sticker({
       style={style}
       role="img"
       aria-label={sticker.name}
+      draggable
+      onDragStart={handleDragStart}
       onClick={handleClick}
     >
       <img src={sticker.img ?? sticker.src} alt={sticker.name} draggable="false" />
