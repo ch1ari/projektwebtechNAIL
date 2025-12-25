@@ -86,15 +86,12 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
     }
   }
 
-  // Calculate nail positions relative to nails-clip container
-  const CLIP_BOUNDS = { left: 0.18, top: 0.22, width: 0.64, height: 0.46 };
-
-  const getNailPositionInClip = (nail) => {
-    const absX = nail.shape.cx / VIEWBOX.width;
-    const absY = nail.shape.cy / VIEWBOX.height;
-    const relX = (absX - CLIP_BOUNDS.left) / CLIP_BOUNDS.width;
-    const relY = (absY - CLIP_BOUNDS.top) / CLIP_BOUNDS.height;
-    return { x: relX * 100, y: relY * 100 };
+  // Nail positions as percentages of board
+  const getNailPosition = (nail) => {
+    return {
+      x: (nail.shape.cx / VIEWBOX.width) * 100,
+      y: (nail.shape.cy / VIEWBOX.height) * 100
+    };
   };
 
   return (
@@ -135,7 +132,7 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
 
         <div className="nails-clip">
           {NAILS.map((nail) => {
-            const pos = getNailPositionInClip(nail);
+            const pos = getNailPosition(nail);
             return (
               <div
                 key={`${nail.id}-polish`}
@@ -144,8 +141,8 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
                 style={{
                   left: `${pos.x}%`,
                   top: `${pos.y}%`,
-                  width: `${(nail.shape.rx * 2 / VIEWBOX.width / CLIP_BOUNDS.width) * 100}%`,
-                  height: `${(nail.shape.ry * 2 / VIEWBOX.height / CLIP_BOUNDS.height) * 100}%`,
+                  width: `${(nail.shape.rx * 2 / VIEWBOX.width) * 100}%`,
+                  height: `${(nail.shape.ry * 2 / VIEWBOX.height) * 100}%`,
                   backgroundColor: nailColors[nail.id] ?? '#f5c1d8',
                   transform: `translate(-50%, -50%) rotate(${nail.shape.rotation}deg)`
                 }}
@@ -167,46 +164,34 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
 
           {showHints ? (
             <div className="board-hints" aria-hidden style={{ pointerEvents: 'none' }}>
-              {templateTargets.map((hint) => {
-                const absX = hint.targetTransform.x;
-                const absY = hint.targetTransform.y;
-                const relX = (absX - CLIP_BOUNDS.left) / CLIP_BOUNDS.width;
-                const relY = (absY - CLIP_BOUNDS.top) / CLIP_BOUNDS.height;
-                return (
-                  <span
-                    key={`${hint.stickerId}-${hint.targetTransform.x}-${hint.targetTransform.y}`}
-                    className="hint-dot"
-                    style={{
-                      left: `${relX * 100}%`,
-                      top: `${relY * 100}%`
-                    }}
-                  />
-                );
-              })}
+              {templateTargets.map((hint) => (
+                <span
+                  key={`${hint.stickerId}-${hint.targetTransform.x}-${hint.targetTransform.y}`}
+                  className="hint-dot"
+                  style={{
+                    left: `${hint.targetTransform.x * 100}%`,
+                    top: `${hint.targetTransform.y * 100}%`
+                  }}
+                />
+              ))}
             </div>
           ) : null}
 
           {showTemplate ? (
             <div className="template-overlay" aria-hidden style={{ pointerEvents: 'none' }}>
-              {templateTargets.map((target) => {
-                const absX = target.targetTransform.x;
-                const absY = target.targetTransform.y;
-                const relX = (absX - CLIP_BOUNDS.left) / CLIP_BOUNDS.width;
-                const relY = (absY - CLIP_BOUNDS.top) / CLIP_BOUNDS.height;
-                return (
-                  <div
-                    key={target.stickerId}
-                    className="template-ghost"
-                    style={{
-                      left: `${relX * 100}%`,
-                      top: `${relY * 100}%`,
-                      transform: `translate(-50%, -50%) rotate(${target.targetTransform.rotation}deg) scale(${target.targetTransform.scale})`
-                    }}
-                  >
-                    <span>{target.nailName}</span>
-                  </div>
-                );
-              })}
+              {templateTargets.map((target) => (
+                <div
+                  key={target.stickerId}
+                  className="template-ghost"
+                  style={{
+                    left: `${target.targetTransform.x * 100}%`,
+                    top: `${target.targetTransform.y * 100}%`,
+                    transform: `translate(-50%, -50%) rotate(${target.targetTransform.rotation}deg) scale(${target.targetTransform.scale})`
+                  }}
+                >
+                  <span>{target.nailName}</span>
+                </div>
+              ))}
             </div>
           ) : null}
         </div>

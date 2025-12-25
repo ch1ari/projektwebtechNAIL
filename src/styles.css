@@ -257,6 +257,7 @@ body {
   object-fit: contain;
   object-position: center;
   pointer-events: none;
+  z-index: 1;
 }
 
 .nail-mask {
@@ -275,12 +276,9 @@ body {
 
 .nails-clip {
   position: absolute;
-  left: 18%;
-  top: 22%;
-  width: 64%;
-  height: 46%;
-  z-index: 2;
-  pointer-events: auto;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
   mask: url('/mask_nails.png') center/contain no-repeat;
   -webkit-mask: url('/mask_nails.png') center/contain no-repeat;
 }
@@ -365,8 +363,15 @@ body {
   z-index: 5;
 }
 
-.nails-clip .sticker {
+.nails-clip .sticker,
+.nails-clip .board-hints,
+.nails-clip .template-overlay {
   pointer-events: auto;
+}
+
+.nails-clip .board-hints *,
+.nails-clip .template-overlay * {
+  pointer-events: none;
 }
 
 .board-hints {
