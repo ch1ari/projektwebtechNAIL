@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import React, { createContext, useEffect, useMemo, useReducer, useRef } from 'react';
 import Board from './components/Board.jsx';
 import Palette from './components/Palette.jsx';
 import tasks from './data/tasks.json';
@@ -322,7 +322,7 @@ function TopBar({ app, completionMap }) {
   );
 }
 
-function Toolbelt({ app, boardRef, startDragColor }) {
+function Toolbelt({ app, boardRef }) {
   const selectColor = (color) => app.dispatch({ type: 'setColor', payload: color });
 
   return (
@@ -349,10 +349,6 @@ function Toolbelt({ app, boardRef, startDragColor }) {
                 <button
                   key={color.value}
                   className={`swatch nail-chip ${app.state.selectedColor === color.value ? 'active' : ''}`}
-                  onPointerDown={(event) => {
-                    selectColor(color);
-                    startDragColor(event, color);
-                  }}
                   onClick={() => selectColor(color)}
                   aria-label={`Vybrať farbu ${color.name}`}
                 >
@@ -479,8 +475,6 @@ function RightPanel({ app, completionMap }) {
 export default function App() {
   const app = useAppState();
   const boardRef = useRef(null);
-  const [dragColor, setDragColor] = useState(null);
-  const [dragPos, setDragPos] = useState({ x: 0, y: 0 });
   const completionMap = useMemo(
     () =>
       app.tasks.reduce((acc, task) => {
@@ -489,7 +483,6 @@ export default function App() {
       }, {}),
     [app.state.stats, app.tasks]
   );
-  const [hoveredNailId, setHoveredNailId] = useState(null);
 
   useEffect(() => {
     if (!app.currentTask) return;
@@ -503,40 +496,6 @@ export default function App() {
       });
     }
   }, [app.currentTask, app.state.placements, app.state.nailColors, app.state.stats, app.dispatch]);
-
-  const handleColorMove = useCallback(
-    (event) => {
-      if (!dragColor) return;
-      setDragPos({ x: event.clientX, y: event.clientY });
-      const nailEl = document.elementFromPoint(event.clientX, event.clientY)?.closest('.nail');
-      setHoveredNailId(nailEl?.dataset.nailId ?? null);
-    },
-    [dragColor]
-  );
-
-  const handleColorEnd = useCallback(
-    (event) => {
-      if (!dragColor) return;
-      const nailEl = document.elementFromPoint(event.clientX, event.clientY)?.closest('.nail');
-      if (nailEl) {
-        const nailId = nailEl.dataset.nailId;
-        app.dispatch({ type: 'setColor', payload: dragColor });
-        app.dispatch({ type: 'paintNail', payload: { nail: nailId, color: dragColor.value } });
-      }
-      setDragColor(null);
-      setHoveredNailId(null);
-    },
-    [dragColor, app]
-  );
-
-  useEffect(() => {
-    window.addEventListener('pointermove', handleColorMove);
-    window.addEventListener('pointerup', handleColorEnd);
-    return () => {
-      window.removeEventListener('pointermove', handleColorMove);
-      window.removeEventListener('pointerup', handleColorEnd);
-    };
-  }, [handleColorMove, handleColorEnd]);
 
   return (
     <AppStateContext.Provider value={app}>
@@ -587,12 +546,6 @@ export default function App() {
               <button onClick={() => app.dispatch({ type: 'toggleStats' })}>Close</button>
             </div>
           </div>
-        ) : null}
-        {dragColor ? (
-          <div
-            className="drag-preview"
-            style={{ left: dragPos.x - 20, top: dragPos.y - 20, background: dragColor.value }}
-          />
         ) : null}
       </div>
     </AppStateContext.Provider>
