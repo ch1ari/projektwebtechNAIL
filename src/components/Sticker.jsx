@@ -15,9 +15,13 @@ export default function Sticker({
 }) {
   const nodeRef = useRef(null);
 
-  const baseScale = placement?.scale ?? sticker.startTransform?.scale ?? sticker.scale ?? 0.35;
   const rotation = placement?.rotation ?? sticker.startTransform?.rotation ?? 0;
   const isBoardPlacement = Boolean(placement) && variant === 'board';
+
+  // Separate scales: large for palette, small for board
+  const baseScale = isBoardPlacement
+    ? (placement?.scale ?? sticker.startTransform?.scale ?? sticker.scale ?? 0.35)
+    : 1.0; // Palette stickers are large and visible
 
   function handleDragStart(event) {
     event.dataTransfer.setData('application/sticker-id', sticker.id);
