@@ -131,9 +131,20 @@ function appReducer(state, action) {
   switch (action.type) {
     case 'setTask': {
       const nextTask = tasks.find((task) => task.id === action.payload) ?? null;
+      const taskId = nextTask?.id;
+      // Increment attempts when starting a new task
+      const currentStats = state.stats?.[taskId] ?? {};
+      const updatedStats = taskId ? {
+        ...state.stats,
+        [taskId]: {
+          ...currentStats,
+          attempts: (currentStats.attempts ?? 0) + 1
+        }
+      } : state.stats;
+
       return {
         ...state,
-        currentTaskId: nextTask?.id ?? null,
+        currentTaskId: taskId ?? null,
         placements: {},
         nailColors: DEFAULT_NAIL_COLORS,
         selectedColor: paletteColors[0].value,
@@ -144,7 +155,8 @@ function appReducer(state, action) {
         lockCorrect: false,
         timerRunning: true,
         elapsedMs: 0,
-        status: 'task:selected'
+        status: 'task:selected',
+        stats: updatedStats
       };
     }
     case 'setColor': {
@@ -260,7 +272,19 @@ function appReducer(state, action) {
       return { ...state, timerRunning: !state.timerRunning };
     case 'stats:update': {
       const { taskId, payload } = action;
-      return { ...state, stats: { ...state.stats, [taskId]: payload } };
+      const currentStats = state.stats?.[taskId] ?? {};
+      // Track best time - keep the lowest timeMs
+      const newBestTime = payload.timeMs && (!currentStats.bestTime || payload.timeMs < currentStats.bestTime)
+        ? payload.timeMs
+        : currentStats.bestTime;
+
+      const updatedTaskStats = {
+        ...currentStats,
+        ...payload,
+        bestTime: newBestTime
+      };
+
+      return { ...state, stats: { ...state.stats, [taskId]: updatedTaskStats } };
     }
     case 'startColorDrag': {
       const { color, colorName, startX, startY } = action.payload;
@@ -745,26 +769,57 @@ export default function App() {
         ) : null}
         {app.state.showStats ? (
           <div className="modal-backdrop" role="dialog" aria-modal>
-            <div className="modal">
-              <h3>Progress</h3>
-              <div className="stat-grid">
-                <div className="stat">
-                  <span className="label">Task</span>
-                  <span className="value">{app.currentTask?.title ?? app.currentTask?.name}</span>
-                </div>
-                <div className="stat">
-                  <span className="label">Elapsed</span>
-                  <span className="value">{Math.round(app.state.elapsedMs / 1000)}s</span>
-                </div>
-                <div className="stat">
-                  <span className="label">Stickers correct</span>
-                  <span className="value">
-                    {Object.values(app.state.placements).filter((p) => p?.isCorrect).length}/
-                    {app.currentTask?.targets?.length ?? 0}
-                  </span>
-                </div>
+            <div className="modal stats-modal">
+              <h2>📊 Štatistiky</h2>
+              <p className="completion-message">Tvoje výsledky pre všetky levely</p>
+              <div className="stats-table" style={{ maxHeight: '400px', overflowY: 'auto', marginTop: '1rem' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead style={{ position: 'sticky', top: 0, background: 'white' }}>
+                    <tr style={{ borderBottom: '2px solid #f472b6', textAlign: 'left' }}>
+                      <th style={{ padding: '0.75rem', color: '#d946b5' }}>Level</th>
+                      <th style={{ padding: '0.75rem', color: '#d946b5', textAlign: 'center' }}>Pokusy</th>
+                      <th style={{ padding: '0.75rem', color: '#d946b5', textAlign: 'center' }}>Najrýchlejší</th>
+                      <th style={{ padding: '0.75rem', color: '#d946b5', textAlign: 'center' }}>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {app.tasks.map((task) => {
+                      const stats = app.state.stats?.[task.id] ?? {};
+                      const attempts = stats.attempts ?? 0;
+                      const bestTime = stats.bestTime ? Math.round(stats.bestTime / 1000) : null;
+                      const completed = stats.completed ?? false;
+
+                      return (
+                        <tr key={task.id} style={{ borderBottom: '1px solid #ffd0e5' }}>
+                          <td style={{ padding: '0.75rem' }}>
+                            <div style={{ fontWeight: 500 }}>{task.title}</div>
+                            <div style={{ fontSize: '0.85rem', color: '#999', textTransform: 'capitalize' }}>
+                              {task.difficulty}
+                            </div>
+                          </td>
+                          <td style={{ padding: '0.75rem', textAlign: 'center' }}>
+                            {attempts > 0 ? attempts : '—'}
+                          </td>
+                          <td style={{ padding: '0.75rem', textAlign: 'center', fontWeight: 600, color: '#d946b5' }}>
+                            {bestTime ? `${bestTime}s` : '—'}
+                          </td>
+                          <td style={{ padding: '0.75rem', textAlign: 'center', fontSize: '1.2rem' }}>
+                            {completed ? '✅' : '—'}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
-              <button onClick={() => app.dispatch({ type: 'toggleStats' })}>Close</button>
+              <div className="completion-buttons" style={{ marginTop: '1.5rem' }}>
+                <button
+                  className="btn-primary"
+                  onClick={() => app.dispatch({ type: 'toggleStats' })}
+                >
+                  Zavrieť
+                </button>
+              </div>
             </div>
           </div>
         ) : null}

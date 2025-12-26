@@ -64,17 +64,19 @@
   - Zobrazenie času: completion modal riadok 682-683
   - useEffect na časomieru
 
-### 8. ⚠️ Štatistiky - koľkokrát hral, najrýchlejší čas
-- **Stav**: ČIASTOČNE SPLNENÉ
+### 8. ✅ Štatistiky - koľkokrát hral, najrýchlejší čas
+- **Stav**: SPLNENÉ
 - **Dôkaz**:
-  - Stats sa ukladajú: `App.jsx` riadok 261-263: `stats:update`
-  - localStorage: `'nail-art-stats'`
-  - Ukladá sa čas dokončenia: riadok 651
-- **CHÝBA**:
-  - ❌ UI pre zobrazenie štatistík (koľkokrát hral level)
-  - ❌ Zobrazenie najrýchlejšieho času
-  - ❌ Počítadlo pokusov pre každý level
-  - Existuje `showStats` state, ale nie je implementované UI
+  - Stats tracking: `App.jsx` riadok 273-288: `stats:update` s bestTime
+  - Počítadlo pokusov: `App.jsx` riadok 132-161: increment attempts pri 'setTask'
+  - localStorage: `'nail-art-stats'` - automatické ukladanie
+  - UI modal: `App.jsx` riadok 770-825: kompletná štatistická tabuľka
+  - Tlačidlo "Štatistiky": `App.jsx` riadok 648
+  - Zobrazuje pre každý level:
+    - ✅ Počet pokusov (attempts)
+    - ✅ Najrýchlejší čas (bestTime v sekundách)
+    - ✅ Status dokončenia (✅/—)
+    - ✅ Názov a obtiažnosť levelu
 
 ### 9. ✅ Popis hry a návod, optimalizácia pre tlač
 - **Stav**: SPLNENÉ
@@ -106,35 +108,31 @@
 
 **Celkovo splnených**: 10/11 požiadaviek
 
-**Kompletne splnené**: 9
-**Čiastočne splnené**: 1 (štatistiky)
+**Kompletne splnené**: 10
 **Nesplnené**: 1 (video)
 
 ---
 
 ## ⚠️ ČO TREBA DOPLNIŤ
 
-### 1. KRITICKÉ - UI pre štatistiky (Požiadavka 8)
+### ✅ ~~1. KRITICKÉ - UI pre štatistiky (Požiadavka 8)~~ - **HOTOVÉ**
 
-Potrebné pridať:
-- Panel alebo modal zobrazujúci pre každý level:
-  - Koľkokrát bol level odohraný
-  - Najrýchlejší dosiahnutý čas
-  - Priemerný čas
-- Tlačidlo "Štatistiky" v menu
-- Uloženie počtu pokusov do stats objektu
+~~Potrebné pridať:~~
+- ✅ Panel alebo modal zobrazujúci pre každý level
+- ✅ Koľkokrát bol level odohraný (attempts)
+- ✅ Najrýchlejší dosiahnutý čas (bestTime)
+- ✅ Tlačidlo "Štatistiky" v menu
 
-**Kód na doplnenie**:
+**Implementované**:
 ```javascript
-// V App.jsx - stats struktura:
+// V App.jsx - stats štruktúra:
 stats: {
   "easy-berry": {
     completed: true,
     completedAt: timestamp,
     timeMs: 25000,
-    attempts: 3,        // CHÝBA
-    bestTime: 25000,    // CHÝBA
-    totalTime: 75000    // CHÝBA
+    attempts: 3,        // ✅ IMPLEMENTOVANÉ
+    bestTime: 25000,    // ✅ IMPLEMENTOVANÉ
   }
 }
 ```
@@ -176,8 +174,8 @@ Musíte vytvoriť video (.mp4, .webm) dokumentujúce:
 ## 🎯 ODPORÚČANIE PRE FINALIZÁCIU
 
 ### Minimálne (na akceptáciu):
-1. ✅ Doplniť UI pre štatistiky
-2. ✅ Vytvoriť video dokumentáciu (2-3 min)
+1. ✅ ~~Doplniť UI pre štatistiky~~ - **HOTOVÉ**
+2. ⚠️ Vytvoriť video dokumentáciu (2-3 min) - **ZOSTÁVA**
 
 ### Voliteľné vylepšenia:
 - Pridať PWA manifest.json a service worker
