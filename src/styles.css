@@ -431,7 +431,8 @@ body {
 }
 
 .nail-hint-dot:hover::before {
-  transform: scale(1.2);
+  opacity: 0;
+  transform: scale(0);
   animation: none;
 }
 
