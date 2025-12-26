@@ -894,6 +894,7 @@ body {
   background: rgba(45, 27, 46, 0.35);
   display: grid;
   place-items: center;
+  z-index: 10000;
 }
 
 .modal {
@@ -904,6 +905,8 @@ body {
   max-width: 480px;
   border: 1px solid #ffd0e5;
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 10001;
 }
 
 .modal button {
