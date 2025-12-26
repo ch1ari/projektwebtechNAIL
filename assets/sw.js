@@ -1,7 +1,7 @@
 // Nail Art Match - Service Worker
 // Progressive Web App offline support
 
-const CACHE_VERSION = 'v2';
+const CACHE_VERSION = 'v3';
 const CACHE_NAME = `nail-art-match-${CACHE_VERSION}`;
 const STATIC_CACHE_NAME = `nail-art-static-${CACHE_VERSION}`;
 
@@ -11,11 +11,22 @@ const STATIC_ASSETS = [
   '/index.html',
   '/instructions.html',
   '/favicon.svg',
-  '/manifest.json'
+  '/manifest.json',
+  // Images
+  '/hand.png',
+  '/bakground.png',
+  '/pink-sparkle-bg.jpg',
+  '/nails_mask.svg',
+  '/mask_nails.png',
+  // Stickers - all nail art stickers
+  '/stickers/break-up.png',
+  '/stickers/cherry.png',
+  '/stickers/diamond.png',
+  '/stickers/rainbow.png',
+  '/stickers/rose.png',
+  '/stickers/shooting-star.png',
+  '/stickers/sunflower.png'
 ];
-
-// Additional assets to cache (will be added during runtime)
-const RUNTIME_CACHE_URLS = new Set();
 
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
