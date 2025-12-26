@@ -502,19 +502,19 @@ body {
   transform: translateY(30%) translateX(8px);
 }
 
-/* Position tooltip at the top-left for middle finger (avoids overlap) */
+/* Position tooltip straight above for middle finger (avoids overlap completely) */
 .nail-hint-dot[data-position="top-left"] .hint-tooltip {
-  bottom: 50%;
-  right: 100%;
-  left: auto;
-  transform: translateY(50%);
-  margin-right: 30px;
-  margin-bottom: 0;
+  bottom: 100%;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  margin-bottom: 35px;
+  margin-right: 0;
 }
 
 .nail-hint-dot[data-position="top-left"]:hover .hint-tooltip {
   opacity: 1;
-  transform: translateY(30%) translateX(-8px);
+  transform: translateX(-50%) translateY(-8px);
 }
 
 /* Default top position for nails without data-position */
