@@ -15,13 +15,14 @@ const NAILS = [
   { id: 'pinky', shape: { cx: 409, cy: 167, rx: 22, ry: 26, rotation: 10 } }
 ];
 
-// Visual nail centers (actual centers of nail tip visuals for hint dots)
+// Visual nail centers (actual centers from F12 console measurements)
+// Calculated from normalized coords: x * 612, y * 408 (VIEWBOX dimensions)
 const NAIL_VISUAL_CENTERS = {
-  thumb: { x: 229, y: 115 },
-  index: { x: 315, y: 63 },
-  middle: { x: 369, y: 57 },
-  ring: { x: 397, y: 91 },
-  pinky: { x: 409, y: 152 }
+  thumb: { x: 230, y: 122 },    // 0.375 * 612, 0.298 * 408
+  index: { x: 314, y: 72 },     // 0.513 * 612, 0.176 * 408
+  middle: { x: 368, y: 67 },    // 0.602 * 612, 0.165 * 408
+  ring: { x: 394, y: 97 },      // 0.644 * 612, 0.237 * 408
+  pinky: { x: 408, y: 150 }     // 0.667 * 612, 0.368 * 408
 };
 
 // Slovak nail names
