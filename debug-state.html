@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Debug Nail Art State</title>
+</head>
+<body>
+  <h1>Current localStorage State</h1>
+  <button onclick="clearState()">Clear All State</button>
+  <button onclick="showState()">Show State</button>
+  <pre id="output"></pre>
+
+  <script>
+    function showState() {
+      const queue = localStorage.getItem('nail-art-queue');
+      const stats = localStorage.getItem('nail-art-stats');
+      const output = document.getElementById('output');
+      output.textContent = `Queue: ${queue}\n\nStats: ${stats}`;
+    }
+
+    function clearState() {
+      localStorage.removeItem('nail-art-queue');
+      localStorage.removeItem('nail-art-stats');
+      alert('State cleared! Refresh the game.');
+    }
+
+    showState();
+  </script>
+</body>
+</html>

@@ -1,3 +1,4 @@
+// Nail Art Match - Main App Component
 import React, { createContext, useEffect, useMemo, useReducer, useRef } from 'react';
 import Board from './components/Board.jsx';
 import Palette from './components/Palette.jsx';
@@ -76,6 +77,8 @@ const initialState = {
   showTemplate: false,
   lockCorrect: false,
   showStats: false,
+  showCompletionModal: false,
+  showSolutionModal: false,
   status: 'idle',
   timerRunning: true,
   elapsedMs: 0,
@@ -91,6 +94,11 @@ function taskTargets(task) {
 function computePlacementCorrectness(task, stickerId, placement) {
   const target = taskTargets(task).find((t) => t.stickerId === stickerId);
   if (!target || !placement) return { placement, isCorrect: false };
+
+  // Check if sticker is on the correct nail
+  const onCorrectNail = placement.nailId === target.nailName;
+  if (!onCorrectNail) return { placement, isCorrect: false };
+
   const xPos = placement.boardX ?? placement.x ?? 0;
   const yPos = placement.boardY ?? placement.y ?? 0;
   const dx = Math.abs(xPos - target.targetTransform.x);
@@ -104,7 +112,7 @@ function computePlacementCorrectness(task, stickerId, placement) {
     dscale <= (target.tolerance.scale ?? 0.05);
 
   if (!within) return { placement, isCorrect: false };
-  return { placement: { ...target.targetTransform, isCorrect: true }, isCorrect: true };
+  return { placement: { ...placement, isCorrect: true }, isCorrect: true };
 }
 
 function isTaskComplete(task, placements, nailColors) {
@@ -201,7 +209,13 @@ function appReducer(state, action) {
     case 'solution': {
       const task = tasks.find((t) => t.id === state.currentTaskId);
       const solved = (task?.targets ?? []).reduce((map, target) => {
-        map[target.stickerId] = { ...target.targetTransform, isCorrect: true };
+        map[target.stickerId] = {
+          ...target.targetTransform,
+          nailId: target.nailName,
+          boardX: target.targetTransform.x,
+          boardY: target.targetTransform.y,
+          isCorrect: true
+        };
         return map;
       }, {});
       return {
@@ -231,6 +245,14 @@ function appReducer(state, action) {
       return { ...state, queue: action.payload };
     case 'toggleStats':
       return { ...state, showStats: !state.showStats };
+    case 'showCompletionModal':
+      return { ...state, showCompletionModal: true, timerRunning: false };
+    case 'hideCompletionModal':
+      return { ...state, showCompletionModal: false };
+    case 'showSolutionModal':
+      return { ...state, showSolutionModal: true };
+    case 'hideSolutionModal':
+      return { ...state, showSolutionModal: false };
     case 'timer:tick':
       if (!state.timerRunning) return state;
       return { ...state, elapsedMs: state.elapsedMs + (action.deltaMs ?? 0) };
@@ -542,6 +564,9 @@ function RightPanel({ app, completionMap }) {
           <li>Šablóna a duchovia sú len náhľad – nezastavia ťahanie.</li>
           <li>Reštart vymaže lak aj ozdoby, Riešenie ťa naučí správny tvar.</li>
         </ul>
+        <a href="/instructions.html" target="_blank" rel="noopener noreferrer" style={{ display: 'block', marginTop: '0.75rem', padding: '0.5rem', textAlign: 'center', background: 'linear-gradient(135deg, #d946b5, #f472b6)', color: 'white', borderRadius: '8px', textDecoration: 'none', fontWeight: 600 }}>
+          📖 Kompletný návod
+        </a>
       </div>
       <div className="client-brief">
         <h3>Klientsky request</h3>
@@ -579,22 +604,17 @@ function RightPanel({ app, completionMap }) {
       </div>
       <div className="control-row">
         <button onClick={() => app.dispatch({ type: 'restart' })}>Reštart</button>
-        <button onClick={() => app.dispatch({ type: 'nextLevel' })} disabled={!hasNext || nextLocked}>
-          Ďalšia
-        </button>
-      </div>
-      <div className="control-row">
-        <button onClick={() => app.dispatch({ type: 'toggleHints' })}>
-          {app.state.showHints ? 'Skryť hint' : 'Hint duch'}
-        </button>
         <button onClick={() => app.dispatch({ type: 'toggleTemplate' })}>
           {app.state.showTemplate ? 'Skryť šablónu' : 'Šablóna'}
         </button>
       </div>
       <div className="control-row">
-        <button onClick={() => app.dispatch({ type: 'solution' })}>Riešenie</button>
-        <button onClick={() => app.dispatch({ type: 'toggleLockCorrect' })}>
-          {app.state.lockCorrect ? 'Odomkni správne' : 'Lock correct'}
+        <button onClick={() => {
+          app.dispatch({ type: 'solution' });
+          app.dispatch({ type: 'showSolutionModal' });
+        }}>Riešenie</button>
+        <button onClick={() => app.dispatch({ type: 'nextLevel' })} disabled={!hasNext || nextLocked}>
+          Ďalšia
         </button>
       </div>
       <div className="control-row">
@@ -623,14 +643,19 @@ export default function App() {
     if (!app.currentTask) return;
     const done = isTaskComplete(app.currentTask, app.state.placements, app.state.nailColors);
     const alreadyDone = app.state.stats?.[app.currentTask.id]?.completed;
-    if (done && !alreadyDone) {
+    // Don't show completion modal if user clicked "Riešenie" button
+    if (done && !alreadyDone && app.state.status !== 'solved') {
       app.dispatch({
         type: 'stats:update',
         taskId: app.currentTask.id,
-        payload: { ...(app.state.stats?.[app.currentTask.id] ?? {}), completed: true, completedAt: Date.now() }
+        payload: { ...(app.state.stats?.[app.currentTask.id] ?? {}), completed: true, completedAt: Date.now(), timeMs: app.state.elapsedMs }
       });
+      // Show completion modal
+      setTimeout(() => {
+        app.dispatch({ type: 'showCompletionModal' });
+      }, 500);
     }
-  }, [app.currentTask, app.state.placements, app.state.nailColors, app.state.stats, app.dispatch]);
+  }, [app.currentTask, app.state.placements, app.state.nailColors, app.state.stats, app.state.elapsedMs, app.state.status, app.dispatch]);
 
   return (
     <AppStateContext.Provider value={app}>
@@ -647,6 +672,77 @@ export default function App() {
           </div>
           <RightPanel app={app} completionMap={completionMap} />
         </div>
+        {app.state.showCompletionModal ? (
+          <div className="modal-backdrop" role="dialog" aria-modal>
+            <div className="modal completion-modal">
+              <h2>🎉 Výborne!</h2>
+              <p className="completion-message">Dokončil si level <strong>{app.currentTask?.title}</strong>!</p>
+              <div className="completion-stats">
+                <div className="stat">
+                  <span className="label">⏱ Čas</span>
+                  <span className="value">{Math.round(app.state.elapsedMs / 1000)}s</span>
+                </div>
+                <div className="stat">
+                  <span className="label">✨ Nálepky</span>
+                  <span className="value">{app.currentTask?.targets?.length ?? 0}/{app.currentTask?.targets?.length ?? 0}</span>
+                </div>
+                <div className="stat">
+                  <span className="label">🎨 Nechty</span>
+                  <span className="value">5/5</span>
+                </div>
+              </div>
+              <div className="completion-buttons">
+                <button
+                  className="btn-primary"
+                  onClick={() => {
+                    app.dispatch({ type: 'hideCompletionModal' });
+                    app.dispatch({ type: 'nextLevel' });
+                  }}
+                >
+                  Ďalší level →
+                </button>
+                <button
+                  className="btn-secondary"
+                  onClick={() => app.dispatch({ type: 'hideCompletionModal' })}
+                >
+                  Zostať tu
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
+        {app.state.showSolutionModal ? (
+          <div className="modal-backdrop" role="dialog" aria-modal>
+            <div className="modal completion-modal">
+              <h2>💡 Toto je riešenie!</h2>
+              <p className="completion-message">
+                Pozri si, ako vyzerá správne umiestnenie nálepiek a nechty s lak na nechty.
+              </p>
+              <p className="completion-message" style={{ marginTop: '1rem', fontWeight: 600 }}>
+                Teraz skús level dokončiť <strong>sám ručne</strong>!
+              </p>
+              <div className="completion-buttons">
+                <button
+                  className="btn-primary"
+                  style={{ color: '#d946b5' }}
+                  onClick={() => {
+                    app.dispatch({ type: 'hideSolutionModal' });
+                    app.dispatch({ type: 'restart' });
+                  }}
+                >
+                  Reštart a skúsim sám
+                </button>
+                <button
+                  className="btn-secondary"
+                  style={{ color: '#d946b5' }}
+                  onClick={() => app.dispatch({ type: 'hideSolutionModal' })}
+                >
+                  Zostať tu
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
         {app.state.showStats ? (
           <div className="modal-backdrop" role="dialog" aria-modal>
             <div className="modal">

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <title>Návod - Nail Art Match</title>
+  <style>
+    :root {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+      color: #2d1b2e;
+    }
+
+    body {
+      margin: 0;
+      padding: 2rem;
+      background: linear-gradient(135deg, #fff5fb 0%, #ffe5f4 45%, #f8ddff 100%);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      padding: 3rem;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(217, 70, 181, 0.2);
+    }
+
+    h1 {
+      color: #d946b5;
+      font-size: 2.5rem;
+      margin-top: 0;
+      text-align: center;
+    }
+
+    h2 {
+      color: #d946b5;
+      font-size: 1.8rem;
+      margin-top: 2rem;
+      border-bottom: 2px solid #ffe5f4;
+      padding-bottom: 0.5rem;
+    }
+
+    h3 {
+      color: #f472b6;
+      font-size: 1.3rem;
+      margin-top: 1.5rem;
+    }
+
+    .header-link {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .btn-play {
+      display: inline-block;
+      padding: 1rem 2rem;
+      background: linear-gradient(135deg, #d946b5, #f472b6);
+      color: white;
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      box-shadow: 0 4px 12px rgba(217, 70, 181, 0.3);
+      transition: transform 0.2s;
+    }
+
+    .btn-play:hover {
+      transform: translateY(-2px);
+    }
+
+    ul {
+      margin: 1rem 0;
+      padding-left: 2rem;
+    }
+
+    li {
+      margin: 0.5rem 0;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .feature-card {
+      background: linear-gradient(135deg, #fff5fb, #ffe5f4);
+      padding: 1.5rem;
+      border-radius: 12px;
+      border: 1px solid #ffd0e5;
+    }
+
+    .feature-card h3 {
+      margin-top: 0;
+      color: #d946b5;
+    }
+
+    .controls-list {
+      background: #f9f9f9;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+    }
+
+    .mobile-only {
+      background: #fff3cd;
+      padding: 1rem;
+      border-left: 4px solid #ffc107;
+      margin: 1rem 0;
+      border-radius: 4px;
+    }
+
+    .mobile-only strong {
+      color: #856404;
+    }
+
+    /* Print styles */
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+
+      .container {
+        box-shadow: none;
+        padding: 1rem;
+      }
+
+      .header-link, .btn-play, .no-print {
+        display: none !important;
+      }
+
+      h1 {
+        font-size: 2rem;
+        page-break-after: avoid;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+        page-break-after: avoid;
+        page-break-before: always;
+      }
+
+      h2:first-of-type {
+        page-break-before: avoid;
+      }
+
+      h3 {
+        page-break-after: avoid;
+      }
+
+      .feature-grid {
+        page-break-inside: avoid;
+      }
+    }
+
+    @media screen and (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+
+      .container {
+        padding: 1.5rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header-link no-print">
+      <a href="/" class="btn-play">← Späť na hru</a>
+    </div>
+
+    <h1>💅 Nail Art Match</h1>
+    <p style="text-align: center; font-size: 1.2rem; color: #666;">Nail salon puzzle pre dievčatá</p>
+
+    <h2>📖 O hre</h2>
+    <p>
+      <strong>Nail Art Match</strong> je interaktívna puzzle hra, kde sa stanete nail art dizajnérkou!
+      Vašou úlohou je splniť požiadavky klientov a vytvoriť dokonalý nail art dizajn pomocou
+      drag and drop technológie.
+    </p>
+    <p>
+      Hra obsahuje <strong>8 levelov</strong> v <strong>3 úrovniach obtiažnosti</strong> (Easy, Medium, Hard).
+      Každý level má jedinečný dizajn a požiadavky, ktoré musíte presne splniť.
+    </p>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h3>🎨 Farby nechtov</h3>
+        <p>12 rôznych pastelových a žiarivých odtieňov na výber</p>
+      </div>
+      <div class="feature-card">
+        <h3>✨ Nálepky</h3>
+        <p>Čerešne, diamanty, hviezdy, dúhy a ďalšie ozdoby</p>
+      </div>
+      <div class="feature-card">
+        <h3>⏱ Časomiera</h3>
+        <p>Sledujte svoj čas a zlepšujte svoje rekordy</p>
+      </div>
+      <div class="feature-card">
+        <h3>💡 Nápovedy</h3>
+        <p>Hint duch, šablóna a kompletné riešenie</p>
+      </div>
+    </div>
+
+    <h2>🎮 Ako hrať</h2>
+
+    <h3>Základné ovládanie</h3>
+    <div class="controls-list">
+      <ul>
+        <li><strong>Maľovanie nechtov:</strong> Kliknite na farbu v palete a potom kliknite na necht, ktorý chcete namaľovať. Alebo potiahnte farbu priamo na necht.</li>
+        <li><strong>Pridanie nálepky:</strong> Prejdite na záložku "Nálepky" a potiahnte nálepku na necht kam chcete.</li>
+        <li><strong>Otáčanie nálepky:</strong> Kliknite na umiestnenú nálepku a bude sa otáčať o 15°.</li>
+        <li><strong>Odstránenie nálepky:</strong> Kliknite na nálepku v palete ak už je umiestnená na ploche.</li>
+      </ul>
+    </div>
+
+    <div class="mobile-only">
+      <strong>📱 Pokyny pre mobil a tablet:</strong>
+      <ul>
+        <li>Všetky funkcie fungujú dotykom prsta namiesto myši</li>
+        <li>Nálepky presuniete ťahaním prstom</li>
+        <li>Farby aplikujete kliknutím na farbu a potom na necht</li>
+        <li>Pre otočenie nálepky jednoducho ťuknite na umiestnenú nálepku</li>
+      </ul>
+    </div>
+
+    <h3>Cieľ hry</h3>
+    <p>Prečítajte si <strong>Klientsky request</strong> na pravej strane obrazovky. Ten obsahuje presné inštrukcie:</p>
+    <ul>
+      <li>Ktorý necht akú farbu má mať</li>
+      <li>Ktoré nálepky kam patria</li>
+      <li>Či nechty ostávajú bez ozdoby</li>
+    </ul>
+    <p>Keď správne umiestnite všetky nálepky a namaľujete všetky nechty, level je dokončený! Zobrazí sa gratulácia a môžete pokračovať na ďalší level.</p>
+
+    <h3>Pomocné funkcie</h3>
+    <div class="controls-list">
+      <ul>
+        <li><strong>Hint duch:</strong> Zobrazí malé bodky na miestach, kde majú byť nálepky</li>
+        <li><strong>Šablóna:</strong> Zobrazí priehľadný náhľad nálepiek na správnych pozíciách</li>
+        <li><strong>Riešenie:</strong> Automaticky umiestni všetky nálepky a namaľuje nechty správne</li>
+        <li><strong>Reštart:</strong> Vymaže všetky nálepky a farby, začnete level odznova</li>
+        <li><strong>Pauza:</strong> Zastaví časomieru</li>
+      </ul>
+    </div>
+
+    <h2>📊 Levely a obtiažnosť</h2>
+
+    <h3>Easy (Ľahká)</h3>
+    <ul>
+      <li>Sladká jahoda - Ružové tóny s diamantom a čerešňou</li>
+      <li>Pastelový dúhový deň - Jemné farby s dúhou a hviezdou</li>
+      <li>Jarný kvet - Svieže farby s ružou a slnkom</li>
+    </ul>
+    <p><em>Tolerancia umiestnenia: 35% - veľmi voľná</em></p>
+
+    <h3>Medium (Stredná)</h3>
+    <ul>
+      <li>Ľadové sklo - Modré tóny s diamantom a dúhou</li>
+      <li>Letná fiesta - Tropické farby s 3 nálepkami</li>
+      <li>Večerná romantika - Pudrové tóny s 3 nálepkami</li>
+    </ul>
+    <p><em>Tolerancia umiestnenia: 10% - stredná presnosť</em></p>
+
+    <h3>Hard (Ťažká)</h3>
+    <ul>
+      <li>Nočný neon - Žiarivé farby s 3 nálepkami</li>
+      <li>Drama queen - Výrazné tóny s break-up nálepkou a 2 ďalšími</li>
+    </ul>
+    <p><em>Tolerancia umiestnenia: 8% - vysoká presnosť</em></p>
+
+    <h2>💎 Tipy a triky</h2>
+    <ul>
+      <li>Prečítajte si vždy celý klientsky request pred začatím</li>
+      <li>Začnite farbami - najprv namaľujte všetky nechty</li>
+      <li>Potom pridávajte nálepky postupne podľa inštrukcií</li>
+      <li>Použite "Hint duch" ak si nie ste istí kde má nálepka byť</li>
+      <li>Využite "Šablóna" pre presné umiestnenie a rotáciu</li>
+      <li>Klikajte na nálepku pre jej otočenie až kým nebude správne</li>
+      <li>Nezabudnite - niektoré nechty ostávajú bez nálepiek!</li>
+    </ul>
+
+    <h2>🏆 Štatistiky a pokrok</h2>
+    <p>Hra ukladá váš pokrok automaticky do prehliadača:</p>
+    <ul>
+      <li>Ktoré levely ste dokončili</li>
+      <li>Váš najrýchlejší čas pre každý level</li>
+      <li>Poradie levelov sa zachováva - nedokončené levely ostávajú v rade</li>
+    </ul>
+    <p>Levely sa odomykajú postupne - musíte dokončiť predchádzajúci level pred pokračovaním na ďalší.</p>
+
+    <h2>⚙️ Technické požiadavky</h2>
+    <ul>
+      <li><strong>Prehliadač:</strong> Chrome, Firefox (najnovšie verzie)</li>
+      <li><strong>Zariadenie:</strong> Desktop, tablet, mobilný telefón</li>
+      <li><strong>Internet:</strong> Potrebný pre načítanie hry</li>
+      <li><strong>Úložisko:</strong> localStorage pre ukladanie progresu</li>
+    </ul>
+
+    <h2>❓ Časté otázky</h2>
+    <h3>Prečo sa nálepky nedetekujú ako správne?</h3>
+    <p>Uistite sa že:</p>
+    <ul>
+      <li>Nálepka je na správnom nechte (podľa klientskeho requestu)</li>
+      <li>Nálepka je dostatočne blízko k cieľovej pozícii</li>
+      <li>Použite "Šablóna" pre presné umiestnenie</li>
+    </ul>
+
+    <h3>Ako vynulujem pokrok?</h3>
+    <p>Otvorte konzolu prehliadača (F12) a zadajte:</p>
+    <pre style="background: #f5f5f5; padding: 1rem; border-radius: 4px; overflow-x: auto;">localStorage.clear()
+location.reload()</pre>
+
+    <h3>Funguje hra offline?</h3>
+    <p>Po prvom načítaní môže hra fungovať offline vďaka PWA technológii, ale obrázky a zdroje musia byť už načítané.</p>
+
+    <div class="header-link no-print" style="margin-top: 3rem;">
+      <a href="/" class="btn-play">Začať hrať →</a>
+    </div>
+
+    <footer style="text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #eee; color: #999;">
+      <p>© 2025 Nail Art Match | Webtech projekt</p>
+    </footer>
+  </div>
+</body>
+</html>
