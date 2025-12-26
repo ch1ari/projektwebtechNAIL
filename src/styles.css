@@ -488,17 +488,18 @@ body {
   transform: translateY(-50%) translateX(-8px);
 }
 
-/* Position tooltip at the top for index finger */
+/* Position tooltip at the top-right for index finger (stays visible on screen) */
 .nail-hint-dot[data-position="top"] .hint-tooltip {
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  margin-bottom: 25px;
+  bottom: 50%;
+  left: 100%;
+  transform: translateY(50%);
+  margin-left: 30px;
+  margin-bottom: 0;
 }
 
 .nail-hint-dot[data-position="top"]:hover .hint-tooltip {
   opacity: 1;
-  transform: translateX(-50%) translateY(-8px);
+  transform: translateY(30%) translateX(8px);
 }
 
 /* Default top position for nails without data-position */
