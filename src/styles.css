@@ -39,10 +39,13 @@ body {
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 1rem;
-  padding: 1rem 1.1rem;
-  border-radius: 14px;
-  background: linear-gradient(120deg, #ffcee5, #ffc5f5);
-  box-shadow: 0 18px 50px rgba(255, 164, 213, 0.35);
+  padding: 1.5rem 1.5rem;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #d946b5 0%, #c026d3 50%, #a21caf 100%);
+  box-shadow: 0 8px 32px rgba(169, 28, 175, 0.4),
+              0 2px 8px rgba(0, 0, 0, 0.1),
+              inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .brand-block {
@@ -52,14 +55,17 @@ body {
 }
 
 .brand {
-  font-size: 1.35rem;
-  font-weight: 700;
+  font-size: 1.5rem;
+  font-weight: 800;
   letter-spacing: 0.04em;
+  color: white;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .subtitle {
-  color: #7d4866;
+  color: rgba(255, 255, 255, 0.9);
   font-size: 0.95rem;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 
 .top-progress {
