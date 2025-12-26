@@ -456,7 +456,39 @@ body {
   z-index: 100;
 }
 
-.nail-hint-dot:hover .hint-tooltip {
+/* Position tooltip to the right for left-side nails */
+.nail-hint-dot[data-position="right"] .hint-tooltip {
+  bottom: auto;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-bottom: 0;
+  margin-left: 10px;
+}
+
+.nail-hint-dot[data-position="right"]:hover .hint-tooltip {
+  opacity: 1;
+  transform: translateY(-50%) translateX(5px);
+}
+
+/* Position tooltip to the left for right-side nails */
+.nail-hint-dot[data-position="left"] .hint-tooltip {
+  bottom: auto;
+  left: auto;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-bottom: 0;
+  margin-right: 10px;
+}
+
+.nail-hint-dot[data-position="left"]:hover .hint-tooltip {
+  opacity: 1;
+  transform: translateY(-50%) translateX(-5px);
+}
+
+/* Default top position for nails without data-position */
+.nail-hint-dot:not([data-position]):hover .hint-tooltip {
   opacity: 1;
   transform: translateX(-50%) translateY(-5px);
 }

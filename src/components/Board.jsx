@@ -15,6 +15,15 @@ const NAILS = [
   { id: 'pinky', shape: { cx: 409, cy: 167, rx: 22, ry: 26, rotation: 10 } }
 ];
 
+// Slovak nail names
+const NAIL_NAMES_SK = {
+  thumb: 'Palec',
+  index: 'Ukazovák',
+  middle: 'Prostredník',
+  ring: 'Prstenník',
+  pinky: 'Malíček'
+};
+
 const Board = forwardRef(function Board({ app, stickers }, boardRef) {
   const { placements, showHints, showTemplate, nailColors } = app.state;
   const activeTask = app.currentTask;
@@ -307,27 +316,38 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
 
           {showTemplate ? (
             <div className="nail-hints-overlay" style={{ pointerEvents: 'auto' }}>
-              {NAILS.map((nail) => {
+              {NAILS.map((nail, index) => {
                 const targetColor = activeTask?.nailTargets?.[nail.id];
                 const targetSticker = templateTargets.find(t => t.nailName === nail.id);
                 const stickerData = targetSticker ? activeTask?.stickers?.find(s => s.id === targetSticker.stickerId) : null;
+
+                // Find color name from palette
+                const colorName = targetColor ? app.paletteColors.find(c => c.value === targetColor)?.name : null;
+
+                // Use sticker target position if available, otherwise use nail center
+                const posX = targetSticker ? targetSticker.targetTransform.x * 100 : (nail.shape.cx / VIEWBOX.width) * 100;
+                const posY = targetSticker ? targetSticker.targetTransform.y * 100 : (nail.shape.cy / VIEWBOX.height) * 100;
+
+                // Determine tooltip position to avoid overlap (left side nails show right, right side show left)
+                const tooltipPosition = index < 2 ? 'right' : 'left';
 
                 return (
                   <div
                     key={nail.id}
                     className="nail-hint-dot"
+                    data-position={tooltipPosition}
                     style={{
-                      left: `${(nail.shape.cx / VIEWBOX.width) * 100}%`,
-                      top: `${(nail.shape.cy / VIEWBOX.height) * 100}%`,
+                      left: `${posX}%`,
+                      top: `${posY}%`,
                     }}
                   >
                     <div className="hint-tooltip">
                       <div className="hint-tooltip-content">
-                        <strong>{nail.id.charAt(0).toUpperCase() + nail.id.slice(1)}</strong>
+                        <strong>{NAIL_NAMES_SK[nail.id]}</strong>
                         {targetColor && (
                           <div className="hint-color">
                             <span className="color-dot" style={{ backgroundColor: targetColor }} />
-                            <span>Farba</span>
+                            <span>{colorName || 'Farba'}</span>
                           </div>
                         )}
                         {stickerData && (
