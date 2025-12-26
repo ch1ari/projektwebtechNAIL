@@ -1,8 +1,9 @@
 // Nail Art Match - Service Worker
 // Progressive Web App offline support
 
-const CACHE_NAME = 'nail-art-match-v1';
-const STATIC_CACHE_NAME = 'nail-art-static-v1';
+const CACHE_VERSION = 'v2';
+const CACHE_NAME = `nail-art-match-${CACHE_VERSION}`;
+const STATIC_CACHE_NAME = `nail-art-static-${CACHE_VERSION}`;
 
 // Core files that should always be cached
 const STATIC_ASSETS = [
@@ -12,6 +13,9 @@ const STATIC_ASSETS = [
   '/favicon.svg',
   '/manifest.json'
 ];
+
+// Additional assets to cache (will be added during runtime)
+const RUNTIME_CACHE_URLS = new Set();
 
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
@@ -43,8 +47,8 @@ self.addEventListener('activate', (event) => {
         return Promise.all(
           cacheNames
             .filter((cacheName) => {
-              // Delete old caches
-              return cacheName !== CACHE_NAME && cacheName !== STATIC_CACHE_NAME;
+              // Delete old version caches
+              return !cacheName.includes(CACHE_VERSION);
             })
             .map((cacheName) => {
               console.log('[Service Worker] Deleting old cache:', cacheName);
@@ -59,21 +63,50 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch event - serve from cache, fallback to network
+// Fetch event - cache-first with network fallback
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip cross-origin requests
+  // Skip cross-origin requests (except same-origin assets)
   if (url.origin !== location.origin) {
     return;
   }
 
+  // For navigation requests (HTML pages)
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      caches.match(request)
+        .then((cachedResponse) => {
+          if (cachedResponse) {
+            console.log('[Service Worker] Serving page from cache:', request.url);
+            return cachedResponse;
+          }
+
+          return fetch(request)
+            .then((response) => {
+              if (response && response.status === 200) {
+                const responseToCache = response.clone();
+                caches.open(CACHE_NAME).then((cache) => {
+                  cache.put(request, responseToCache);
+                });
+              }
+              return response;
+            })
+            .catch(() => {
+              // Offline - return cached index.html
+              return caches.match('/index.html');
+            });
+        })
+    );
+    return;
+  }
+
+  // For all other requests (CSS, JS, images, etc.)
   event.respondWith(
     caches.match(request)
       .then((cachedResponse) => {
         if (cachedResponse) {
-          // Return cached version
           console.log('[Service Worker] Serving from cache:', request.url);
           return cachedResponse;
         }
@@ -90,23 +123,34 @@ self.addEventListener('fetch', (event) => {
             // Clone the response
             const responseToCache = response.clone();
 
-            // Cache dynamic content
+            // Cache everything from our origin
             caches.open(CACHE_NAME)
               .then((cache) => {
                 cache.put(request, responseToCache);
+                console.log('[Service Worker] Cached:', request.url);
               });
 
             return response;
           })
           .catch((error) => {
-            console.error('[Service Worker] Fetch failed:', error);
+            console.error('[Service Worker] Fetch failed (offline?):', error);
 
-            // Return offline page if available
-            if (request.destination === 'document') {
-              return caches.match('/index.html');
-            }
+            // Try to return cached version
+            return caches.match(request)
+              .then((cachedResponse) => {
+                if (cachedResponse) {
+                  console.log('[Service Worker] Returning cached fallback:', request.url);
+                  return cachedResponse;
+                }
 
-            throw error;
+                // For images, return a placeholder or throw
+                if (request.destination === 'image') {
+                  console.log('[Service Worker] Image not cached, offline');
+                  // Could return a placeholder image here
+                }
+
+                throw error;
+              });
           });
       })
   );
