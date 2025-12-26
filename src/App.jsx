@@ -605,14 +605,7 @@ function RightPanel({ app, completionMap }) {
       <div className="control-row">
         <button onClick={() => {
           app.dispatch({ type: 'solution' });
-          // Auto-next after showing solution
-          setTimeout(() => {
-            const currentIndex = app.tasks.findIndex((task) => task.id === app.state.currentTaskId);
-            const hasNext = currentIndex >= 0 && currentIndex < app.tasks.length - 1;
-            if (hasNext) {
-              app.dispatch({ type: 'showCompletionModal' });
-            }
-          }, 1500);
+          alert('💡 Toto je riešenie! Teraz skús level dokončiť sám ručne. Použi tlačidlo "Reštart" a umiestni nálepky správne.');
         }}>Riešenie</button>
         <button onClick={() => app.dispatch({ type: 'nextLevel' })} disabled={!hasNext || nextLocked}>
           Ďalšia
@@ -644,7 +637,8 @@ export default function App() {
     if (!app.currentTask) return;
     const done = isTaskComplete(app.currentTask, app.state.placements, app.state.nailColors);
     const alreadyDone = app.state.stats?.[app.currentTask.id]?.completed;
-    if (done && !alreadyDone) {
+    // Don't show completion modal if user clicked "Riešenie" button
+    if (done && !alreadyDone && app.state.status !== 'solved') {
       app.dispatch({
         type: 'stats:update',
         taskId: app.currentTask.id,
@@ -655,7 +649,7 @@ export default function App() {
         app.dispatch({ type: 'showCompletionModal' });
       }, 500);
     }
-  }, [app.currentTask, app.state.placements, app.state.nailColors, app.state.stats, app.state.elapsedMs, app.dispatch]);
+  }, [app.currentTask, app.state.placements, app.state.nailColors, app.state.stats, app.state.elapsedMs, app.state.status, app.dispatch]);
 
   return (
     <AppStateContext.Provider value={app}>

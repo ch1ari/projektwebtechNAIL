@@ -26,7 +26,7 @@
       {
         "stickerId": "berry-cherry",
         "nailName": "middle",
-        "targetTransform": { "x": 0.603, "y": 0.176, "rotation": 15, "scale": 0.35 },
+        "targetTransform": { "x": 0.603, "y": 0.14, "rotation": 15, "scale": 0.35 },
         "tolerance": { "x": 0.35, "y": 0.35, "rotation": 45, "scale": 0.5 }
       },
       {
@@ -70,7 +70,7 @@
       {
         "stickerId": "rainbow-star",
         "nailName": "ring",
-        "targetTransform": { "x": 0.649, "y": 0.260, "rotation": 30, "scale": 0.35 },
+        "targetTransform": { "x": 0.649, "y": 0.23, "rotation": 30, "scale": 0.35 },
         "tolerance": { "x": 0.35, "y": 0.35, "rotation": 45, "scale": 0.5 }
       }
     ]
@@ -236,7 +236,7 @@
       {
         "stickerId": "romance-star",
         "nailName": "middle",
-        "targetTransform": { "x": 0.603, "y": 0.176, "rotation": 45, "scale": 0.35 },
+        "targetTransform": { "x": 0.603, "y": 0.14, "rotation": 45, "scale": 0.35 },
         "tolerance": { "x": 0.10, "y": 0.10, "rotation": 25, "scale": 0.35 }
       }
     ]
@@ -269,7 +269,7 @@
       {
         "stickerId": "neon-star",
         "nailName": "pinky",
-        "targetTransform": { "x": 0.668, "y": 0.409, "rotation": -45, "scale": 0.35 },
+        "targetTransform": { "x": 0.668, "y": 0.36, "rotation": -45, "scale": 0.35 },
         "tolerance": { "x": 0.08, "y": 0.08, "rotation": 20, "scale": 0.35 }
       },
       {
@@ -326,7 +326,7 @@
       {
         "stickerId": "drama-rose",
         "nailName": "ring",
-        "targetTransform": { "x": 0.649, "y": 0.260, "rotation": 45, "scale": 0.35 },
+        "targetTransform": { "x": 0.649, "y": 0.23, "rotation": 45, "scale": 0.35 },
         "tolerance": { "x": 0.08, "y": 0.08, "rotation": 20, "scale": 0.35 }
       }
     ]
