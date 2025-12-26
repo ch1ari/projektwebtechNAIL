@@ -561,7 +561,7 @@ function RightPanel({ app, completionMap }) {
       <div className="helper-card">
         <ul>
           <li>Porovnaj s klientskou kartou a udrž farby aj ozdoby presne.</li>
-          <li>Šablóna a duchovia sú len náhľad – nezastavia ťahanie.</li>
+          <li>Nápoveda a duchovia sú len náhľad – nezastavia ťahanie.</li>
           <li>Reštart vymaže lak aj ozdoby, Riešenie ťa naučí správny tvar.</li>
         </ul>
         <a href="/instructions.html" style={{ display: 'block', marginTop: '0.75rem', padding: '0.5rem', textAlign: 'center', background: 'linear-gradient(135deg, #d946b5, #f472b6)', color: 'white', borderRadius: '8px', textDecoration: 'none', fontWeight: 600 }}>
@@ -605,7 +605,7 @@ function RightPanel({ app, completionMap }) {
       <div className="control-row">
         <button onClick={() => app.dispatch({ type: 'restart' })}>Reštart</button>
         <button onClick={() => app.dispatch({ type: 'toggleTemplate' })}>
-          {app.state.showTemplate ? 'Skryť šablónu' : 'Šablóna'}
+          {app.state.showTemplate ? 'Skryť nápovedu' : 'Nápoveda'}
         </button>
       </div>
       <div className="control-row">

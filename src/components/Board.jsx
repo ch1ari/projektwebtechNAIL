@@ -306,22 +306,41 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
           ) : null}
 
           {showTemplate ? (
-            <div className="template-overlay" aria-hidden style={{ pointerEvents: 'none' }}>
-              {templateTargets.map((target, index) => {
+            <div className="nail-hints-overlay" style={{ pointerEvents: 'auto' }}>
+              {NAILS.map((nail) => {
+                const targetColor = activeTask?.nailTargets?.[nail.id];
+                const targetSticker = templateTargets.find(t => t.nailName === nail.id);
+                const stickerData = targetSticker ? activeTask?.stickers?.find(s => s.id === targetSticker.stickerId) : null;
+
                 return (
                   <div
-                    key={target.stickerId}
-                    className="template-hint"
+                    key={nail.id}
+                    className="nail-hint-dot"
                     style={{
-                      left: `${target.targetTransform.x * 100}%`,
-                      top: `${target.targetTransform.y * 100}%`,
-                      width: `${90 * target.targetTransform.scale}px`,
-                      height: `${90 * target.targetTransform.scale}px`,
-                      transform: `translate(-50%, -50%) rotate(${target.targetTransform.rotation}deg)`,
-                      animationDelay: `${index * 0.2}s`
+                      left: `${(nail.shape.cx / VIEWBOX.width) * 100}%`,
+                      top: `${(nail.shape.cy / VIEWBOX.height) * 100}%`,
                     }}
                   >
-                    <div className="hint-pulse" />
+                    <div className="hint-tooltip">
+                      <div className="hint-tooltip-content">
+                        <strong>{nail.id.charAt(0).toUpperCase() + nail.id.slice(1)}</strong>
+                        {targetColor && (
+                          <div className="hint-color">
+                            <span className="color-dot" style={{ backgroundColor: targetColor }} />
+                            <span>Farba</span>
+                          </div>
+                        )}
+                        {stickerData && (
+                          <div className="hint-sticker">
+                            <img src={stickerData.img ?? stickerData.src} alt={stickerData.name} />
+                            <span>{stickerData.name}</span>
+                          </div>
+                        )}
+                        {!targetColor && !stickerData && (
+                          <div className="hint-empty">Bez zmeny</div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 );
               })}
