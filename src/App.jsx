@@ -564,7 +564,7 @@ function RightPanel({ app, completionMap }) {
           <li>Šablóna a duchovia sú len náhľad – nezastavia ťahanie.</li>
           <li>Reštart vymaže lak aj ozdoby, Riešenie ťa naučí správny tvar.</li>
         </ul>
-        <a href="/instructions.html" target="_blank" rel="noopener noreferrer" style={{ display: 'block', marginTop: '0.75rem', padding: '0.5rem', textAlign: 'center', background: 'linear-gradient(135deg, #d946b5, #f472b6)', color: 'white', borderRadius: '8px', textDecoration: 'none', fontWeight: 600 }}>
+        <a href="/instructions.html" style={{ display: 'block', marginTop: '0.75rem', padding: '0.5rem', textAlign: 'center', background: 'linear-gradient(135deg, #d946b5, #f472b6)', color: 'white', borderRadius: '8px', textDecoration: 'none', fontWeight: 600 }}>
           📖 Kompletný návod
         </a>
       </div>
