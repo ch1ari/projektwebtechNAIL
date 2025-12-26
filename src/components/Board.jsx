@@ -1,3 +1,4 @@
+// Board Component - Handles nail art workspace and sticker placement
 import React, { forwardRef, useMemo, useRef } from 'react';
 import { clamp } from '../lib/geometry.js';
 import Sticker from './Sticker.jsx';
