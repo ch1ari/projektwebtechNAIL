@@ -340,9 +340,17 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
                 const posY = (center.y / VIEWBOX.height) * 100;
 
                 // Determine tooltip position to avoid overlap
-                // thumb & index: show tooltip to the right
+                // thumb: show tooltip to the right
+                // index: show tooltip at the top (to avoid overlap with middle)
                 // middle, ring, pinky: show tooltip to the left
-                const tooltipPosition = index <= 1 ? 'right' : 'left';
+                let tooltipPosition;
+                if (nail.id === 'thumb') {
+                  tooltipPosition = 'right';
+                } else if (nail.id === 'index') {
+                  tooltipPosition = 'top';
+                } else {
+                  tooltipPosition = 'left';
+                }
 
                 return (
                   <div
