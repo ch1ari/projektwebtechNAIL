@@ -4,5 +4,8 @@
       "src": "/instructions.html",
       "dest": "/instructions.html"
     }
-  ]
+  ],
+  "github": {
+    "silent": true
+  }
 }
