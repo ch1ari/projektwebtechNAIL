@@ -15,6 +15,25 @@ const NAILS = [
   { id: 'pinky', shape: { cx: 409, cy: 167, rx: 22, ry: 26, rotation: 10 } }
 ];
 
+// Visual nail centers (actual centers from F12 console measurements)
+// Calculated from normalized coords: x * 612, y * 408 (VIEWBOX dimensions)
+const NAIL_VISUAL_CENTERS = {
+  thumb: { x: 230, y: 122 },    // 0.375 * 612, 0.298 * 408
+  index: { x: 314, y: 72 },     // 0.513 * 612, 0.176 * 408
+  middle: { x: 368, y: 67 },    // 0.602 * 612, 0.165 * 408
+  ring: { x: 394, y: 97 },      // 0.644 * 612, 0.237 * 408
+  pinky: { x: 408, y: 150 }     // 0.667 * 612, 0.368 * 408
+};
+
+// Slovak nail names
+const NAIL_NAMES_SK = {
+  thumb: 'Palec',
+  index: 'Ukazovák',
+  middle: 'Prostredník',
+  ring: 'Prstenník',
+  pinky: 'Malíček'
+};
+
 const Board = forwardRef(function Board({ app, stickers }, boardRef) {
   const { placements, showHints, showTemplate, nailColors } = app.state;
   const activeTask = app.currentTask;
@@ -306,20 +325,60 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
           ) : null}
 
           {showTemplate ? (
-            <div className="template-overlay" aria-hidden style={{ pointerEvents: 'none' }}>
-              {templateTargets.map((target) => {
-                const sticker = activeTask?.stickers?.find(s => s.id === target.stickerId);
+            <div className="nail-hints-overlay" style={{ pointerEvents: 'auto' }}>
+              {NAILS.map((nail, index) => {
+                const targetColor = activeTask?.nailTargets?.[nail.id];
+                const targetSticker = templateTargets.find(t => t.nailName === nail.id);
+                const stickerData = targetSticker ? activeTask?.stickers?.find(s => s.id === targetSticker.stickerId) : null;
+
+                // Find color name from palette
+                const colorName = targetColor ? app.paletteColors.find(c => c.value === targetColor)?.name : null;
+
+                // Use visual nail centers for hint dots
+                const center = NAIL_VISUAL_CENTERS[nail.id];
+                const posX = (center.x / VIEWBOX.width) * 100;
+                const posY = (center.y / VIEWBOX.height) * 100;
+
+                // Determine tooltip position to avoid overlap
+                // thumb: show tooltip to the right
+                // index, middle, ring, pinky: show tooltip to the left
+                let tooltipPosition;
+                if (nail.id === 'thumb') {
+                  tooltipPosition = 'right';
+                } else {
+                  tooltipPosition = 'left';
+                }
+
                 return (
                   <div
-                    key={target.stickerId}
-                    className="template-ghost"
+                    key={nail.id}
+                    className="nail-hint-dot"
+                    data-position={tooltipPosition}
                     style={{
-                      left: `${target.targetTransform.x * 100}%`,
-                      top: `${target.targetTransform.y * 100}%`,
-                      transform: `translate(-50%, -50%) rotate(${target.targetTransform.rotation}deg) scale(${target.targetTransform.scale})`
+                      left: `${posX}%`,
+                      top: `${posY}%`,
                     }}
                   >
-                    {sticker && <img src={sticker.img ?? sticker.src} alt={sticker.name} style={{ width: '100%', height: '100%', objectFit: 'contain', opacity: 0.5 }} />}
+                    <div className="hint-tooltip">
+                      <div className="hint-tooltip-content">
+                        <strong>{NAIL_NAMES_SK[nail.id]}</strong>
+                        {targetColor && (
+                          <div className="hint-color">
+                            <span className="color-dot" style={{ backgroundColor: targetColor }} />
+                            <span>{colorName || 'Farba'}</span>
+                          </div>
+                        )}
+                        {stickerData && (
+                          <div className="hint-sticker">
+                            <img src={stickerData.img ?? stickerData.src} alt={stickerData.name} />
+                            <span>{stickerData.name}</span>
+                          </div>
+                        )}
+                        {!targetColor && !stickerData && (
+                          <div className="hint-empty">Bez zmeny</div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 );
               })}

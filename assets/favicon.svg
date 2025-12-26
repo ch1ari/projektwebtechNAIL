@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="bottleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fff;stop-opacity:0.9" />
+      <stop offset="50%" style="stop-color:#ffe5f4;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#ffd0e5;stop-opacity:0.9" />
+    </linearGradient>
+    <linearGradient id="polishGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff9ec4;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f472b6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="capGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#93c5fd;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="brushHandleGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#e0e7ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#c7d2fe;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="rainbowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6b9d;stop-opacity:1" />
+      <stop offset="16%" style="stop-color:#ffa06b;stop-opacity:1" />
+      <stop offset="33%" style="stop-color:#ffd93d;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#6bcf7f;stop-opacity:1" />
+      <stop offset="66%" style="stop-color:#4d9de0;stop-opacity:1" />
+      <stop offset="83%" style="stop-color:#9d6bff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff6bde;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.3"/>
+    </filter>
+    <filter id="innerGlow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1"/>
+      <feOffset dx="0" dy="0" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.5"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background rainbow square -->
+  <rect x="0" y="0" width="100" height="100" fill="url(#rainbowGradient)"/>
+
+  <!-- Bottle body (glass) -->
+  <g filter="url(#shadow)">
+    <!-- Main bottle shape -->
+    <rect x="32" y="45" width="24" height="35" rx="3" fill="url(#bottleGradient)" stroke="#d946b5" stroke-width="2.5"/>
+
+    <!-- Bottle neck/threads -->
+    <rect x="36" y="40" width="16" height="6" rx="1" fill="url(#bottleGradient)" stroke="#d946b5" stroke-width="2"/>
+    <line x1="37" y1="42" x2="51" y2="42" stroke="#e0a1cb" stroke-width="0.8"/>
+    <line x1="37" y1="44" x2="51" y2="44" stroke="#e0a1cb" stroke-width="0.8"/>
+
+    <!-- Polish liquid inside bottle -->
+    <rect x="35.5" y="55" width="17" height="22" rx="2" fill="url(#polishGradient)" opacity="0.95"/>
+
+    <!-- Bottle shine/reflection -->
+    <ellipse cx="40" cy="60" rx="3" ry="8" fill="white" opacity="0.4"/>
+    <rect x="35.5" y="70" width="3" height="6" fill="white" opacity="0.2"/>
+  </g>
+
+  <!-- Brush and cap -->
+  <g filter="url(#shadow)">
+    <!-- Cap (tilted) -->
+    <g transform="translate(52, 20) rotate(25)">
+      <!-- Cap main body -->
+      <rect x="-8" y="0" width="16" height="22" rx="2" fill="url(#capGradient)" stroke="#1e40af" stroke-width="2"/>
+      <!-- Cap highlight -->
+      <ellipse cx="-3" cy="8" rx="3" ry="6" fill="white" opacity="0.4"/>
+      <!-- Cap ridges -->
+      <line x1="-8" y1="18" x2="8" y2="18" stroke="#1e40af" stroke-width="1" opacity="0.5"/>
+      <line x1="-8" y1="15" x2="8" y2="15" stroke="#1e40af" stroke-width="1" opacity="0.5"/>
+    </g>
+
+    <!-- Brush handle -->
+    <line x1="50" y1="35" x2="42" y2="50" stroke="url(#brushHandleGradient)" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- Brush bristles with polish -->
+    <g transform="translate(41, 50)">
+      <!-- Brush ferrule -->
+      <ellipse cx="0" cy="0" rx="2.5" ry="1.5" fill="#94a3b8"/>
+
+      <!-- Polish drop on brush -->
+      <ellipse cx="0" cy="3" rx="3" ry="4" fill="url(#polishGradient)" opacity="0.9"/>
+      <!-- Polish drip -->
+      <path d="M 0,6 Q -1,8 -0.5,10 Q 0,11 0.5,10 Q 1,8 0,6 Z" fill="url(#polishGradient)" opacity="0.85"/>
+
+      <!-- Shine on polish drop -->
+      <ellipse cx="-0.8" cy="2.5" rx="1.2" ry="1.8" fill="white" opacity="0.5"/>
+    </g>
+  </g>
+
+  <!-- Sparkles and decorations -->
+  <circle cx="70" cy="55" r="2" fill="#ffd700" opacity="0.8">
+    <animate attributeName="opacity" values="0.8;1;0.8" dur="1.8s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="22" cy="45" r="1.8" fill="#ec4899" opacity="0.7">
+    <animate attributeName="opacity" values="0.7;1;0.7" dur="2.2s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="68" cy="75" r="1.5" fill="#f472b6" opacity="0.75">
+    <animate attributeName="opacity" values="0.75;1;0.75" dur="2.5s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Small star sparkle -->
+  <g transform="translate(25, 65)" opacity="0.85">
+    <path d="M 0,-2.5 L 0.4,0 L 2.5,0.4 L 0.4,0.4 L 0,2.5 L -0.4,0.4 L -2.5,0.4 L -0.4,0 Z" fill="#ffd700">
+      <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="4s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- Tiny hearts -->
+  <g transform="translate(72, 35)" opacity="0.7">
+    <path d="M 0,-1 C -2,-3 -4,-1 -2,1 L 0,3 L 2,1 C 4,-1 2,-3 0,-1 Z" fill="#ec4899" transform="scale(0.8)">
+      <animate attributeName="opacity" values="0.7;1;0.7" dur="3s" repeatCount="indefinite"/>
+    </path>
+  </g>
+</svg>

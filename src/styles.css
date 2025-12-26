@@ -14,9 +14,11 @@ body {
   margin: 0;
   min-height: 100vh;
   overflow-x: hidden;
-  background: radial-gradient(circle at 15% 20%, #ffe2f2, rgba(255, 226, 242, 0)),
-    radial-gradient(circle at 80% 0%, #ffd7ef, rgba(255, 215, 239, 0.15)),
-    linear-gradient(135deg, #fff5fb 0%, #ffe5f4 45%, #f8ddff 100%);
+  background-image: url('/pink-sparkle-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
 }
 
 #root {
@@ -37,10 +39,13 @@ body {
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 1rem;
-  padding: 1rem 1.1rem;
-  border-radius: 14px;
-  background: linear-gradient(120deg, #ffcee5, #ffc5f5);
-  box-shadow: 0 18px 50px rgba(255, 164, 213, 0.35);
+  padding: 1.5rem 1.5rem;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #ec4899 0%, #db2777 50%, #be185d 100%);
+  box-shadow: 0 8px 32px rgba(236, 72, 153, 0.4),
+              0 2px 8px rgba(0, 0, 0, 0.1),
+              inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .brand-block {
@@ -50,14 +55,17 @@ body {
 }
 
 .brand {
-  font-size: 1.35rem;
-  font-weight: 700;
+  font-size: 1.5rem;
+  font-weight: 800;
   letter-spacing: 0.04em;
+  color: white;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .subtitle {
-  color: #7d4866;
+  color: rgba(255, 255, 255, 0.9);
   font-size: 0.95rem;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 
 .top-progress {
@@ -131,17 +139,19 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  padding: 0.45rem 0.7rem;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid #ffd0e5;
+  padding: 0.5rem 0.85rem;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: 999px;
   font-weight: 600;
   text-transform: capitalize;
+  color: #be185d;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .pill.muted {
-  color: #7a5a73;
-  background: rgba(255, 255, 255, 0.6);
+  color: #db2777;
+  background: rgba(255, 255, 255, 0.75);
 }
 
 .layout {
@@ -404,18 +414,180 @@ body {
   pointer-events: none;
 }
 
-.template-ghost {
+.nail-hints-overlay {
   position: absolute;
-  width: 90px;
-  height: 90px;
-  border-radius: 20px;
-  background: rgba(255, 193, 219, 0.35);
-  border: 1px dashed rgba(244, 143, 177, 0.75);
-  color: #9c4f78;
-  display: grid;
-  place-items: center;
-  font-weight: 600;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.nail-hint-dot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+  cursor: help;
+}
+
+.nail-hint-dot::before {
+  content: '';
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f472b6, #ec4899);
+  box-shadow: 0 2px 8px rgba(236, 72, 153, 0.4), 0 0 0 3px rgba(255, 255, 255, 0.8);
+  animation: hintDotPulse 2s ease-in-out infinite;
+  transition: transform 0.2s;
+}
+
+.nail-hint-dot:hover::before {
+  opacity: 0;
+  transform: scale(0);
+  animation: none;
+}
+
+@keyframes hintDotPulse {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(236, 72, 153, 0.4), 0 0 0 3px rgba(255, 255, 255, 0.8);
+  }
+  50% {
+    box-shadow: 0 2px 12px rgba(236, 72, 153, 0.6), 0 0 0 5px rgba(255, 255, 255, 0.9);
+  }
+}
+
+.hint-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 10px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+  z-index: 100;
+}
+
+/* Position tooltip to the right for left-side nails */
+.nail-hint-dot[data-position="right"] .hint-tooltip {
+  bottom: auto;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-bottom: 0;
+  margin-left: 30px;
+}
+
+.nail-hint-dot[data-position="right"]:hover .hint-tooltip {
+  opacity: 1;
+  transform: translateY(-50%) translateX(8px);
+}
+
+/* Position tooltip to the left for right-side nails */
+.nail-hint-dot[data-position="left"] .hint-tooltip {
+  bottom: auto;
+  left: auto;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-bottom: 0;
+  margin-right: 30px;
+}
+
+.nail-hint-dot[data-position="left"]:hover .hint-tooltip {
+  opacity: 1;
+  transform: translateY(-50%) translateX(-8px);
+}
+
+/* Position tooltip at the top-right for index finger (stays visible on screen) */
+.nail-hint-dot[data-position="top"] .hint-tooltip {
+  bottom: 50%;
+  left: 100%;
+  transform: translateY(50%);
+  margin-left: 30px;
+  margin-bottom: 0;
+}
+
+.nail-hint-dot[data-position="top"]:hover .hint-tooltip {
+  opacity: 1;
+  transform: translateY(30%) translateX(8px);
+}
+
+/* Position tooltip straight above for middle finger (avoids overlap completely) */
+.nail-hint-dot[data-position="top-left"] .hint-tooltip {
+  bottom: 100%;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  margin-bottom: 35px;
+  margin-right: 0;
+}
+
+.nail-hint-dot[data-position="top-left"]:hover .hint-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-8px);
+}
+
+/* Default top position for nails without data-position */
+.nail-hint-dot:not([data-position]):hover .hint-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-5px);
+}
+
+.hint-tooltip-content {
+  background: white;
+  border: 2px solid #f472b6;
+  border-radius: 12px;
+  padding: 10px 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  min-width: 140px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.hint-tooltip-content strong {
+  display: block;
+  color: #d946b5;
+  font-size: 14px;
+  margin-bottom: 8px;
   text-transform: capitalize;
+  border-bottom: 1px solid #ffd0e5;
+  padding-bottom: 4px;
+}
+
+.hint-color {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 4px 0;
+}
+
+.color-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px #d946b5, 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.hint-sticker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 4px 0;
+}
+
+.hint-sticker img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.hint-empty {
+  color: #999;
+  font-style: italic;
+  margin-top: 4px;
 }
 
 .board-footer {
@@ -732,6 +904,7 @@ body {
   background: rgba(45, 27, 46, 0.35);
   display: grid;
   place-items: center;
+  z-index: 10000;
 }
 
 .modal {
@@ -742,6 +915,8 @@ body {
   max-width: 480px;
   border: 1px solid #ffd0e5;
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 10001;
 }
 
 .modal button {
@@ -914,12 +1089,4 @@ body {
   }
 }
 
-/* Better template ghost styling */
-.template-ghost {
-  pointer-events: none;
-  box-shadow: 0 2px 8px rgba(244, 143, 177, 0.3);
-}
-
-.template-ghost img {
-  filter: brightness(1.2);
-}
+/* Subtle template hint - shows position and approximate size without revealing the solution */
