@@ -127,7 +127,7 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
       >
         <div
           className="board-surface"
-          style={{ backgroundImage: "url('/bakground.png')" }}
+          style={{ backgroundImage: "url('/pink-sparkle-bg.jpg')" }}
           aria-hidden
         />
         <img className="board-hand" src="/hand.png" alt="Hand with nails" />
