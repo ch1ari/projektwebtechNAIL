@@ -15,6 +15,15 @@ const NAILS = [
   { id: 'pinky', shape: { cx: 409, cy: 167, rx: 22, ry: 26, rotation: 10 } }
 ];
 
+// Visual nail centers (actual centers of nail tip visuals for hint dots)
+const NAIL_VISUAL_CENTERS = {
+  thumb: { x: 229, y: 115 },
+  index: { x: 315, y: 63 },
+  middle: { x: 369, y: 57 },
+  ring: { x: 397, y: 91 },
+  pinky: { x: 409, y: 152 }
+};
+
 // Slovak nail names
 const NAIL_NAMES_SK = {
   thumb: 'Palec',
@@ -324,12 +333,15 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
                 // Find color name from palette
                 const colorName = targetColor ? app.paletteColors.find(c => c.value === targetColor)?.name : null;
 
-                // Use sticker target position if available, otherwise use nail center
-                const posX = targetSticker ? targetSticker.targetTransform.x * 100 : (nail.shape.cx / VIEWBOX.width) * 100;
-                const posY = targetSticker ? targetSticker.targetTransform.y * 100 : (nail.shape.cy / VIEWBOX.height) * 100;
+                // Use visual nail centers for hint dots
+                const center = NAIL_VISUAL_CENTERS[nail.id];
+                const posX = (center.x / VIEWBOX.width) * 100;
+                const posY = (center.y / VIEWBOX.height) * 100;
 
-                // Determine tooltip position to avoid overlap (left side nails show right, right side show left)
-                const tooltipPosition = index < 2 ? 'right' : 'left';
+                // Determine tooltip position to avoid overlap
+                // thumb & index: show tooltip to the right
+                // middle, ring, pinky: show tooltip to the left
+                const tooltipPosition = index <= 1 ? 'right' : 'left';
 
                 return (
                   <div

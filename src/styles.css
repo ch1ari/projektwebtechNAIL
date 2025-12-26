@@ -463,12 +463,12 @@ body {
   top: 50%;
   transform: translateY(-50%);
   margin-bottom: 0;
-  margin-left: 10px;
+  margin-left: 30px;
 }
 
 .nail-hint-dot[data-position="right"]:hover .hint-tooltip {
   opacity: 1;
-  transform: translateY(-50%) translateX(5px);
+  transform: translateY(-50%) translateX(8px);
 }
 
 /* Position tooltip to the left for right-side nails */
@@ -479,12 +479,12 @@ body {
   top: 50%;
   transform: translateY(-50%);
   margin-bottom: 0;
-  margin-right: 10px;
+  margin-right: 30px;
 }
 
 .nail-hint-dot[data-position="left"]:hover .hint-tooltip {
   opacity: 1;
-  transform: translateY(-50%) translateX(-5px);
+  transform: translateY(-50%) translateX(-8px);
 }
 
 /* Default top position for nails without data-position */
