@@ -77,6 +77,7 @@ const initialState = {
   lockCorrect: false,
   showStats: false,
   showCompletionModal: false,
+  showSolutionModal: false,
   status: 'idle',
   timerRunning: true,
   elapsedMs: 0,
@@ -247,6 +248,10 @@ function appReducer(state, action) {
       return { ...state, showCompletionModal: true, timerRunning: false };
     case 'hideCompletionModal':
       return { ...state, showCompletionModal: false };
+    case 'showSolutionModal':
+      return { ...state, showSolutionModal: true };
+    case 'hideSolutionModal':
+      return { ...state, showSolutionModal: false };
     case 'timer:tick':
       if (!state.timerRunning) return state;
       return { ...state, elapsedMs: state.elapsedMs + (action.deltaMs ?? 0) };
@@ -605,7 +610,7 @@ function RightPanel({ app, completionMap }) {
       <div className="control-row">
         <button onClick={() => {
           app.dispatch({ type: 'solution' });
-          alert('💡 Toto je riešenie! Teraz skús level dokončiť sám ručne. Použi tlačidlo "Reštart" a umiestni nálepky správne.');
+          app.dispatch({ type: 'showSolutionModal' });
         }}>Riešenie</button>
         <button onClick={() => app.dispatch({ type: 'nextLevel' })} disabled={!hasNext || nextLocked}>
           Ďalšia
@@ -698,6 +703,36 @@ export default function App() {
                 <button
                   className="btn-secondary"
                   onClick={() => app.dispatch({ type: 'hideCompletionModal' })}
+                >
+                  Zostať tu
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
+        {app.state.showSolutionModal ? (
+          <div className="modal-backdrop" role="dialog" aria-modal>
+            <div className="modal completion-modal">
+              <h2>💡 Toto je riešenie!</h2>
+              <p className="completion-message">
+                Pozri si, ako vyzerá správne umiestnenie nálepiek a nechty s lak na nechty.
+              </p>
+              <p className="completion-message" style={{ marginTop: '1rem', fontWeight: 600 }}>
+                Teraz skús level dokončiť <strong>sám ručne</strong>!
+              </p>
+              <div className="completion-buttons">
+                <button
+                  className="btn-primary"
+                  onClick={() => {
+                    app.dispatch({ type: 'hideSolutionModal' });
+                    app.dispatch({ type: 'restart' });
+                  }}
+                >
+                  Reštart a skúsim sám
+                </button>
+                <button
+                  className="btn-secondary"
+                  onClick={() => app.dispatch({ type: 'hideSolutionModal' })}
                 >
                   Zostať tu
                 </button>
