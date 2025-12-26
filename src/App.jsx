@@ -207,7 +207,13 @@ function appReducer(state, action) {
     case 'solution': {
       const task = tasks.find((t) => t.id === state.currentTaskId);
       const solved = (task?.targets ?? []).reduce((map, target) => {
-        map[target.stickerId] = { ...target.targetTransform, isCorrect: true };
+        map[target.stickerId] = {
+          ...target.targetTransform,
+          nailId: target.nailName,
+          boardX: target.targetTransform.x,
+          boardY: target.targetTransform.y,
+          isCorrect: true
+        };
         return map;
       }, {});
       return {
