@@ -341,13 +341,16 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
 
                 // Determine tooltip position to avoid overlap
                 // thumb: show tooltip to the right
-                // index: show tooltip at the top (to avoid overlap with middle)
-                // middle, ring, pinky: show tooltip to the left
+                // index: show tooltip at the top-right (to avoid overlap)
+                // middle: show tooltip at the top-left (to avoid overlap with dot)
+                // ring, pinky: show tooltip to the left
                 let tooltipPosition;
                 if (nail.id === 'thumb') {
                   tooltipPosition = 'right';
                 } else if (nail.id === 'index') {
                   tooltipPosition = 'top';
+                } else if (nail.id === 'middle') {
+                  tooltipPosition = 'top-left';
                 } else {
                   tooltipPosition = 'left';
                 }
