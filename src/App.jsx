@@ -552,7 +552,7 @@ function RightPanel({ app, completionMap }) {
           <li>Šablóna a duchovia sú len náhľad – nezastavia ťahanie.</li>
           <li>Reštart vymaže lak aj ozdoby, Riešenie ťa naučí správny tvar.</li>
         </ul>
-        <a href="/instructions.html" target="_blank" style={{ display: 'block', marginTop: '0.75rem', padding: '0.5rem', textAlign: 'center', background: 'linear-gradient(135deg, #d946b5, #f472b6)', color: 'white', borderRadius: '8px', textDecoration: 'none', fontWeight: 600 }}>
+        <a href="/instructions.html" target="_blank" rel="noopener noreferrer" style={{ display: 'block', marginTop: '0.75rem', padding: '0.5rem', textAlign: 'center', background: 'linear-gradient(135deg, #d946b5, #f472b6)', color: 'white', borderRadius: '8px', textDecoration: 'none', fontWeight: 600 }}>
           📖 Kompletný návod
         </a>
       </div>
@@ -592,22 +592,24 @@ function RightPanel({ app, completionMap }) {
       </div>
       <div className="control-row">
         <button onClick={() => app.dispatch({ type: 'restart' })}>Reštart</button>
-        <button onClick={() => app.dispatch({ type: 'nextLevel' })} disabled={!hasNext || nextLocked}>
-          Ďalšia
-        </button>
-      </div>
-      <div className="control-row">
-        <button onClick={() => app.dispatch({ type: 'toggleHints' })}>
-          {app.state.showHints ? 'Skryť hint' : 'Hint duch'}
-        </button>
         <button onClick={() => app.dispatch({ type: 'toggleTemplate' })}>
           {app.state.showTemplate ? 'Skryť šablónu' : 'Šablóna'}
         </button>
       </div>
       <div className="control-row">
-        <button onClick={() => app.dispatch({ type: 'solution' })}>Riešenie</button>
-        <button onClick={() => app.dispatch({ type: 'toggleLockCorrect' })}>
-          {app.state.lockCorrect ? 'Odomkni správne' : 'Lock correct'}
+        <button onClick={() => {
+          app.dispatch({ type: 'solution' });
+          // Auto-next after showing solution
+          setTimeout(() => {
+            const currentIndex = app.tasks.findIndex((task) => task.id === app.state.currentTaskId);
+            const hasNext = currentIndex >= 0 && currentIndex < app.tasks.length - 1;
+            if (hasNext) {
+              app.dispatch({ type: 'showCompletionModal' });
+            }
+          }, 1500);
+        }}>Riešenie</button>
+        <button onClick={() => app.dispatch({ type: 'nextLevel' })} disabled={!hasNext || nextLocked}>
+          Ďalšia
         </button>
       </div>
       <div className="control-row">

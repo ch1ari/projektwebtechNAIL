@@ -898,3 +898,28 @@ body {
 
 
 
+
+/* Print styles - hide game content when printing */
+@media print {
+  .app-shell {
+    display: none !important;
+  }
+  
+  body::before {
+    content: "Tento obsah nie je určený na tlač. Pre tlač návodu prejdite na stránku s návodom.";
+    display: block;
+    padding: 2rem;
+    text-align: center;
+    font-size: 1.2rem;
+  }
+}
+
+/* Better template ghost styling */
+.template-ghost {
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(244, 143, 177, 0.3);
+}
+
+.template-ghost img {
+  filter: brightness(1.2);
+}
