@@ -307,19 +307,21 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
 
           {showTemplate ? (
             <div className="template-overlay" aria-hidden style={{ pointerEvents: 'none' }}>
-              {templateTargets.map((target) => {
-                const sticker = activeTask?.stickers?.find(s => s.id === target.stickerId);
+              {templateTargets.map((target, index) => {
                 return (
                   <div
                     key={target.stickerId}
-                    className="template-ghost"
+                    className="template-hint"
                     style={{
                       left: `${target.targetTransform.x * 100}%`,
                       top: `${target.targetTransform.y * 100}%`,
-                      transform: `translate(-50%, -50%) rotate(${target.targetTransform.rotation}deg) scale(${target.targetTransform.scale})`
+                      width: `${90 * target.targetTransform.scale}px`,
+                      height: `${90 * target.targetTransform.scale}px`,
+                      transform: `translate(-50%, -50%) rotate(${target.targetTransform.rotation}deg)`,
+                      animationDelay: `${index * 0.2}s`
                     }}
                   >
-                    {sticker && <img src={sticker.img ?? sticker.src} alt={sticker.name} style={{ width: '100%', height: '100%', objectFit: 'contain', opacity: 0.5 }} />}
+                    <div className="hint-pulse" />
                   </div>
                 );
               })}
