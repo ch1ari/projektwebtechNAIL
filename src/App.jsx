@@ -815,6 +815,7 @@ export default function App() {
               <div className="completion-buttons" style={{ marginTop: '1.5rem' }}>
                 <button
                   className="btn-primary"
+                  style={{ background: 'linear-gradient(135deg, #d946b5, #f472b6)', color: 'white' }}
                   onClick={() => app.dispatch({ type: 'toggleStats' })}
                 >
                   Zavrieť
