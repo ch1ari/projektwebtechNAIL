@@ -1,3 +1,4 @@
+// Nail Art Match - Main App Component
 import React, { createContext, useEffect, useMemo, useReducer, useRef } from 'react';
 import Board from './components/Board.jsx';
 import Palette from './components/Palette.jsx';
