@@ -723,6 +723,7 @@ export default function App() {
               <div className="completion-buttons">
                 <button
                   className="btn-primary"
+                  style={{ color: '#d946b5' }}
                   onClick={() => {
                     app.dispatch({ type: 'hideSolutionModal' });
                     app.dispatch({ type: 'restart' });
@@ -732,6 +733,7 @@ export default function App() {
                 </button>
                 <button
                   className="btn-secondary"
+                  style={{ color: '#d946b5' }}
                   onClick={() => app.dispatch({ type: 'hideSolutionModal' })}
                 >
                   Zostať tu
