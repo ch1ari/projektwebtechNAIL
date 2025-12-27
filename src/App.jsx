@@ -634,10 +634,6 @@ function RightPanel({ app, completionMap, onReturnToMenu }) {
           <span className="label">Nechty</span>
           <span className="value">{nailsCorrect}/5</span>
         </div>
-        <div className="stat">
-          <span className="label">Čas</span>
-          <span className="value">{elapsedSec}s</span>
-        </div>
       </div>
 
       {/* Coverage progress bar */}

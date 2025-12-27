@@ -402,6 +402,14 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
             </div>
           </div>
         </div>
+
+        {/* Timer overlay - top right */}
+        <div className="board-timer-overlay">
+          <div className="timer-card">
+            <span className="timer-icon">⏱</span>
+            <span className="timer-value">{Math.round(app.state.elapsedMs / 1000)}s</span>
+          </div>
+        </div>
       </div>
     </div>
   );

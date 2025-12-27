@@ -685,6 +685,40 @@ body {
   font-size: 0.82rem;
 }
 
+/* Timer overlay - top right */
+.board-timer-overlay {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.timer-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 250, 253, 0.96) 100%);
+  border: 1px solid rgba(255, 208, 229, 0.5);
+  border-radius: 12px;
+  padding: 0.6rem 0.8rem;
+  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.2), 0 2px 6px rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.timer-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.timer-value {
+  color: #5a2f47;
+  font-weight: 700;
+  font-size: 1rem;
+  min-width: 40px;
+  text-align: right;
+}
+
 .palette {
   display: flex;
   flex-direction: row;
