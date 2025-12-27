@@ -22,6 +22,17 @@ export default function IntroScreen({ onPlay }) {
 
   return (
     <div className="intro-screen">
+      {/* Background layer - fullscreen animated decorations */}
+      <div className="intro-decorations">
+        <div className="deco-circle deco-1"></div>
+        <div className="deco-circle deco-2"></div>
+        <div className="deco-circle deco-3"></div>
+        <div className="deco-circle deco-4"></div>
+        <div className="deco-circle deco-5"></div>
+        <div className="deco-circle deco-6"></div>
+      </div>
+
+      {/* Content layer - centered text and button */}
       <div className="intro-content">
         <div className="intro-header">
           <h1 className="intro-title">Nail Art Match</h1>
@@ -38,12 +49,6 @@ export default function IntroScreen({ onPlay }) {
           <span className="play-button-icon">▶</span>
           <span className="play-button-text">Play</span>
         </button>
-
-        <div className="intro-decorations">
-          <div className="deco-circle deco-1"></div>
-          <div className="deco-circle deco-2"></div>
-          <div className="deco-circle deco-3"></div>
-        </div>
       </div>
     </div>
   );
