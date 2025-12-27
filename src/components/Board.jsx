@@ -396,7 +396,7 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
             <div className="info-color">
               <span className="info-label">Farba:</span>
               <div className="info-color-display">
-                <span className="color-preview" style={{ backgroundColor: nailColors.thumb ?? '#F5E6D3' }} />
+                <span className="color-preview" style={{ backgroundColor: app.state.selectedColor ?? '#f06292' }} />
                 <span className="color-name">{app.state.selectedColorName ?? 'Žiadna'}</span>
               </div>
             </div>
