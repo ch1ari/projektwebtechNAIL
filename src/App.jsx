@@ -603,13 +603,13 @@ function RightPanel({ app, completionMap, onReturnToMenu }) {
   return (
     <aside className="panel right-panel">
       <h2>Popis & návod</h2>
-      <div className="helper-card" style={{ fontSize: '0.85rem' }}>
+      <div className="helper-card">
         <ul>
           <li>Porovnaj s klientskou kartou a udrž farby aj ozdoby presne.</li>
           <li>Nápoveda a duchovia sú len náhľad – nezastavia ťahanie.</li>
           <li>Reštart vymaže lak aj ozdoby, Riešenie ťa naučí správny tvar.</li>
         </ul>
-        <a href="/instructions.html" style={{ display: 'block', marginTop: '0.75rem', padding: '0.5rem', textAlign: 'center', background: 'linear-gradient(135deg, #d946b5, #f472b6)', color: 'white', borderRadius: '8px', textDecoration: 'none', fontWeight: 600 }}>
+        <a href="/instructions.html" className="helper-guide-link">
           📖 Kompletný návod
         </a>
       </div>
