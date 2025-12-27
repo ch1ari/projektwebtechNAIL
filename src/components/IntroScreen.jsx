@@ -1,10 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 /**
  * IntroScreen - First screen shown when the app loads
  * Shows game title, subtitle, and a large Play button
+ * Temporarily disables body scrolling while visible
  */
 export default function IntroScreen({ onPlay }) {
+  // Disable scrolling on body while intro screen is visible
+  useEffect(() => {
+    // Save the original overflow value
+    const originalOverflow = document.body.style.overflow;
+
+    // Disable scrolling
+    document.body.style.overflow = 'hidden';
+
+    // Cleanup: restore scrolling when component unmounts
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, []);
+
   return (
     <div className="intro-screen">
       <div className="intro-content">
