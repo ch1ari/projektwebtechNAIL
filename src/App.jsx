@@ -391,9 +391,12 @@ function useAppState() {
   );
 }
 
-function TopBar({ app, completionMap }) {
+function TopBar({ app, completionMap, onReturnToMenu }) {
   return (
     <header className="top-bar">
+      <button className="menu-button-top" onClick={onReturnToMenu}>
+        🏠 Hlavné menu
+      </button>
       <div className="level-bar" aria-label="Level navigation">
         {app.tasks.map((task, index) => {
           const locked = index > 0 && !completionMap[app.tasks[index - 1].id];
@@ -411,8 +414,6 @@ function TopBar({ app, completionMap }) {
               aria-label={`Level ${index + 1} ${task.title} ${locked ? 'locked' : 'playable'}`}
             >
               <span className="level-index">Lv {index + 1}</span>
-              <span className="level-name">{task.title ?? task.name}</span>
-              <span className="level-meta">{task.difficulty}</span>
               <span className="level-state" aria-hidden>
                 {locked ? '🔒' : completed ? '✔' : '▶'}
               </span>
@@ -752,7 +753,7 @@ export default function App() {
         />
       ) : (
         <div className="app-shell fade-in">
-        <TopBar app={app} completionMap={completionMap} />
+        <TopBar app={app} completionMap={completionMap} onReturnToMenu={handleReturnToMenu} />
         <div className="layout">
           <div className="main-column">
             <Board
