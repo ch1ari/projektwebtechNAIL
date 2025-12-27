@@ -392,20 +392,8 @@ function useAppState() {
 }
 
 function TopBar({ app, completionMap }) {
-  const elapsedSec = Math.round(app.state.elapsedMs / 1000);
-  const totalTargets = app.currentTask?.targets?.length ?? 0;
-  const correctCount = Object.values(app.state.placements).filter((p) => p?.isCorrect).length;
-  const nailsCorrect = Object.entries(app.currentTask?.nailTargets ?? {}).filter(
-    ([key, target]) => app.state.nailColors[key] === target
-  ).length;
-  const activeColorName = app.state.selectedColorName;
-
   return (
     <header className="top-bar">
-      <div className="brand-block">
-        <div className="brand">Nail Art Match</div>
-        <div className="subtitle">Nail salon puzzle pre dievčatá</div>
-      </div>
       <div className="level-bar" aria-label="Level navigation">
         {app.tasks.map((task, index) => {
           const locked = index > 0 && !completionMap[app.tasks[index - 1].id];
@@ -431,16 +419,6 @@ function TopBar({ app, completionMap }) {
             </button>
           );
         })}
-      </div>
-      <div className="top-progress">
-        <span className="pill">{app.currentTask?.title ?? app.currentTask?.name}</span>
-        <span className="pill muted">{app.currentTask?.difficulty ?? 'easy'}</span>
-        <span className="pill">
-          ⏱ {elapsedSec}s
-        </span>
-        <span className="pill">✨ Stickers {correctCount}/{totalTargets}</span>
-        <span className="pill">🎨 Nechty {nailsCorrect}/5</span>
-        <span className="pill">🖌 {activeColorName}</span>
       </div>
     </header>
   );

@@ -35,11 +35,10 @@ body {
 }
 
 .top-bar {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 1rem;
-  padding: 1.5rem 1.5rem;
+  padding: 1rem 1.5rem;
   border-radius: 16px;
   background: linear-gradient(135deg, #ec4899 0%, #db2777 50%, #be185d 100%);
   box-shadow: 0 8px 32px rgba(236, 72, 153, 0.4),
@@ -79,7 +78,8 @@ body {
 .level-bar {
   display: flex;
   gap: 0.4rem;
-  overflow-x: auto;
+  flex-wrap: wrap;
+  justify-content: center;
   padding: 0.15rem 0;
 }
 
