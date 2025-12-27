@@ -730,8 +730,10 @@ export default function App() {
 
   return (
     <AppStateContext.Provider value={app}>
-      {showIntro && <IntroScreen onPlay={handlePlay} />}
-      <div className={`app-shell ${!showIntro ? 'fade-in' : ''}`}>
+      {showIntro ? (
+        <IntroScreen onPlay={handlePlay} />
+      ) : (
+        <div className="app-shell fade-in">
         <TopBar app={app} completionMap={completionMap} />
         <div className="layout">
           <div className="main-column">
@@ -882,7 +884,8 @@ export default function App() {
             }}
           />
         ) : null}
-      </div>
+        </div>
+      )}
     </AppStateContext.Provider>
   );
 }
