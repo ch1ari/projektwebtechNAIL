@@ -635,18 +635,25 @@ function RightPanel({ app, completionMap, onReturnToMenu }) {
           <span className="value">{nailsCorrect}/5</span>
         </div>
         <div className="stat">
-          <span className="label">Rozmiestnené</span>
-          <span className="value">{Object.keys(app.state.placements).length}</span>
-        </div>
-        <div className="stat">
           <span className="label">Čas</span>
           <span className="value">{elapsedSec}s</span>
         </div>
-        <div className="stat">
-          <span className="label">Plán pokrytia</span>
-          <span className="value">{plannedCoverage}%</span>
+      </div>
+
+      {/* Coverage progress bar */}
+      <div className="coverage-progress">
+        <div className="coverage-header">
+          <span className="coverage-label">Plán pokrytia</span>
+          <span className="coverage-value">{plannedCoverage}%</span>
+        </div>
+        <div className="coverage-bar">
+          <div
+            className="coverage-fill"
+            style={{ width: `${plannedCoverage}%` }}
+          />
         </div>
       </div>
+
       <div className="control-row">
         <button onClick={() => app.dispatch({ type: 'restart' })}>Reštart</button>
         <button onClick={() => app.dispatch({ type: 'toggleTemplate' })}>

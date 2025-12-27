@@ -955,6 +955,71 @@ body {
   color: #5a2f47;
 }
 
+/* Coverage Progress Bar */
+.coverage-progress {
+  margin-top: 0.85rem;
+  padding: 0.75rem 0.9rem;
+  background: #fff;
+  border: 1px solid #ffd0e5;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(255, 177, 209, 0.15);
+}
+
+.coverage-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.coverage-label {
+  color: #7a5a73;
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.coverage-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ec4899;
+  background: linear-gradient(135deg, #ec4899, #f472b6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.coverage-bar {
+  width: 100%;
+  height: 10px;
+  background: linear-gradient(135deg, #fef3f8 0%, #fce7f3 100%);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.coverage-fill {
+  height: 100%;
+  background: linear-gradient(135deg, #ec4899 0%, #f472b6 50%, #fb7ab9 100%);
+  border-radius: 10px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 8px rgba(236, 72, 153, 0.5);
+  position: relative;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    box-shadow: 0 0 8px rgba(236, 72, 153, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(236, 72, 153, 0.7), 0 0 20px rgba(236, 72, 153, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 8px rgba(236, 72, 153, 0.5);
+  }
+}
+
 .control-row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
