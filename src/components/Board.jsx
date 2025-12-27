@@ -410,6 +410,50 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
             <span className="timer-value">{Math.round(app.state.elapsedMs / 1000)}s</span>
           </div>
         </div>
+
+        {/* Quick actions panel - bottom right */}
+        <div className="board-actions-overlay">
+          <div className="actions-panel">
+            <button
+              className="action-icon-btn"
+              onClick={() => app.dispatch({ type: 'timer:toggle' })}
+              data-tooltip={app.state.timerRunning ? 'Pauza' : 'Pokračuj'}
+            >
+              {app.state.timerRunning ? '⏸' : '▶️'}
+            </button>
+            <button
+              className="action-icon-btn"
+              onClick={() => app.dispatch({ type: 'restart' })}
+              data-tooltip="Reštart"
+            >
+              🔄
+            </button>
+            <button
+              className="action-icon-btn"
+              onClick={() => app.dispatch({ type: 'toggleStats' })}
+              data-tooltip="Štatistiky"
+            >
+              📊
+            </button>
+            <button
+              className="action-icon-btn"
+              onClick={() => app.dispatch({ type: 'toggleTemplate' })}
+              data-tooltip={app.state.showTemplate ? 'Skryť nápovedu' : 'Nápoveda'}
+            >
+              💡
+            </button>
+            <button
+              className="action-icon-btn"
+              onClick={() => {
+                app.dispatch({ type: 'solution' });
+                app.dispatch({ type: 'showSolutionModal' });
+              }}
+              data-tooltip="Riešenie"
+            >
+              ✨
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
