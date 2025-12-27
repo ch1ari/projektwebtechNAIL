@@ -601,7 +601,7 @@ function nailHitTest(boardElement, clientX, clientY) {
   return null;
 }
 
-function RightPanel({ app, completionMap }) {
+function RightPanel({ app, completionMap, onReturnToMenu }) {
   const plannedCoverage = clamp(
     Math.round((Object.keys(app.state.placements).length / 5) * 100),
     0,
@@ -689,6 +689,15 @@ function RightPanel({ app, completionMap }) {
         </button>
         <button onClick={() => app.dispatch({ type: 'toggleStats' })}>Štatistiky</button>
       </div>
+      <div className="control-row" style={{ marginTop: '1rem' }}>
+        <button
+          className="menu-button"
+          onClick={onReturnToMenu}
+          style={{ width: '100%' }}
+        >
+          🏠 Hlavné menu
+        </button>
+      </div>
     </aside>
   );
 }
@@ -699,6 +708,14 @@ export default function App() {
   // Check if user has seen intro before - only show on first visit
   const hasSeenIntro = window.localStorage.getItem('nail-art-intro-seen') === 'true';
   const [showIntro, setShowIntro] = useState(!hasSeenIntro);
+
+  // Check if there's saved game progress
+  const hasProgress = useMemo(() => {
+    const gameState = window.localStorage.getItem('nail-art-game-state');
+    const stats = window.localStorage.getItem('nail-art-stats');
+    return !!(gameState || stats);
+  }, []);
+
   const completionMap = useMemo(
     () =>
       app.tasks.reduce((acc, task) => {
@@ -732,10 +749,29 @@ export default function App() {
     setShowIntro(false);
   };
 
+  const handleNewGame = () => {
+    // Clear all saved progress
+    window.localStorage.removeItem('nail-art-game-state');
+    window.localStorage.removeItem('nail-art-stats');
+    window.localStorage.removeItem('nail-art-queue');
+    window.localStorage.setItem('nail-art-intro-seen', 'true');
+    // Reload page to start fresh
+    window.location.reload();
+  };
+
+  const handleReturnToMenu = () => {
+    // Show intro screen again
+    setShowIntro(true);
+  };
+
   return (
     <AppStateContext.Provider value={app}>
       {showIntro ? (
-        <IntroScreen onPlay={handlePlay} />
+        <IntroScreen
+          onPlay={handlePlay}
+          onNewGame={handleNewGame}
+          hasProgress={hasProgress}
+        />
       ) : (
         <div className="app-shell fade-in">
         <TopBar app={app} completionMap={completionMap} />
@@ -748,7 +784,7 @@ export default function App() {
             />
             <Toolbelt app={app} boardRef={boardRef} />
           </div>
-          <RightPanel app={app} completionMap={completionMap} />
+          <RightPanel app={app} completionMap={completionMap} onReturnToMenu={handleReturnToMenu} />
         </div>
         {app.state.showCompletionModal ? (
           <div className="modal-backdrop" role="dialog" aria-modal>

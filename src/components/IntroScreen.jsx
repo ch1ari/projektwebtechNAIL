@@ -2,10 +2,11 @@ import React, { useEffect } from 'react';
 
 /**
  * IntroScreen - First screen shown when the app loads
- * Shows game title, subtitle, and a large Play button
+ * Shows game title, subtitle, and Play button(s)
+ * If user has saved progress, shows both "New Game" and "Continue" options
  * Temporarily disables body scrolling while visible
  */
-export default function IntroScreen({ onPlay }) {
+export default function IntroScreen({ onPlay, onNewGame, hasProgress }) {
   // Disable scrolling on body while intro screen is visible
   useEffect(() => {
     // Save the original overflow value
@@ -41,14 +42,35 @@ export default function IntroScreen({ onPlay }) {
           </p>
         </div>
 
-        <button
-          className="intro-play-button"
-          onClick={onPlay}
-          aria-label="Start playing Nail Art Match"
-        >
-          <span className="play-button-icon">▶</span>
-          <span className="play-button-text">Play</span>
-        </button>
+        {hasProgress ? (
+          <div className="intro-buttons-group">
+            <button
+              className="intro-play-button intro-continue-button"
+              onClick={onPlay}
+              aria-label="Continue game with saved progress"
+            >
+              <span className="play-button-icon">▶</span>
+              <span className="play-button-text">Pokračovať</span>
+            </button>
+            <button
+              className="intro-play-button intro-new-game-button"
+              onClick={onNewGame}
+              aria-label="Start new game from beginning"
+            >
+              <span className="play-button-icon">↻</span>
+              <span className="play-button-text">Nová hra</span>
+            </button>
+          </div>
+        ) : (
+          <button
+            className="intro-play-button"
+            onClick={onPlay}
+            aria-label="Start playing Nail Art Match"
+          >
+            <span className="play-button-icon">▶</span>
+            <span className="play-button-text">Play</span>
+          </button>
+        )}
       </div>
     </div>
   );
