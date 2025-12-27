@@ -698,12 +698,12 @@ body {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 250, 253, 0.96) 100%);
   border: 1px solid rgba(255, 208, 229, 0.5);
   border-radius: 12px;
-  padding: 0.6rem 0.8rem;
+  padding: 0.5rem 0.7rem;
   box-shadow: 0 6px 20px rgba(236, 72, 153, 0.2), 0 2px 6px rgba(0, 0, 0, 0.04);
   backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.3rem;
 }
 
 .timer-icon {
