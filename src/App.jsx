@@ -1,7 +1,8 @@
 // Nail Art Match - Main App Component
-import React, { createContext, useEffect, useMemo, useReducer, useRef } from 'react';
+import React, { createContext, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import Board from './components/Board.jsx';
 import Palette from './components/Palette.jsx';
+import IntroScreen from './components/IntroScreen.jsx';
 import tasks from './data/tasks.json';
 import { clamp, rotationDeltaDegrees } from './lib/geometry.js';
 
@@ -63,10 +64,31 @@ const loadStats = () => {
   return {};
 };
 
+// Load saved game state from localStorage
+const loadGameState = () => {
+  const stored = window.localStorage.getItem('nail-art-game-state');
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      // Validate that the saved state has the expected structure
+      if (parsed && typeof parsed === 'object') {
+        return parsed;
+      }
+    } catch (err) {
+      // If parsing fails, return null to use default initial state
+      return null;
+    }
+  }
+  return null;
+};
+
 // Always start with natural nail color
 const initialTaskColors = DEFAULT_NAIL_COLORS;
 
-const initialState = {
+// Try to load saved game state, otherwise use defaults
+const savedGameState = loadGameState();
+
+const initialState = savedGameState || {
   currentTaskId: firstTaskId,
   placements: {},
   selectedColor: paletteColors[0].value,
@@ -335,6 +357,26 @@ function useAppState() {
   useEffect(() => {
     window.localStorage.setItem('nail-art-stats', JSON.stringify(state.stats));
   }, [state.stats]);
+
+  // Persist full game state to localStorage (excluding transient UI states)
+  useEffect(() => {
+    const stateToPersist = {
+      currentTaskId: state.currentTaskId,
+      placements: state.placements,
+      selectedColor: state.selectedColor,
+      selectedColorName: state.selectedColorName,
+      nailColors: state.nailColors,
+      activeToolTab: state.activeToolTab,
+      showHints: state.showHints,
+      showTemplate: state.showTemplate,
+      lockCorrect: state.lockCorrect,
+      elapsedMs: state.elapsedMs,
+      queue: state.queue,
+      stats: state.stats,
+      // Don't persist: showStats, showCompletionModal, showSolutionModal, status, timerRunning, dragState
+    };
+    window.localStorage.setItem('nail-art-game-state', JSON.stringify(stateToPersist));
+  }, [state]);
 
   useEffect(() => {
     const handle = setInterval(() => {
@@ -654,6 +696,7 @@ function RightPanel({ app, completionMap }) {
 export default function App() {
   const app = useAppState();
   const boardRef = useRef(null);
+  const [showIntro, setShowIntro] = useState(true);
   const completionMap = useMemo(
     () =>
       app.tasks.reduce((acc, task) => {
@@ -681,9 +724,14 @@ export default function App() {
     }
   }, [app.currentTask, app.state.placements, app.state.nailColors, app.state.stats, app.state.elapsedMs, app.state.status, app.dispatch]);
 
+  const handlePlay = () => {
+    setShowIntro(false);
+  };
+
   return (
     <AppStateContext.Provider value={app}>
-      <div className="app-shell">
+      {showIntro && <IntroScreen onPlay={handlePlay} />}
+      <div className={`app-shell ${!showIntro ? 'fade-in' : ''}`}>
         <TopBar app={app} completionMap={completionMap} />
         <div className="layout">
           <div className="main-column">
