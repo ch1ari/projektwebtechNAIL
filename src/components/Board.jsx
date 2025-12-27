@@ -385,11 +385,22 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
             </div>
           ) : null}
         </div>
-      </div>
-      <div className="board-footer">
-        <div className="tag">Aktívny level: {activeTask?.title ?? activeTask?.name ?? 'none'}</div>
-        <div className="tag tone" style={{ backgroundColor: nailColors.thumb ?? '#F5E6D3' }}>
-          Vybraná farba
+
+        {/* Level and color info overlay */}
+        <div className="board-info-overlay">
+          <div className="info-card">
+            <div className="info-level">
+              <span className="info-label">Level:</span>
+              <span className="info-value">{activeTask?.title ?? activeTask?.name ?? 'none'}</span>
+            </div>
+            <div className="info-color">
+              <span className="info-label">Farba:</span>
+              <div className="info-color-display">
+                <span className="color-preview" style={{ backgroundColor: nailColors.thumb ?? '#F5E6D3' }} />
+                <span className="color-name">{app.state.selectedColorName ?? 'Žiadna'}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
