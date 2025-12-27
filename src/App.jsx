@@ -603,7 +603,7 @@ function RightPanel({ app, completionMap, onReturnToMenu }) {
   return (
     <aside className="panel right-panel">
       <h2>Popis & návod</h2>
-      <div className="helper-card">
+      <div className="helper-card" style={{ fontSize: '0.85rem' }}>
         <ul>
           <li>Porovnaj s klientskou kartou a udrž farby aj ozdoby presne.</li>
           <li>Nápoveda a duchovia sú len náhľad – nezastavia ťahanie.</li>
@@ -667,15 +667,6 @@ function RightPanel({ app, completionMap, onReturnToMenu }) {
           {app.state.timerRunning ? 'Pauza' : 'Pokračuj'}
         </button>
         <button onClick={() => app.dispatch({ type: 'toggleStats' })}>Štatistiky</button>
-      </div>
-      <div className="control-row" style={{ marginTop: '1rem' }}>
-        <button
-          className="menu-button"
-          onClick={onReturnToMenu}
-          style={{ width: '100%' }}
-        >
-          🏠 Hlavné menu
-        </button>
       </div>
     </aside>
   );
