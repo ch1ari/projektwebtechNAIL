@@ -144,48 +144,48 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
 
             {/* Thumb - angled from bottom-right to top-left */}
             <linearGradient id="thumb-gradient" x1="85%" y1="95%" x2="20%" y2="10%">
-              <stop offset="0%" stopColor="rgba(0,0,0,0.5)" />
+              <stop offset="0%" stopColor="rgba(0,0,0,0.15)" />
               <stop offset="35%" stopColor="rgba(0,0,0,0)" />
-              <stop offset="65%" stopColor="rgba(255,255,255,0.2)" />
-              <stop offset="100%" stopColor="rgba(255,255,255,0.6)" />
+              <stop offset="65%" stopColor="rgba(255,255,255,0.1)" />
+              <stop offset="100%" stopColor="rgba(255,255,255,0.25)" />
             </linearGradient>
 
             {/* Index - from bottom to top, slightly angled right */}
             <linearGradient id="index-gradient" x1="40%" y1="100%" x2="50%" y2="0%">
-              <stop offset="0%" stopColor="rgba(0,0,0,0.5)" />
+              <stop offset="0%" stopColor="rgba(0,0,0,0.15)" />
               <stop offset="30%" stopColor="rgba(0,0,0,0)" />
-              <stop offset="65%" stopColor="rgba(255,255,255,0.2)" />
-              <stop offset="100%" stopColor="rgba(255,255,255,0.6)" />
+              <stop offset="65%" stopColor="rgba(255,255,255,0.1)" />
+              <stop offset="100%" stopColor="rgba(255,255,255,0.25)" />
             </linearGradient>
 
             {/* Middle - straight from bottom to top */}
             <linearGradient id="middle-gradient" x1="50%" y1="100%" x2="50%" y2="0%">
-              <stop offset="0%" stopColor="rgba(0,0,0,0.5)" />
+              <stop offset="0%" stopColor="rgba(0,0,0,0.15)" />
               <stop offset="30%" stopColor="rgba(0,0,0,0)" />
-              <stop offset="65%" stopColor="rgba(255,255,255,0.2)" />
-              <stop offset="100%" stopColor="rgba(255,255,255,0.6)" />
+              <stop offset="65%" stopColor="rgba(255,255,255,0.1)" />
+              <stop offset="100%" stopColor="rgba(255,255,255,0.25)" />
             </linearGradient>
 
             {/* Ring - from bottom-left to top-right */}
             <linearGradient id="ring-gradient" x1="35%" y1="100%" x2="60%" y2="0%">
-              <stop offset="0%" stopColor="rgba(0,0,0,0.5)" />
+              <stop offset="0%" stopColor="rgba(0,0,0,0.15)" />
               <stop offset="30%" stopColor="rgba(0,0,0,0)" />
-              <stop offset="65%" stopColor="rgba(255,255,255,0.2)" />
-              <stop offset="100%" stopColor="rgba(255,255,255,0.6)" />
+              <stop offset="65%" stopColor="rgba(255,255,255,0.1)" />
+              <stop offset="100%" stopColor="rgba(255,255,255,0.25)" />
             </linearGradient>
 
             {/* Pinky - angled from bottom-left to top-right */}
             <linearGradient id="pinky-gradient" x1="30%" y1="100%" x2="65%" y2="0%">
-              <stop offset="0%" stopColor="rgba(0,0,0,0.5)" />
+              <stop offset="0%" stopColor="rgba(0,0,0,0.15)" />
               <stop offset="35%" stopColor="rgba(0,0,0,0)" />
-              <stop offset="65%" stopColor="rgba(255,255,255,0.2)" />
-              <stop offset="100%" stopColor="rgba(255,255,255,0.6)" />
+              <stop offset="65%" stopColor="rgba(255,255,255,0.1)" />
+              <stop offset="100%" stopColor="rgba(255,255,255,0.25)" />
             </linearGradient>
 
-            {/* Strong glossy shine - visible on all colors */}
+            {/* Subtle glossy shine - visible on all colors */}
             <radialGradient id="nail-shine" cx="40%" cy="20%">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.7)" />
-              <stop offset="40%" stopColor="rgba(255,255,255,0.2)" />
+              <stop offset="0%" stopColor="rgba(255,255,255,0.35)" />
+              <stop offset="40%" stopColor="rgba(255,255,255,0.1)" />
               <stop offset="100%" stopColor="rgba(255,255,255,0)" />
             </radialGradient>
 
