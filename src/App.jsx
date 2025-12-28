@@ -120,12 +120,6 @@ const initialState = {
   activeToolTab: null
 };
 
-const initialState = {
-  ...defaultState,
-  ...(savedGameState || {}),
-  activeToolTab: null
-};
-
 function taskTargets(task) {
   return task?.targets ?? [];
 }
