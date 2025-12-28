@@ -408,6 +408,20 @@ function useAppState() {
     [state.currentTaskId]
   );
 
+  // Initialize attempts for current task on first load
+  useEffect(() => {
+    if (state.currentTaskId) {
+      const currentStats = state.stats?.[state.currentTaskId] ?? {};
+      if (currentStats.attempts === undefined || currentStats.attempts === 0) {
+        dispatch({
+          type: 'stats:update',
+          taskId: state.currentTaskId,
+          payload: { attempts: 1 }
+        });
+      }
+    }
+  }, [state.currentTaskId]);
+
   useEffect(() => {
     window.localStorage.setItem('nail-art-queue', JSON.stringify(state.queue));
   }, [state.queue]);
@@ -819,6 +833,10 @@ export default function App() {
     // Mark intro as seen and hide it
     window.localStorage.setItem('nail-art-intro-seen', 'true');
     setShowIntro(false);
+    // Resume timer when starting to play
+    if (!app.state.timerRunning) {
+      app.dispatch({ type: 'timer:toggle' });
+    }
   };
 
   const handleNewGame = () => {
@@ -832,8 +850,12 @@ export default function App() {
   };
 
   const handleReturnToMenu = () => {
-    // Show intro screen again
+    // Show intro screen again and pause timer
     setShowIntro(true);
+    // Pause timer when returning to menu
+    if (app.state.timerRunning) {
+      app.dispatch({ type: 'timer:toggle' });
+    }
   };
 
   return (
