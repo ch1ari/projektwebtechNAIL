@@ -8,7 +8,7 @@ import { clamp, rotationDeltaDegrees } from './lib/geometry.js';
 
 export const AppStateContext = createContext();
 
-// Natural nail color - default for all nails
+// Natural nail color default for all nails
 const NATURAL_NAIL_COLOR = '#F5E6D3';
 const DEFAULT_NAIL_COLORS = {
   thumb: NATURAL_NAIL_COLOR,
