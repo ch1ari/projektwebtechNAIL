@@ -350,6 +350,8 @@ function appReducer(state, action) {
       return { ...state, elapsedMs: state.elapsedMs + (action.deltaMs ?? 0) };
     case 'timer:toggle':
       return { ...state, timerRunning: !state.timerRunning };
+    case 'timer:reset':
+      return { ...state, elapsedMs: 0, timerRunning: true };
     case 'stats:update': {
       const { taskId, payload } = action;
       const currentStats = state.stats?.[taskId] ?? {};
@@ -833,10 +835,8 @@ export default function App() {
     // Mark intro as seen and hide it
     window.localStorage.setItem('nail-art-intro-seen', 'true');
     setShowIntro(false);
-    // Resume timer when starting to play
-    if (!app.state.timerRunning) {
-      app.dispatch({ type: 'timer:toggle' });
-    }
+    // Reset timer when starting to play from menu
+    app.dispatch({ type: 'timer:reset' });
   };
 
   const handleNewGame = () => {
