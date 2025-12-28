@@ -1706,13 +1706,177 @@ body {
   .app-shell {
     display: none !important;
   }
-  
+
   body::before {
     content: "Tento obsah nie je určený na tlač. Pre tlač návodu prejdite na stránku s návodom.";
     display: block;
     padding: 2rem;
     text-align: center;
     font-size: 1.2rem;
+  }
+}
+
+/* Mobile optimizations - keep game compact */
+@media (max-width: 768px) {
+  /* Keep app compact */
+  .app-shell {
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  /* Make board smaller to fit with toolbelt */
+  .board {
+    max-height: 45vh;
+    min-height: 300px;
+    width: 100%;
+  }
+
+  /* Make overlays smaller and less intrusive */
+  .board-info-overlay {
+    top: 0.25rem;
+    left: 0.25rem;
+    transform: scale(0.85);
+    transform-origin: top left;
+  }
+
+  .info-card {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .info-level,
+  .info-color {
+    gap: 0.25rem;
+  }
+
+  /* Smaller timer */
+  .board-timer-overlay {
+    top: 0.25rem;
+    right: 0.25rem;
+    transform: scale(0.85);
+    transform-origin: top right;
+  }
+
+  .timer-card {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .timer-icon {
+    font-size: 0.85rem;
+  }
+
+  /* Compact actions panel */
+  .board-actions-overlay {
+    bottom: 0.25rem;
+    right: 0.25rem;
+  }
+
+  .actions-panel {
+    padding: 0.25rem;
+    gap: 0.25rem;
+    flex-direction: column;
+  }
+
+  .action-icon-btn {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 0.85rem;
+  }
+
+  /* Make toolbelt more compact */
+  .toolbelt {
+    margin-top: 0;
+  }
+
+  .tool-strip {
+    max-height: 35vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Smaller color swatches on mobile */
+  .color-shelf {
+    gap: 0.4rem;
+    padding: 0.5rem;
+  }
+
+  .swatch.nail-chip {
+    width: 2.25rem;
+    height: 2.75rem;
+  }
+
+  .nail-cap {
+    width: 1.5rem;
+    height: 1rem;
+  }
+
+  .nail-bed {
+    width: 1.75rem;
+    height: 1.5rem;
+  }
+
+  /* Compact sticker palette */
+  .palette-row {
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+
+  .palette-item {
+    padding: 0.35rem;
+    min-width: auto;
+  }
+
+  .sticker.from-palette img {
+    max-width: 2.5rem;
+    max-height: 2.5rem;
+  }
+
+  .palette-meta {
+    font-size: 0.7rem;
+  }
+
+  /* Smaller right panel */
+  .right-panel {
+    padding: 0.75rem;
+  }
+
+  .right-panel h2 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .helper-card,
+  .client-brief {
+    font-size: 0.8rem;
+    padding: 0.6rem;
+  }
+}
+
+/* Very small mobile screens */
+@media (max-width: 480px) {
+  .board {
+    max-height: 45vh;
+  }
+
+  .tool-strip {
+    max-height: 25vh;
+  }
+
+  .info-card {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.6rem;
+  }
+
+  .timer-card {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.6rem;
+  }
+
+  .action-icon-btn {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 0.9rem;
   }
 }
 
