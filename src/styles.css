@@ -127,7 +127,7 @@ body {
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 0.75rem;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.92);
   border: 1px solid #ffd0e5;
   border-radius: 12px;
   cursor: pointer;
@@ -136,6 +136,8 @@ body {
   transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
   white-space: nowrap;
   flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
 }
 
 .level-chip .level-index {
@@ -149,9 +151,25 @@ body {
 }
 
 .level-chip.active {
+  background: linear-gradient(135deg, #fce7f3, #f9a8d4, #f472b6);
+  color: #5a103c;
   border-color: #f06292;
-  box-shadow: 0 12px 32px rgba(240, 98, 146, 0.25);
-  transform: translateY(-1px);
+  box-shadow: 0 14px 36px rgba(240, 98, 146, 0.35), 0 0 0 4px rgba(240, 98, 146, 0.12);
+  transform: translateY(-2px);
+}
+
+.level-chip.active::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.25), transparent 45%),
+              radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.22), transparent 45%);
+  pointer-events: none;
+}
+
+.level-chip.active .level-index,
+.level-chip.active .level-state {
+  color: #5a103c;
 }
 
 .level-chip.completed {
