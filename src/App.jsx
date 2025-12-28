@@ -36,20 +36,23 @@ const paletteColors = [
 const firstTaskId = tasks[0]?.id ?? null;
 
 const loadQueue = () => {
+  const defaultQueue = tasks.map((task) => task.id);
   const stored = window.localStorage.getItem('nail-art-queue');
-  const validIds = new Set(tasks.map((task) => task.id));
-  if (stored) {
-    try {
-      const parsed = JSON.parse(stored);
-      const filtered = Array.isArray(parsed)
-        ? parsed.filter((id) => validIds.has(id))
-        : null;
-      if (filtered && filtered.length) return filtered;
-    } catch (err) {
-      return tasks.map((task) => task.id);
-    }
+  const validIds = new Set(defaultQueue);
+
+  if (!stored) return defaultQueue;
+
+  try {
+    const parsed = JSON.parse(stored);
+    if (!Array.isArray(parsed)) return defaultQueue;
+
+    const filtered = parsed.filter((id) => validIds.has(id));
+    const hasAll = defaultQueue.every((id) => filtered.includes(id));
+
+    return hasAll ? filtered : defaultQueue;
+  } catch (err) {
+    return defaultQueue;
   }
-  return tasks.map((task) => task.id);
 };
 
 const loadStats = () => {
@@ -100,13 +103,15 @@ const defaultState = {
   lockCorrect: false,
   showStats: false,
   showCompletionModal: false,
+  showGameCompleteModal: false,
   showSolutionModal: false,
   status: 'idle',
   timerRunning: true,
   elapsedMs: 0,
   queue: loadQueue(),
   stats: loadStats(),
-  dragState: null
+  dragState: null,
+  savedProgress: {}
 };
 
 const initialState = {
@@ -160,6 +165,23 @@ function appReducer(state, action) {
     case 'setTask': {
       const nextTask = tasks.find((task) => task.id === action.payload) ?? null;
       const taskId = nextTask?.id;
+      const prevTaskId = state.currentTaskId;
+      const progressSnapshot = prevTaskId
+        ? {
+            ...state.savedProgress,
+            [prevTaskId]: {
+              placements: state.placements,
+              nailColors: state.nailColors,
+              elapsedMs: state.elapsedMs,
+              selectedColor: state.selectedColor,
+              selectedColorName: state.selectedColorName
+            }
+          }
+        : state.savedProgress;
+      const restored = taskId && progressSnapshot[taskId] ? progressSnapshot[taskId] : null;
+      const selectedIndex = tasks.findIndex((task) => task.id === taskId);
+      const nextQueue =
+        selectedIndex >= 0 ? tasks.slice(selectedIndex).map((task) => task.id) : loadQueue();
       // Increment attempts when starting a new task
       const currentStats = state.stats?.[taskId] ?? {};
       const updatedStats = taskId ? {
@@ -175,16 +197,18 @@ function appReducer(state, action) {
         currentTaskId: taskId ?? null,
         placements: {},
         nailColors: DEFAULT_NAIL_COLORS,
-        selectedColor: paletteColors[0].value,
-        selectedColorName: paletteColors[0].name,
+        selectedColor: restored?.selectedColor ?? paletteColors[0].value,
+        selectedColorName: restored?.selectedColorName ?? paletteColors[0].name,
         activeToolTab: null,
         showHints: false,
         showTemplate: false,
         lockCorrect: false,
         timerRunning: true,
-        elapsedMs: 0,
+        elapsedMs: restored?.elapsedMs ?? 0,
         status: 'task:selected',
-        stats: updatedStats
+        stats: updatedStats,
+        queue: nextQueue,
+        savedProgress: progressSnapshot
       };
     }
     case 'setColor': {
@@ -231,6 +255,10 @@ function appReducer(state, action) {
       return { ...state, lockCorrect: !state.lockCorrect };
     case 'restart': {
       const task = tasks.find((t) => t.id === state.currentTaskId);
+      const updatedSaved = { ...state.savedProgress };
+      if (state.currentTaskId) {
+        delete updatedSaved[state.currentTaskId];
+      }
       return {
         ...state,
         placements: {},
@@ -243,6 +271,8 @@ function appReducer(state, action) {
         showHints: false,
         showTemplate: false,
         lockCorrect: false,
+        showGameCompleteModal: false,
+        savedProgress: updatedSaved,
         status: 'restart'
       };
     }
@@ -266,19 +296,37 @@ function appReducer(state, action) {
       };
     }
     case 'nextLevel': {
+      const prevTaskId = state.currentTaskId;
+      const savedProgress = prevTaskId
+        ? {
+            ...state.savedProgress,
+            [prevTaskId]: {
+              placements: state.placements,
+              nailColors: state.nailColors,
+              elapsedMs: state.elapsedMs,
+              selectedColor: state.selectedColor,
+              selectedColorName: state.selectedColorName
+            }
+          }
+        : state.savedProgress;
+
       const queue = state.queue.length ? state.queue.slice(1) : loadQueue();
-      const nextId = queue[0] ?? tasks[0]?.id;
+      const fallbackQueue = loadQueue();
+      const nextId = queue[0] ?? fallbackQueue[0] ?? tasks[0]?.id;
+      const normalizedQueue = queue.length ? queue : fallbackQueue;
+      const restored = nextId && savedProgress[nextId] ? savedProgress[nextId] : null;
       return {
         ...state,
-        queue,
+        queue: normalizedQueue,
         currentTaskId: nextId,
-        placements: {},
-        nailColors: DEFAULT_NAIL_COLORS,
-        selectedColor: paletteColors[0].value,
-        selectedColorName: paletteColors[0].name,
+        placements: restored?.placements ?? {},
+        nailColors: restored?.nailColors ?? DEFAULT_NAIL_COLORS,
+        selectedColor: restored?.selectedColor ?? paletteColors[0].value,
+        selectedColorName: restored?.selectedColorName ?? paletteColors[0].name,
         activeToolTab: null,
-        elapsedMs: 0,
-        timerRunning: true
+        elapsedMs: restored?.elapsedMs ?? 0,
+        timerRunning: true,
+        savedProgress
       };
     }
     case 'queue:update':
@@ -289,6 +337,10 @@ function appReducer(state, action) {
       return { ...state, showCompletionModal: true, timerRunning: false };
     case 'hideCompletionModal':
       return { ...state, showCompletionModal: false };
+    case 'showGameCompleteModal':
+      return { ...state, showGameCompleteModal: true, timerRunning: false };
+    case 'hideGameCompleteModal':
+      return { ...state, showGameCompleteModal: false };
     case 'showSolutionModal':
       return { ...state, showSolutionModal: true };
     case 'hideSolutionModal':
@@ -379,6 +431,7 @@ function useAppState() {
       elapsedMs: state.elapsedMs,
       queue: state.queue,
       stats: state.stats,
+      savedProgress: state.savedProgress,
       // Don't persist: showStats, showCompletionModal, showSolutionModal, status, timerRunning, dragState
     };
     window.localStorage.setItem('nail-art-game-state', JSON.stringify(stateToPersist));
@@ -606,18 +659,22 @@ function nailHitTest(boardElement, clientX, clientY) {
 }
 
 function RightPanel({ app, completionMap, onReturnToMenu }) {
+  const correctCount = Object.values(app.state.placements).filter((p) => p?.isCorrect).length;
+  const totalTargets = app.currentTask?.targets?.length ?? 0;
+  const nailsCorrect = Object.entries(app.currentTask?.nailTargets ?? {}).filter(
+    ([key, target]) => app.state.nailColors[key] === target
+  ).length;
+  const totalNailTargets = Object.keys(app.currentTask?.nailTargets ?? {}).length || 0;
+
+  const achieved = correctCount + nailsCorrect;
+  const required = totalTargets + totalNailTargets;
   const plannedCoverage = clamp(
-    Math.round((Object.keys(app.state.placements).length / 5) * 100),
+    required > 0 ? Math.round((achieved / required) * 100) : 0,
     0,
     100
   );
 
-  const correctCount = Object.values(app.state.placements).filter((p) => p?.isCorrect).length;
-  const totalTargets = app.currentTask?.targets?.length ?? 0;
   const elapsedSec = Math.round(app.state.elapsedMs / 1000);
-  const nailsCorrect = Object.entries(app.currentTask?.nailTargets ?? {}).filter(
-    ([key, target]) => app.state.nailColors[key] === target
-  ).length;
 
   const requirements = app.currentTask?.clientRequirements ?? [];
   const currentIndex = app.tasks.findIndex((task) => task.id === app.state.currentTaskId);
@@ -701,10 +758,29 @@ export default function App() {
     [app.state.stats, app.tasks]
   );
 
+  const bestTotalTimeMs = useMemo(
+    () =>
+      app.tasks.reduce((sum, task) => {
+        const best = app.state.stats?.[task.id]?.bestTime;
+        return best ? sum + best : sum;
+      }, 0),
+    [app.state.stats, app.tasks]
+  );
+
   useEffect(() => {
     if (!app.currentTask) return;
     const done = isTaskComplete(app.currentTask, app.state.placements, app.state.nailColors);
     const alreadyDone = app.state.stats?.[app.currentTask.id]?.completed;
+    const futureStats = {
+      ...app.state.stats,
+      [app.currentTask.id]: {
+        ...(app.state.stats?.[app.currentTask.id] ?? {}),
+        completed: true,
+        completedAt: Date.now(),
+        timeMs: app.state.elapsedMs
+      }
+    };
+    const allLevelsCompleted = app.tasks.every((task) => futureStats?.[task.id]?.completed);
     // Don't show completion modal if user clicked "Riešenie" button
     if (done && !alreadyDone && app.state.status !== 'solved') {
       app.dispatch({
@@ -712,9 +788,13 @@ export default function App() {
         taskId: app.currentTask.id,
         payload: { ...(app.state.stats?.[app.currentTask.id] ?? {}), completed: true, completedAt: Date.now(), timeMs: app.state.elapsedMs }
       });
-      // Show completion modal
+      // Show completion modal or final game modal
       setTimeout(() => {
-        app.dispatch({ type: 'showCompletionModal' });
+        if (allLevelsCompleted) {
+          app.dispatch({ type: 'showGameCompleteModal' });
+        } else {
+          app.dispatch({ type: 'showCompletionModal' });
+        }
       }, 500);
     }
   }, [app.currentTask, app.state.placements, app.state.nailColors, app.state.stats, app.state.elapsedMs, app.state.status, app.dispatch]);
@@ -797,6 +877,42 @@ export default function App() {
                   onClick={() => app.dispatch({ type: 'hideCompletionModal' })}
                 >
                   Zostať tu
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
+        {app.state.showGameCompleteModal ? (
+          <div className="modal-backdrop" role="dialog" aria-modal>
+            <div className="modal completion-modal game-complete-modal">
+              <h2>🌟 Výborná práca!</h2>
+              <p className="completion-message">
+                Prešla si všetky úrovne. Chceš si dať ďalšie kolo alebo skúšať ďalej?
+              </p>
+              <div className="completion-stats final">
+                <div className="stat">
+                  <span className="label">Hotovo</span>
+                  <span className="value">{app.tasks.length}/{app.tasks.length}</span>
+                </div>
+                <div className="stat">
+                  <span className="label">Čas spolu</span>
+                  <span className="value">
+                    {bestTotalTimeMs ? `${Math.round(bestTotalTimeMs / 1000)}s` : '—'}
+                  </span>
+                </div>
+              </div>
+              <div className="completion-buttons">
+                <button
+                  className="btn-primary"
+                  onClick={handleNewGame}
+                >
+                  Reštartovať hru
+                </button>
+                <button
+                  className="btn-secondary"
+                  onClick={() => app.dispatch({ type: 'hideGameCompleteModal' })}
+                >
+                  Pokračovať v hre
                 </button>
               </div>
             </div>
