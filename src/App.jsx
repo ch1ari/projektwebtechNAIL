@@ -756,6 +756,7 @@ export default function App() {
             <Board
               ref={boardRef}
               app={app}
+              completionMap={completionMap}
               stickers={app.currentTask?.stickers ?? []}
             />
             <Toolbelt app={app} boardRef={boardRef} />
