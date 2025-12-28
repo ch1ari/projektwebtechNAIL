@@ -813,45 +813,76 @@ export default function App() {
             <div className="modal stats-modal">
               <h2>📊 Štatistiky</h2>
               <p className="completion-message">Tvoje výsledky pre všetky levely</p>
-              <div className="stats-table" style={{ maxHeight: '400px', overflowY: 'auto', marginTop: '1rem' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead style={{ position: 'sticky', top: 0, background: 'white' }}>
-                    <tr style={{ borderBottom: '2px solid #f472b6', textAlign: 'left' }}>
-                      <th style={{ padding: '0.75rem', color: '#d946b5' }}>Level</th>
-                      <th style={{ padding: '0.75rem', color: '#d946b5', textAlign: 'center' }}>Pokusy</th>
-                      <th style={{ padding: '0.75rem', color: '#d946b5', textAlign: 'center' }}>Najrýchlejší</th>
-                      <th style={{ padding: '0.75rem', color: '#d946b5', textAlign: 'center' }}>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {app.tasks.map((task) => {
-                      const stats = app.state.stats?.[task.id] ?? {};
-                      const attempts = stats.attempts ?? 0;
-                      const bestTime = stats.bestTime ? Math.round(stats.bestTime / 1000) : null;
-                      const completed = stats.completed ?? false;
+              <div className="stats-cards-container">
+                {app.tasks.map((task, index) => {
+                  const stats = app.state.stats?.[task.id] ?? {};
+                  const attempts = stats.attempts ?? 0;
+                  const bestTime = stats.bestTime ? Math.round(stats.bestTime / 1000) : null;
+                  const completed = stats.completed ?? false;
 
-                      return (
-                        <tr key={task.id} style={{ borderBottom: '1px solid #ffd0e5' }}>
-                          <td style={{ padding: '0.75rem' }}>
-                            <div style={{ fontWeight: 500 }}>{task.title}</div>
-                            <div style={{ fontSize: '0.85rem', color: '#999', textTransform: 'capitalize' }}>
-                              {task.difficulty}
-                            </div>
-                          </td>
-                          <td style={{ padding: '0.75rem', textAlign: 'center' }}>
-                            {attempts > 0 ? attempts : '—'}
-                          </td>
-                          <td style={{ padding: '0.75rem', textAlign: 'center', fontWeight: 600, color: '#d946b5' }}>
+                  // Calculate max time for progress bar scaling
+                  const allTimes = app.tasks
+                    .map(t => app.state.stats?.[t.id]?.bestTime)
+                    .filter(t => t != null);
+                  const maxTime = allTimes.length > 0 ? Math.max(...allTimes) : 1000;
+                  const timePercent = bestTime ? (stats.bestTime / maxTime) * 100 : 0;
+
+                  return (
+                    <div key={task.id} className={`stat-card ${completed ? 'completed' : ''}`}>
+                      <div className="stat-card-header">
+                        <div className="stat-level-badge">
+                          <span className="level-number">{index + 1}</span>
+                        </div>
+                        <div className="stat-level-info">
+                          <div className="stat-level-title">{task.title}</div>
+                          <div className="stat-level-difficulty">{task.difficulty}</div>
+                        </div>
+                        <div className="stat-completion-badge">
+                          {completed ? '✅' : '⏳'}
+                        </div>
+                      </div>
+
+                      <div className="stat-card-body">
+                        <div className="stat-metric">
+                          <div className="stat-metric-label">⏱ Najrýchlejší čas</div>
+                          <div className="stat-metric-value">
                             {bestTime ? `${bestTime}s` : '—'}
-                          </td>
-                          <td style={{ padding: '0.75rem', textAlign: 'center', fontSize: '1.2rem' }}>
-                            {completed ? '✅' : '—'}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                          </div>
+                          {bestTime ? (
+                            <div className="stat-progress-bar">
+                              <div
+                                className="stat-progress-fill"
+                                style={{ width: `${timePercent}%` }}
+                              />
+                            </div>
+                          ) : null}
+                        </div>
+
+                        <div className="stat-metrics-row">
+                          <div className="stat-metric-small">
+                            <div className="stat-metric-icon">🎯</div>
+                            <div>
+                              <div className="stat-metric-small-label">Pokusy</div>
+                              <div className="stat-metric-small-value">
+                                {attempts > 0 ? attempts : '—'}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="stat-metric-small">
+                            <div className="stat-metric-icon">⭐</div>
+                            <div>
+                              <div className="stat-metric-small-label">Status</div>
+                              <div className="stat-metric-small-value">
+                                {completed ? 'Hotovo' : 'Aktívny'}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
               <div className="completion-buttons" style={{ marginTop: '1.5rem' }}>
                 <button
