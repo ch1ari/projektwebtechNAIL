@@ -1,7 +1,8 @@
 // Nail Art Match - Main App Component
-import React, { createContext, useEffect, useMemo, useReducer, useRef } from 'react';
+import React, { createContext, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import Board from './components/Board.jsx';
 import Palette from './components/Palette.jsx';
+import IntroScreen from './components/IntroScreen.jsx';
 import tasks from './data/tasks.json';
 import { clamp, rotationDeltaDegrees } from './lib/geometry.js';
 
@@ -63,10 +64,31 @@ const loadStats = () => {
   return {};
 };
 
+// Load saved game state from localStorage
+const loadGameState = () => {
+  const stored = window.localStorage.getItem('nail-art-game-state');
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      // Validate that the saved state has the expected structure
+      if (parsed && typeof parsed === 'object') {
+        return parsed;
+      }
+    } catch (err) {
+      // If parsing fails, return null to use default initial state
+      return null;
+    }
+  }
+  return null;
+};
+
 // Always start with natural nail color
 const initialTaskColors = DEFAULT_NAIL_COLORS;
 
-const initialState = {
+// Try to load saved game state, otherwise use defaults
+const savedGameState = loadGameState();
+
+const initialState = savedGameState || {
   currentTaskId: firstTaskId,
   placements: {},
   selectedColor: paletteColors[0].value,
@@ -336,6 +358,26 @@ function useAppState() {
     window.localStorage.setItem('nail-art-stats', JSON.stringify(state.stats));
   }, [state.stats]);
 
+  // Persist full game state to localStorage (excluding transient UI states)
+  useEffect(() => {
+    const stateToPersist = {
+      currentTaskId: state.currentTaskId,
+      placements: state.placements,
+      selectedColor: state.selectedColor,
+      selectedColorName: state.selectedColorName,
+      nailColors: state.nailColors,
+      activeToolTab: state.activeToolTab,
+      showHints: state.showHints,
+      showTemplate: state.showTemplate,
+      lockCorrect: state.lockCorrect,
+      elapsedMs: state.elapsedMs,
+      queue: state.queue,
+      stats: state.stats,
+      // Don't persist: showStats, showCompletionModal, showSolutionModal, status, timerRunning, dragState
+    };
+    window.localStorage.setItem('nail-art-game-state', JSON.stringify(stateToPersist));
+  }, [state]);
+
   useEffect(() => {
     const handle = setInterval(() => {
       dispatch({ type: 'timer:tick', deltaMs: 500 });
@@ -349,21 +391,12 @@ function useAppState() {
   );
 }
 
-function TopBar({ app, completionMap }) {
-  const elapsedSec = Math.round(app.state.elapsedMs / 1000);
-  const totalTargets = app.currentTask?.targets?.length ?? 0;
-  const correctCount = Object.values(app.state.placements).filter((p) => p?.isCorrect).length;
-  const nailsCorrect = Object.entries(app.currentTask?.nailTargets ?? {}).filter(
-    ([key, target]) => app.state.nailColors[key] === target
-  ).length;
-  const activeColorName = app.state.selectedColorName;
-
+function TopBar({ app, completionMap, onReturnToMenu }) {
   return (
     <header className="top-bar">
-      <div className="brand-block">
-        <div className="brand">Nail Art Match</div>
-        <div className="subtitle">Nail salon puzzle pre dievčatá</div>
-      </div>
+      <button className="menu-button-top" onClick={onReturnToMenu}>
+        🏠 Hlavné menu
+      </button>
       <div className="level-bar" aria-label="Level navigation">
         {app.tasks.map((task, index) => {
           const locked = index > 0 && !completionMap[app.tasks[index - 1].id];
@@ -381,24 +414,12 @@ function TopBar({ app, completionMap }) {
               aria-label={`Level ${index + 1} ${task.title} ${locked ? 'locked' : 'playable'}`}
             >
               <span className="level-index">Lv {index + 1}</span>
-              <span className="level-name">{task.title ?? task.name}</span>
-              <span className="level-meta">{task.difficulty}</span>
               <span className="level-state" aria-hidden>
                 {locked ? '🔒' : completed ? '✔' : '▶'}
               </span>
             </button>
           );
         })}
-      </div>
-      <div className="top-progress">
-        <span className="pill">{app.currentTask?.title ?? app.currentTask?.name}</span>
-        <span className="pill muted">{app.currentTask?.difficulty ?? 'easy'}</span>
-        <span className="pill">
-          ⏱ {elapsedSec}s
-        </span>
-        <span className="pill">✨ Stickers {correctCount}/{totalTargets}</span>
-        <span className="pill">🎨 Nechty {nailsCorrect}/5</span>
-        <span className="pill">🖌 {activeColorName}</span>
       </div>
     </header>
   );
@@ -559,7 +580,7 @@ function nailHitTest(boardElement, clientX, clientY) {
   return null;
 }
 
-function RightPanel({ app, completionMap }) {
+function RightPanel({ app, completionMap, onReturnToMenu }) {
   const plannedCoverage = clamp(
     Math.round((Object.keys(app.state.placements).length / 5) * 100),
     0,
@@ -588,7 +609,7 @@ function RightPanel({ app, completionMap }) {
           <li>Nápoveda a duchovia sú len náhľad – nezastavia ťahanie.</li>
           <li>Reštart vymaže lak aj ozdoby, Riešenie ťa naučí správny tvar.</li>
         </ul>
-        <a href="/instructions.html" style={{ display: 'block', marginTop: '0.75rem', padding: '0.5rem', textAlign: 'center', background: 'linear-gradient(135deg, #d946b5, #f472b6)', color: 'white', borderRadius: '8px', textDecoration: 'none', fontWeight: 600 }}>
+        <a href="/instructions.html" className="helper-guide-link">
           📖 Kompletný návod
         </a>
       </div>
@@ -613,39 +634,20 @@ function RightPanel({ app, completionMap }) {
           <span className="label">Nechty</span>
           <span className="value">{nailsCorrect}/5</span>
         </div>
-        <div className="stat">
-          <span className="label">Rozmiestnené</span>
-          <span className="value">{Object.keys(app.state.placements).length}</span>
-        </div>
-        <div className="stat">
-          <span className="label">Čas</span>
-          <span className="value">{elapsedSec}s</span>
-        </div>
-        <div className="stat">
-          <span className="label">Plán pokrytia</span>
-          <span className="value">{plannedCoverage}%</span>
-        </div>
       </div>
-      <div className="control-row">
-        <button onClick={() => app.dispatch({ type: 'restart' })}>Reštart</button>
-        <button onClick={() => app.dispatch({ type: 'toggleTemplate' })}>
-          {app.state.showTemplate ? 'Skryť nápovedu' : 'Nápoveda'}
-        </button>
-      </div>
-      <div className="control-row">
-        <button onClick={() => {
-          app.dispatch({ type: 'solution' });
-          app.dispatch({ type: 'showSolutionModal' });
-        }}>Riešenie</button>
-        <button onClick={() => app.dispatch({ type: 'nextLevel' })} disabled={!hasNext || nextLocked}>
-          Ďalšia
-        </button>
-      </div>
-      <div className="control-row">
-        <button onClick={() => app.dispatch({ type: 'timer:toggle' })}>
-          {app.state.timerRunning ? 'Pauza' : 'Pokračuj'}
-        </button>
-        <button onClick={() => app.dispatch({ type: 'toggleStats' })}>Štatistiky</button>
+
+      {/* Coverage progress bar */}
+      <div className="coverage-progress">
+        <div className="coverage-header">
+          <span className="coverage-label">Plán pokrytia</span>
+          <span className="coverage-value">{plannedCoverage}%</span>
+        </div>
+        <div className="coverage-bar">
+          <div
+            className="coverage-fill"
+            style={{ width: `${plannedCoverage}%` }}
+          />
+        </div>
       </div>
     </aside>
   );
@@ -654,6 +656,17 @@ function RightPanel({ app, completionMap }) {
 export default function App() {
   const app = useAppState();
   const boardRef = useRef(null);
+  // Check if user has seen intro before - only show on first visit
+  const hasSeenIntro = window.localStorage.getItem('nail-art-intro-seen') === 'true';
+  const [showIntro, setShowIntro] = useState(!hasSeenIntro);
+
+  // Check if there's saved game progress
+  const hasProgress = useMemo(() => {
+    const gameState = window.localStorage.getItem('nail-art-game-state');
+    const stats = window.localStorage.getItem('nail-art-stats');
+    return !!(gameState || stats);
+  }, []);
+
   const completionMap = useMemo(
     () =>
       app.tasks.reduce((acc, task) => {
@@ -681,10 +694,38 @@ export default function App() {
     }
   }, [app.currentTask, app.state.placements, app.state.nailColors, app.state.stats, app.state.elapsedMs, app.state.status, app.dispatch]);
 
+  const handlePlay = () => {
+    // Mark intro as seen and hide it
+    window.localStorage.setItem('nail-art-intro-seen', 'true');
+    setShowIntro(false);
+  };
+
+  const handleNewGame = () => {
+    // Clear all saved progress
+    window.localStorage.removeItem('nail-art-game-state');
+    window.localStorage.removeItem('nail-art-stats');
+    window.localStorage.removeItem('nail-art-queue');
+    window.localStorage.setItem('nail-art-intro-seen', 'true');
+    // Reload page to start fresh
+    window.location.reload();
+  };
+
+  const handleReturnToMenu = () => {
+    // Show intro screen again
+    setShowIntro(true);
+  };
+
   return (
     <AppStateContext.Provider value={app}>
-      <div className="app-shell">
-        <TopBar app={app} completionMap={completionMap} />
+      {showIntro ? (
+        <IntroScreen
+          onPlay={handlePlay}
+          onNewGame={handleNewGame}
+          hasProgress={hasProgress}
+        />
+      ) : (
+        <div className="app-shell fade-in">
+        <TopBar app={app} completionMap={completionMap} onReturnToMenu={handleReturnToMenu} />
         <div className="layout">
           <div className="main-column">
             <Board
@@ -694,7 +735,7 @@ export default function App() {
             />
             <Toolbelt app={app} boardRef={boardRef} />
           </div>
-          <RightPanel app={app} completionMap={completionMap} />
+          <RightPanel app={app} completionMap={completionMap} onReturnToMenu={handleReturnToMenu} />
         </div>
         {app.state.showCompletionModal ? (
           <div className="modal-backdrop" role="dialog" aria-modal>
@@ -772,45 +813,76 @@ export default function App() {
             <div className="modal stats-modal">
               <h2>📊 Štatistiky</h2>
               <p className="completion-message">Tvoje výsledky pre všetky levely</p>
-              <div className="stats-table" style={{ maxHeight: '400px', overflowY: 'auto', marginTop: '1rem' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead style={{ position: 'sticky', top: 0, background: 'white' }}>
-                    <tr style={{ borderBottom: '2px solid #f472b6', textAlign: 'left' }}>
-                      <th style={{ padding: '0.75rem', color: '#d946b5' }}>Level</th>
-                      <th style={{ padding: '0.75rem', color: '#d946b5', textAlign: 'center' }}>Pokusy</th>
-                      <th style={{ padding: '0.75rem', color: '#d946b5', textAlign: 'center' }}>Najrýchlejší</th>
-                      <th style={{ padding: '0.75rem', color: '#d946b5', textAlign: 'center' }}>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {app.tasks.map((task) => {
-                      const stats = app.state.stats?.[task.id] ?? {};
-                      const attempts = stats.attempts ?? 0;
-                      const bestTime = stats.bestTime ? Math.round(stats.bestTime / 1000) : null;
-                      const completed = stats.completed ?? false;
+              <div className="stats-cards-container">
+                {app.tasks.map((task, index) => {
+                  const stats = app.state.stats?.[task.id] ?? {};
+                  const attempts = stats.attempts ?? 0;
+                  const bestTime = stats.bestTime ? Math.round(stats.bestTime / 1000) : null;
+                  const completed = stats.completed ?? false;
 
-                      return (
-                        <tr key={task.id} style={{ borderBottom: '1px solid #ffd0e5' }}>
-                          <td style={{ padding: '0.75rem' }}>
-                            <div style={{ fontWeight: 500 }}>{task.title}</div>
-                            <div style={{ fontSize: '0.85rem', color: '#999', textTransform: 'capitalize' }}>
-                              {task.difficulty}
-                            </div>
-                          </td>
-                          <td style={{ padding: '0.75rem', textAlign: 'center' }}>
-                            {attempts > 0 ? attempts : '—'}
-                          </td>
-                          <td style={{ padding: '0.75rem', textAlign: 'center', fontWeight: 600, color: '#d946b5' }}>
+                  // Calculate max time for progress bar scaling
+                  const allTimes = app.tasks
+                    .map(t => app.state.stats?.[t.id]?.bestTime)
+                    .filter(t => t != null);
+                  const maxTime = allTimes.length > 0 ? Math.max(...allTimes) : 1000;
+                  const timePercent = bestTime ? (stats.bestTime / maxTime) * 100 : 0;
+
+                  return (
+                    <div key={task.id} className={`stat-card ${completed ? 'completed' : ''}`}>
+                      <div className="stat-card-header">
+                        <div className="stat-level-badge">
+                          <span className="level-number">{index + 1}</span>
+                        </div>
+                        <div className="stat-level-info">
+                          <div className="stat-level-title">{task.title}</div>
+                          <div className="stat-level-difficulty">{task.difficulty}</div>
+                        </div>
+                        <div className="stat-completion-badge">
+                          {completed ? '✅' : '⏳'}
+                        </div>
+                      </div>
+
+                      <div className="stat-card-body">
+                        <div className="stat-metric">
+                          <div className="stat-metric-label">⏱ Najrýchlejší čas</div>
+                          <div className="stat-metric-value">
                             {bestTime ? `${bestTime}s` : '—'}
-                          </td>
-                          <td style={{ padding: '0.75rem', textAlign: 'center', fontSize: '1.2rem' }}>
-                            {completed ? '✅' : '—'}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                          </div>
+                          {bestTime ? (
+                            <div className="stat-progress-bar">
+                              <div
+                                className="stat-progress-fill"
+                                style={{ width: `${timePercent}%` }}
+                              />
+                            </div>
+                          ) : null}
+                        </div>
+
+                        <div className="stat-metrics-row">
+                          <div className="stat-metric-small">
+                            <div className="stat-metric-icon">🎯</div>
+                            <div>
+                              <div className="stat-metric-small-label">Pokusy</div>
+                              <div className="stat-metric-small-value">
+                                {attempts > 0 ? attempts : '—'}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="stat-metric-small">
+                            <div className="stat-metric-icon">⭐</div>
+                            <div>
+                              <div className="stat-metric-small-label">Status</div>
+                              <div className="stat-metric-small-value">
+                                {completed ? 'Hotovo' : 'Aktívny'}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
               <div className="completion-buttons" style={{ marginTop: '1.5rem' }}>
                 <button
@@ -834,7 +906,8 @@ export default function App() {
             }}
           />
         ) : null}
-      </div>
+        </div>
+      )}
     </AppStateContext.Provider>
   );
 }

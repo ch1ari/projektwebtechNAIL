@@ -144,48 +144,48 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
 
             {/* Thumb - angled from bottom-right to top-left */}
             <linearGradient id="thumb-gradient" x1="85%" y1="95%" x2="20%" y2="10%">
-              <stop offset="0%" stopColor="rgba(0,0,0,0.5)" />
+              <stop offset="0%" stopColor="rgba(0,0,0,0.15)" />
               <stop offset="35%" stopColor="rgba(0,0,0,0)" />
-              <stop offset="65%" stopColor="rgba(255,255,255,0.2)" />
-              <stop offset="100%" stopColor="rgba(255,255,255,0.6)" />
+              <stop offset="65%" stopColor="rgba(255,255,255,0.1)" />
+              <stop offset="100%" stopColor="rgba(255,255,255,0.25)" />
             </linearGradient>
 
             {/* Index - from bottom to top, slightly angled right */}
             <linearGradient id="index-gradient" x1="40%" y1="100%" x2="50%" y2="0%">
-              <stop offset="0%" stopColor="rgba(0,0,0,0.5)" />
+              <stop offset="0%" stopColor="rgba(0,0,0,0.15)" />
               <stop offset="30%" stopColor="rgba(0,0,0,0)" />
-              <stop offset="65%" stopColor="rgba(255,255,255,0.2)" />
-              <stop offset="100%" stopColor="rgba(255,255,255,0.6)" />
+              <stop offset="65%" stopColor="rgba(255,255,255,0.1)" />
+              <stop offset="100%" stopColor="rgba(255,255,255,0.25)" />
             </linearGradient>
 
             {/* Middle - straight from bottom to top */}
             <linearGradient id="middle-gradient" x1="50%" y1="100%" x2="50%" y2="0%">
-              <stop offset="0%" stopColor="rgba(0,0,0,0.5)" />
+              <stop offset="0%" stopColor="rgba(0,0,0,0.15)" />
               <stop offset="30%" stopColor="rgba(0,0,0,0)" />
-              <stop offset="65%" stopColor="rgba(255,255,255,0.2)" />
-              <stop offset="100%" stopColor="rgba(255,255,255,0.6)" />
+              <stop offset="65%" stopColor="rgba(255,255,255,0.1)" />
+              <stop offset="100%" stopColor="rgba(255,255,255,0.25)" />
             </linearGradient>
 
             {/* Ring - from bottom-left to top-right */}
             <linearGradient id="ring-gradient" x1="35%" y1="100%" x2="60%" y2="0%">
-              <stop offset="0%" stopColor="rgba(0,0,0,0.5)" />
+              <stop offset="0%" stopColor="rgba(0,0,0,0.15)" />
               <stop offset="30%" stopColor="rgba(0,0,0,0)" />
-              <stop offset="65%" stopColor="rgba(255,255,255,0.2)" />
-              <stop offset="100%" stopColor="rgba(255,255,255,0.6)" />
+              <stop offset="65%" stopColor="rgba(255,255,255,0.1)" />
+              <stop offset="100%" stopColor="rgba(255,255,255,0.25)" />
             </linearGradient>
 
             {/* Pinky - angled from bottom-left to top-right */}
             <linearGradient id="pinky-gradient" x1="30%" y1="100%" x2="65%" y2="0%">
-              <stop offset="0%" stopColor="rgba(0,0,0,0.5)" />
+              <stop offset="0%" stopColor="rgba(0,0,0,0.15)" />
               <stop offset="35%" stopColor="rgba(0,0,0,0)" />
-              <stop offset="65%" stopColor="rgba(255,255,255,0.2)" />
-              <stop offset="100%" stopColor="rgba(255,255,255,0.6)" />
+              <stop offset="65%" stopColor="rgba(255,255,255,0.1)" />
+              <stop offset="100%" stopColor="rgba(255,255,255,0.25)" />
             </linearGradient>
 
-            {/* Strong glossy shine - visible on all colors */}
+            {/* Subtle glossy shine - visible on all colors */}
             <radialGradient id="nail-shine" cx="40%" cy="20%">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.7)" />
-              <stop offset="40%" stopColor="rgba(255,255,255,0.2)" />
+              <stop offset="0%" stopColor="rgba(255,255,255,0.35)" />
+              <stop offset="40%" stopColor="rgba(255,255,255,0.1)" />
               <stop offset="100%" stopColor="rgba(255,255,255,0)" />
             </radialGradient>
 
@@ -385,11 +385,81 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
             </div>
           ) : null}
         </div>
-      </div>
-      <div className="board-footer">
-        <div className="tag">Aktívny level: {activeTask?.title ?? activeTask?.name ?? 'none'}</div>
-        <div className="tag tone" style={{ backgroundColor: nailColors.thumb ?? '#F5E6D3' }}>
-          Vybraná farba
+
+        {/* Level and color info overlay */}
+        <div className="board-info-overlay">
+          <div className="info-card">
+            <div className="info-level">
+              <span className="info-label">Level:</span>
+              <span className="info-value">{activeTask?.title ?? activeTask?.name ?? 'none'}</span>
+            </div>
+            <div className="info-color">
+              <span className="info-label">Farba:</span>
+              <div className="info-color-display">
+                <span className="color-preview" style={{ backgroundColor: app.state.selectedColor ?? '#f06292' }} />
+                <span className="color-name">{app.state.selectedColorName ?? 'Žiadna'}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Timer overlay - top right */}
+        <div className="board-timer-overlay">
+          <div className="timer-card">
+            <span className="timer-icon">⏱</span>
+            <span className="timer-value">{Math.round(app.state.elapsedMs / 1000)}s</span>
+          </div>
+        </div>
+
+        {/* Quick actions panel - bottom right */}
+        <div className="board-actions-overlay">
+          <div className="actions-panel">
+            <button
+              className="action-icon-btn"
+              onClick={() => app.dispatch({ type: 'timer:toggle' })}
+              data-tooltip={app.state.timerRunning ? 'Pauza' : 'Pokračuj'}
+            >
+              {app.state.timerRunning ? '⏸' : '▶️'}
+            </button>
+            <button
+              className="action-icon-btn"
+              onClick={() => app.dispatch({ type: 'restart' })}
+              data-tooltip="Reštart"
+            >
+              🔄
+            </button>
+            <button
+              className="action-icon-btn"
+              onClick={() => app.dispatch({ type: 'toggleStats' })}
+              data-tooltip="Štatistiky"
+            >
+              📊
+            </button>
+            <button
+              className="action-icon-btn"
+              onClick={() => app.dispatch({ type: 'toggleTemplate' })}
+              data-tooltip={app.state.showTemplate ? 'Skryť nápovedu' : 'Nápoveda'}
+            >
+              💡
+            </button>
+            <button
+              className="action-icon-btn"
+              onClick={() => {
+                app.dispatch({ type: 'solution' });
+                app.dispatch({ type: 'showSolutionModal' });
+              }}
+              data-tooltip="Riešenie"
+            >
+              🔍
+            </button>
+            <button
+              className="action-icon-btn"
+              onClick={() => app.dispatch({ type: 'nextLevel' })}
+              data-tooltip="Ďalší level"
+            >
+              ⏭
+            </button>
+          </div>
         </div>
       </div>
     </div>
