@@ -1,0 +1,22 @@
+{
+  "name": "Nail Art Match - Nail Salon Puzzle",
+  "short_name": "Nail Art Match",
+  "description": "Nail salon puzzle pre dievčatá. Drag and drop hra s nálepkami a lak na nechty.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fef3f8",
+  "theme_color": "#d946b5",
+  "orientation": "any",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["games", "entertainment"],
+  "lang": "sk",
+  "dir": "ltr"
+}
