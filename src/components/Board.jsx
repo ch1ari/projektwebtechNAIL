@@ -450,7 +450,14 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
               }}
               data-tooltip="Riešenie"
             >
-              ✨
+              🔍
+            </button>
+            <button
+              className="action-icon-btn"
+              onClick={() => app.dispatch({ type: 'nextLevel' })}
+              data-tooltip="Ďalší level"
+            >
+              ⏭
             </button>
           </div>
         </div>

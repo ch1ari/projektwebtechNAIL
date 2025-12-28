@@ -649,28 +649,6 @@ function RightPanel({ app, completionMap, onReturnToMenu }) {
           />
         </div>
       </div>
-
-      <div className="control-row">
-        <button onClick={() => app.dispatch({ type: 'restart' })}>Reštart</button>
-        <button onClick={() => app.dispatch({ type: 'toggleTemplate' })}>
-          {app.state.showTemplate ? 'Skryť nápovedu' : 'Nápoveda'}
-        </button>
-      </div>
-      <div className="control-row">
-        <button onClick={() => {
-          app.dispatch({ type: 'solution' });
-          app.dispatch({ type: 'showSolutionModal' });
-        }}>Riešenie</button>
-        <button onClick={() => app.dispatch({ type: 'nextLevel' })} disabled={!hasNext || nextLocked}>
-          Ďalšia
-        </button>
-      </div>
-      <div className="control-row">
-        <button onClick={() => app.dispatch({ type: 'timer:toggle' })}>
-          {app.state.timerRunning ? 'Pauza' : 'Pokračuj'}
-        </button>
-        <button onClick={() => app.dispatch({ type: 'toggleStats' })}>Štatistiky</button>
-      </div>
     </aside>
   );
 }
