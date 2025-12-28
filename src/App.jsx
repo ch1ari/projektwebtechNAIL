@@ -103,6 +103,7 @@ const defaultState = {
   lockCorrect: false,
   showStats: false,
   showCompletionModal: false,
+  showGameCompleteModal: false,
   showSolutionModal: false,
   status: 'idle',
   timerRunning: true,
@@ -250,6 +251,7 @@ function appReducer(state, action) {
         showHints: false,
         showTemplate: false,
         lockCorrect: false,
+        showGameCompleteModal: false,
         status: 'restart'
       };
     }
@@ -298,6 +300,10 @@ function appReducer(state, action) {
       return { ...state, showCompletionModal: true, timerRunning: false };
     case 'hideCompletionModal':
       return { ...state, showCompletionModal: false };
+    case 'showGameCompleteModal':
+      return { ...state, showGameCompleteModal: true, timerRunning: false };
+    case 'hideGameCompleteModal':
+      return { ...state, showGameCompleteModal: false };
     case 'showSolutionModal':
       return { ...state, showSolutionModal: true };
     case 'hideSolutionModal':
@@ -714,6 +720,16 @@ export default function App() {
     if (!app.currentTask) return;
     const done = isTaskComplete(app.currentTask, app.state.placements, app.state.nailColors);
     const alreadyDone = app.state.stats?.[app.currentTask.id]?.completed;
+    const futureStats = {
+      ...app.state.stats,
+      [app.currentTask.id]: {
+        ...(app.state.stats?.[app.currentTask.id] ?? {}),
+        completed: true,
+        completedAt: Date.now(),
+        timeMs: app.state.elapsedMs
+      }
+    };
+    const allLevelsCompleted = app.tasks.every((task) => futureStats?.[task.id]?.completed);
     // Don't show completion modal if user clicked "Riešenie" button
     if (done && !alreadyDone && app.state.status !== 'solved') {
       app.dispatch({
@@ -721,9 +737,13 @@ export default function App() {
         taskId: app.currentTask.id,
         payload: { ...(app.state.stats?.[app.currentTask.id] ?? {}), completed: true, completedAt: Date.now(), timeMs: app.state.elapsedMs }
       });
-      // Show completion modal
+      // Show completion modal or final game modal
       setTimeout(() => {
-        app.dispatch({ type: 'showCompletionModal' });
+        if (allLevelsCompleted) {
+          app.dispatch({ type: 'showGameCompleteModal' });
+        } else {
+          app.dispatch({ type: 'showCompletionModal' });
+        }
       }, 500);
     }
   }, [app.currentTask, app.state.placements, app.state.nailColors, app.state.stats, app.state.elapsedMs, app.state.status, app.dispatch]);
@@ -806,6 +826,40 @@ export default function App() {
                   onClick={() => app.dispatch({ type: 'hideCompletionModal' })}
                 >
                   Zostať tu
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
+        {app.state.showGameCompleteModal ? (
+          <div className="modal-backdrop" role="dialog" aria-modal>
+            <div className="modal completion-modal game-complete-modal">
+              <h2>🌟 Výborná práca!</h2>
+              <p className="completion-message">
+                Prešla si všetky úrovne. Chceš si dať ďalšie kolo alebo skúšať ďalej?
+              </p>
+              <div className="completion-stats final">
+                <div className="stat">
+                  <span className="label">Hotovo</span>
+                  <span className="value">{app.tasks.length}/{app.tasks.length}</span>
+                </div>
+                <div className="stat">
+                  <span className="label">Čas spolu</span>
+                  <span className="value">{Math.round(app.state.elapsedMs / 1000)}s</span>
+                </div>
+              </div>
+              <div className="completion-buttons">
+                <button
+                  className="btn-primary"
+                  onClick={handleNewGame}
+                >
+                  Reštartovať hru
+                </button>
+                <button
+                  className="btn-secondary"
+                  onClick={() => app.dispatch({ type: 'hideGameCompleteModal' })}
+                >
+                  Pokračovať v hre
                 </button>
               </div>
             </div>

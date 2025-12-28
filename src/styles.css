@@ -1576,6 +1576,15 @@ body {
   color: #d946b5;
 }
 
+.game-complete-modal {
+  background: linear-gradient(145deg, #fff5fb 0%, #ffe9f6 45%, #fdf2ff 100%);
+  box-shadow: 0 16px 40px rgba(217, 70, 181, 0.25);
+}
+
+.completion-stats.final {
+  grid-template-columns: repeat(2, 1fr);
+}
+
 .completion-buttons {
   display: flex;
   gap: 0.75rem;
