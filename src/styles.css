@@ -1653,15 +1653,17 @@ body {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #ec4899, #f472b6, #fbbf24);
-  color: white;
-  box-shadow: 0 10px 25px rgba(236, 72, 153, 0.3);
-  border: 1px solid rgba(236, 72, 153, 0.5);
+  background: linear-gradient(135deg, #fce7f5, #ffe5f4);
+  color: #d946b5;
+  box-shadow: 0 10px 25px rgba(217, 70, 181, 0.25);
+  border: 2px solid #d946b5;
+  font-weight: 700;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(236, 72, 153, 0.36);
+  box-shadow: 0 12px 28px rgba(217, 70, 181, 0.35);
+  background: linear-gradient(135deg, #fad9f1, #ffd6ed);
 }
 
 .btn-primary:disabled {
@@ -1704,13 +1706,137 @@ body {
   .app-shell {
     display: none !important;
   }
-  
+
   body::before {
     content: "Tento obsah nie je určený na tlač. Pre tlač návodu prejdite na stránku s návodom.";
     display: block;
     padding: 2rem;
     text-align: center;
     font-size: 1.2rem;
+  }
+}
+
+/* Mobile optimizations - keep game compact */
+@media (max-width: 768px) {
+  /* Keep app compact */
+  .app-shell {
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  /* Compact overlays - use smaller padding and font sizes, NO transforms */
+  .info-card {
+    padding: 0.4rem 0.6rem;
+    min-width: 140px;
+  }
+
+  .info-label {
+    font-size: 0.7rem;
+  }
+
+  .info-value {
+    font-size: 0.75rem;
+  }
+
+  .color-name {
+    font-size: 0.75rem;
+  }
+
+  .color-preview {
+    width: 18px;
+    height: 18px;
+  }
+
+  .timer-card {
+    padding: 0.4rem 0.6rem;
+  }
+
+  .timer-value {
+    font-size: 0.9rem;
+    min-width: 35px;
+  }
+
+  .timer-icon {
+    font-size: 1rem;
+  }
+
+  /* Compact actions panel */
+  .actions-panel {
+    padding: 0.35rem;
+    gap: 0.3rem;
+  }
+
+  .action-icon-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+
+  /* Make toolbelt more compact */
+  .toolbelt {
+    margin-top: 0;
+  }
+
+  .tool-strip {
+    max-height: 40vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Compact sticker palette */
+  .palette-row {
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+
+  .palette-item {
+    padding: 0.35rem;
+    min-width: 95px;
+  }
+
+  .palette-meta {
+    font-size: 0.75rem;
+  }
+
+  .palette-meta .name {
+    font-size: 0.75rem;
+  }
+
+  /* Smaller right panel */
+  .right-panel {
+    padding: 0.75rem;
+  }
+
+  .right-panel h2 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .helper-card,
+  .client-brief {
+    font-size: 0.85rem;
+    padding: 0.7rem;
+  }
+}
+
+/* Very small mobile screens */
+@media (max-width: 480px) {
+  .tool-strip {
+    max-height: 30vh;
+  }
+
+  .info-card {
+    padding: 0.35rem 0.5rem;
+  }
+
+  .timer-card {
+    padding: 0.35rem 0.5rem;
+  }
+
+  .action-icon-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 0.9rem;
   }
 }
 

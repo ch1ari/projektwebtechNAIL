@@ -96,6 +96,7 @@ const defaultState = {
   placements: {},
   selectedColor: paletteColors[0].value,
   selectedColorName: paletteColors[0].name,
+  selectedSticker: null, // For mobile tap-to-place
   nailColors: initialTaskColors,
   activeToolTab: null,
   showHints: false,
@@ -213,6 +214,9 @@ function appReducer(state, action) {
     }
     case 'setColor': {
       return { ...state, selectedColor: action.payload.value, selectedColorName: action.payload.name };
+    }
+    case 'selectSticker': {
+      return { ...state, selectedSticker: action.payload };
     }
     case 'paintNail': {
       const { nail, color } = action.payload;
@@ -350,6 +354,8 @@ function appReducer(state, action) {
       return { ...state, elapsedMs: state.elapsedMs + (action.deltaMs ?? 0) };
     case 'timer:toggle':
       return { ...state, timerRunning: !state.timerRunning };
+    case 'timer:reset':
+      return { ...state, elapsedMs: 0, timerRunning: true };
     case 'stats:update': {
       const { taskId, payload } = action;
       const currentStats = state.stats?.[taskId] ?? {};
@@ -407,6 +413,20 @@ function useAppState() {
     () => tasks.find((task) => task.id === state.currentTaskId) ?? null,
     [state.currentTaskId]
   );
+
+  // Initialize attempts for current task on first load
+  useEffect(() => {
+    if (state.currentTaskId) {
+      const currentStats = state.stats?.[state.currentTaskId] ?? {};
+      if (currentStats.attempts === undefined || currentStats.attempts === 0) {
+        dispatch({
+          type: 'stats:update',
+          taskId: state.currentTaskId,
+          payload: { attempts: 1 }
+        });
+      }
+    }
+  }, [state.currentTaskId]);
 
   useEffect(() => {
     window.localStorage.setItem('nail-art-queue', JSON.stringify(state.queue));
@@ -493,8 +513,7 @@ function Toolbelt({ app, boardRef }) {
   };
 
   const handlePointerDown = (event, color) => {
-    const target = event.currentTarget;
-    target.setPointerCapture(event.pointerId);
+    event.preventDefault();
 
     app.dispatch({
       type: 'startColorDrag',
@@ -523,11 +542,6 @@ function Toolbelt({ app, boardRef }) {
   const handlePointerUp = (event) => {
     if (!app.state.dragState) return;
 
-    const target = event.currentTarget;
-    if (target.hasPointerCapture(event.pointerId)) {
-      target.releasePointerCapture(event.pointerId);
-    }
-
     const { startX, startY, currentX, currentY, color } = app.state.dragState;
     const dx = currentX - startX;
     const dy = currentY - startY;
@@ -547,14 +561,39 @@ function Toolbelt({ app, boardRef }) {
 
   const handlePointerCancel = (event) => {
     if (!app.state.dragState) return;
-
-    const target = event.currentTarget;
-    if (target.hasPointerCapture(event.pointerId)) {
-      target.releasePointerCapture(event.pointerId);
-    }
-
     app.dispatch({ type: 'endColorDrag' });
   };
+
+  // Global pointer handlers to ensure drag state always works and clears
+  useEffect(() => {
+    const handleGlobalPointerMove = (event) => {
+      if (app.state.dragState) {
+        handlePointerMove(event);
+      }
+    };
+
+    const handleGlobalPointerUp = (event) => {
+      if (app.state.dragState) {
+        handlePointerUp(event);
+      }
+    };
+
+    const handleGlobalPointerCancel = (event) => {
+      if (app.state.dragState) {
+        app.dispatch({ type: 'endColorDrag' });
+      }
+    };
+
+    window.addEventListener('pointermove', handleGlobalPointerMove);
+    window.addEventListener('pointerup', handleGlobalPointerUp);
+    window.addEventListener('pointercancel', handleGlobalPointerCancel);
+
+    return () => {
+      window.removeEventListener('pointermove', handleGlobalPointerMove);
+      window.removeEventListener('pointerup', handleGlobalPointerUp);
+      window.removeEventListener('pointercancel', handleGlobalPointerCancel);
+    };
+  }, [app.state.dragState]);
 
   const renderToolContent = () => {
     if (app.state.activeToolTab === 'colors') {
@@ -567,9 +606,6 @@ function Toolbelt({ app, boardRef }) {
                 className={`swatch nail-chip ${app.state.selectedColor === color.value ? 'active' : ''}`}
                 onClick={() => selectColor(color)}
                 onPointerDown={(event) => handlePointerDown(event, color)}
-                onPointerMove={handlePointerMove}
-                onPointerUp={handlePointerUp}
-                onPointerCancel={handlePointerCancel}
                 aria-label={`Vybrať farbu ${color.name}`}
               >
                 <span className="nail-cap" style={{ backgroundColor: color.value }} />
@@ -594,6 +630,7 @@ function Toolbelt({ app, boardRef }) {
             dispatch={app.dispatch}
             lockCorrect={app.state.lockCorrect}
             currentTask={app.currentTask}
+            selectedSticker={app.state.selectedSticker}
           />
         </div>
       );
@@ -803,6 +840,8 @@ export default function App() {
     // Mark intro as seen and hide it
     window.localStorage.setItem('nail-art-intro-seen', 'true');
     setShowIntro(false);
+    // Reset timer when starting to play from menu
+    app.dispatch({ type: 'timer:reset' });
   };
 
   const handleNewGame = () => {
@@ -816,8 +855,12 @@ export default function App() {
   };
 
   const handleReturnToMenu = () => {
-    // Show intro screen again
+    // Show intro screen again and pause timer
     setShowIntro(true);
+    // Pause timer when returning to menu
+    if (app.state.timerRunning) {
+      app.dispatch({ type: 'timer:toggle' });
+    }
   };
 
   return (
