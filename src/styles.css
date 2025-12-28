@@ -1593,6 +1593,7 @@ body {
   transition: all 0.2s;
   position: relative;
   overflow: hidden;
+  pointer-events: auto;
 }
 
 .completion-buttons button::after {
@@ -1608,6 +1609,12 @@ body {
   opacity: 1;
 }
 
+.completion-buttons button:disabled {
+  cursor: not-allowed;
+  opacity: 0.92;
+  box-shadow: none;
+}
+
 .btn-primary {
   background: linear-gradient(135deg, #ec4899, #f472b6, #fbbf24);
   color: white;
@@ -1618,6 +1625,13 @@ body {
 .btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 28px rgba(236, 72, 153, 0.36);
+}
+
+.btn-primary:disabled {
+  background: linear-gradient(135deg, #fde2f4, #f8c8e5);
+  color: #f8f2f6;
+  border: 1px solid rgba(236, 72, 153, 0.28);
+  transform: none;
 }
 
 
@@ -1631,6 +1645,13 @@ body {
 .btn-secondary:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 22px rgba(217, 70, 181, 0.26);
+}
+
+.btn-secondary:disabled {
+  background: linear-gradient(135deg, #fffafc, #fff2fb);
+  color: #d49bbf;
+  border: 1px solid rgba(217, 70, 181, 0.18);
+  transform: none;
 }
 
 
