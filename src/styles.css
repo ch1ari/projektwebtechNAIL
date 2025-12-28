@@ -1653,15 +1653,17 @@ body {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #d946b5, #ec4899, #f472b6);
-  color: white;
-  box-shadow: 0 10px 25px rgba(217, 70, 181, 0.35);
-  border: 1px solid rgba(217, 70, 181, 0.5);
+  background: linear-gradient(135deg, #fce7f5, #ffe5f4);
+  color: #d946b5;
+  box-shadow: 0 10px 25px rgba(217, 70, 181, 0.25);
+  border: 2px solid #d946b5;
+  font-weight: 700;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(217, 70, 181, 0.4);
+  box-shadow: 0 12px 28px rgba(217, 70, 181, 0.35);
+  background: linear-gradient(135deg, #fad9f1, #ffd6ed);
 }
 
 .btn-primary:disabled {

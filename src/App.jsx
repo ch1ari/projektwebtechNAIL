@@ -493,8 +493,7 @@ function Toolbelt({ app, boardRef }) {
   };
 
   const handlePointerDown = (event, color) => {
-    const target = event.currentTarget;
-    target.setPointerCapture(event.pointerId);
+    event.preventDefault();
 
     app.dispatch({
       type: 'startColorDrag',
@@ -523,11 +522,6 @@ function Toolbelt({ app, boardRef }) {
   const handlePointerUp = (event) => {
     if (!app.state.dragState) return;
 
-    const target = event.currentTarget;
-    if (target.hasPointerCapture(event.pointerId)) {
-      target.releasePointerCapture(event.pointerId);
-    }
-
     const { startX, startY, currentX, currentY, color } = app.state.dragState;
     const dx = currentX - startX;
     const dy = currentY - startY;
@@ -547,14 +541,39 @@ function Toolbelt({ app, boardRef }) {
 
   const handlePointerCancel = (event) => {
     if (!app.state.dragState) return;
-
-    const target = event.currentTarget;
-    if (target.hasPointerCapture(event.pointerId)) {
-      target.releasePointerCapture(event.pointerId);
-    }
-
     app.dispatch({ type: 'endColorDrag' });
   };
+
+  // Global pointer handlers to ensure drag state always works and clears
+  useEffect(() => {
+    const handleGlobalPointerMove = (event) => {
+      if (app.state.dragState) {
+        handlePointerMove(event);
+      }
+    };
+
+    const handleGlobalPointerUp = (event) => {
+      if (app.state.dragState) {
+        handlePointerUp(event);
+      }
+    };
+
+    const handleGlobalPointerCancel = (event) => {
+      if (app.state.dragState) {
+        app.dispatch({ type: 'endColorDrag' });
+      }
+    };
+
+    window.addEventListener('pointermove', handleGlobalPointerMove);
+    window.addEventListener('pointerup', handleGlobalPointerUp);
+    window.addEventListener('pointercancel', handleGlobalPointerCancel);
+
+    return () => {
+      window.removeEventListener('pointermove', handleGlobalPointerMove);
+      window.removeEventListener('pointerup', handleGlobalPointerUp);
+      window.removeEventListener('pointercancel', handleGlobalPointerCancel);
+    };
+  }, [app.state.dragState]);
 
   const renderToolContent = () => {
     if (app.state.activeToolTab === 'colors') {
@@ -567,9 +586,6 @@ function Toolbelt({ app, boardRef }) {
                 className={`swatch nail-chip ${app.state.selectedColor === color.value ? 'active' : ''}`}
                 onClick={() => selectColor(color)}
                 onPointerDown={(event) => handlePointerDown(event, color)}
-                onPointerMove={handlePointerMove}
-                onPointerUp={handlePointerUp}
-                onPointerCancel={handlePointerCancel}
                 aria-label={`Vybrať farbu ${color.name}`}
               >
                 <span className="nail-cap" style={{ backgroundColor: color.value }} />
