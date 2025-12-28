@@ -110,7 +110,8 @@ const defaultState = {
   elapsedMs: 0,
   queue: loadQueue(),
   stats: loadStats(),
-  dragState: null
+  dragState: null,
+  savedProgress: {}
 };
 
 const initialState = {
@@ -164,6 +165,20 @@ function appReducer(state, action) {
     case 'setTask': {
       const nextTask = tasks.find((task) => task.id === action.payload) ?? null;
       const taskId = nextTask?.id;
+      const prevTaskId = state.currentTaskId;
+      const progressSnapshot = prevTaskId
+        ? {
+            ...state.savedProgress,
+            [prevTaskId]: {
+              placements: state.placements,
+              nailColors: state.nailColors,
+              elapsedMs: state.elapsedMs,
+              selectedColor: state.selectedColor,
+              selectedColorName: state.selectedColorName
+            }
+          }
+        : state.savedProgress;
+      const restored = taskId && progressSnapshot[taskId] ? progressSnapshot[taskId] : null;
       const selectedIndex = tasks.findIndex((task) => task.id === taskId);
       const nextQueue =
         selectedIndex >= 0 ? tasks.slice(selectedIndex).map((task) => task.id) : loadQueue();
@@ -182,17 +197,18 @@ function appReducer(state, action) {
         currentTaskId: taskId ?? null,
         placements: {},
         nailColors: DEFAULT_NAIL_COLORS,
-        selectedColor: paletteColors[0].value,
-        selectedColorName: paletteColors[0].name,
+        selectedColor: restored?.selectedColor ?? paletteColors[0].value,
+        selectedColorName: restored?.selectedColorName ?? paletteColors[0].name,
         activeToolTab: null,
         showHints: false,
         showTemplate: false,
         lockCorrect: false,
         timerRunning: true,
-        elapsedMs: 0,
+        elapsedMs: restored?.elapsedMs ?? 0,
         status: 'task:selected',
         stats: updatedStats,
-        queue: nextQueue
+        queue: nextQueue,
+        savedProgress: progressSnapshot
       };
     }
     case 'setColor': {
@@ -239,6 +255,10 @@ function appReducer(state, action) {
       return { ...state, lockCorrect: !state.lockCorrect };
     case 'restart': {
       const task = tasks.find((t) => t.id === state.currentTaskId);
+      const updatedSaved = { ...state.savedProgress };
+      if (state.currentTaskId) {
+        delete updatedSaved[state.currentTaskId];
+      }
       return {
         ...state,
         placements: {},
@@ -252,6 +272,7 @@ function appReducer(state, action) {
         showTemplate: false,
         lockCorrect: false,
         showGameCompleteModal: false,
+        savedProgress: updatedSaved,
         status: 'restart'
       };
     }
@@ -275,21 +296,37 @@ function appReducer(state, action) {
       };
     }
     case 'nextLevel': {
+      const prevTaskId = state.currentTaskId;
+      const savedProgress = prevTaskId
+        ? {
+            ...state.savedProgress,
+            [prevTaskId]: {
+              placements: state.placements,
+              nailColors: state.nailColors,
+              elapsedMs: state.elapsedMs,
+              selectedColor: state.selectedColor,
+              selectedColorName: state.selectedColorName
+            }
+          }
+        : state.savedProgress;
+
       const queue = state.queue.length ? state.queue.slice(1) : loadQueue();
       const fallbackQueue = loadQueue();
       const nextId = queue[0] ?? fallbackQueue[0] ?? tasks[0]?.id;
       const normalizedQueue = queue.length ? queue : fallbackQueue;
+      const restored = nextId && savedProgress[nextId] ? savedProgress[nextId] : null;
       return {
         ...state,
         queue: normalizedQueue,
         currentTaskId: nextId,
-        placements: {},
-        nailColors: DEFAULT_NAIL_COLORS,
-        selectedColor: paletteColors[0].value,
-        selectedColorName: paletteColors[0].name,
+        placements: restored?.placements ?? {},
+        nailColors: restored?.nailColors ?? DEFAULT_NAIL_COLORS,
+        selectedColor: restored?.selectedColor ?? paletteColors[0].value,
+        selectedColorName: restored?.selectedColorName ?? paletteColors[0].name,
         activeToolTab: null,
-        elapsedMs: 0,
-        timerRunning: true
+        elapsedMs: restored?.elapsedMs ?? 0,
+        timerRunning: true,
+        savedProgress
       };
     }
     case 'queue:update':
@@ -394,6 +431,7 @@ function useAppState() {
       elapsedMs: state.elapsedMs,
       queue: state.queue,
       stats: state.stats,
+      savedProgress: state.savedProgress,
       // Don't persist: showStats, showCompletionModal, showSolutionModal, status, timerRunning, dragState
     };
     window.localStorage.setItem('nail-art-game-state', JSON.stringify(stateToPersist));
@@ -621,18 +659,22 @@ function nailHitTest(boardElement, clientX, clientY) {
 }
 
 function RightPanel({ app, completionMap, onReturnToMenu }) {
+  const correctCount = Object.values(app.state.placements).filter((p) => p?.isCorrect).length;
+  const totalTargets = app.currentTask?.targets?.length ?? 0;
+  const nailsCorrect = Object.entries(app.currentTask?.nailTargets ?? {}).filter(
+    ([key, target]) => app.state.nailColors[key] === target
+  ).length;
+  const totalNailTargets = Object.keys(app.currentTask?.nailTargets ?? {}).length || 0;
+
+  const achieved = correctCount + nailsCorrect;
+  const required = totalTargets + totalNailTargets;
   const plannedCoverage = clamp(
-    Math.round((Object.keys(app.state.placements).length / 5) * 100),
+    required > 0 ? Math.round((achieved / required) * 100) : 0,
     0,
     100
   );
 
-  const correctCount = Object.values(app.state.placements).filter((p) => p?.isCorrect).length;
-  const totalTargets = app.currentTask?.targets?.length ?? 0;
   const elapsedSec = Math.round(app.state.elapsedMs / 1000);
-  const nailsCorrect = Object.entries(app.currentTask?.nailTargets ?? {}).filter(
-    ([key, target]) => app.state.nailColors[key] === target
-  ).length;
 
   const requirements = app.currentTask?.clientRequirements ?? [];
   const currentIndex = app.tasks.findIndex((task) => task.id === app.state.currentTaskId);
