@@ -716,6 +716,15 @@ export default function App() {
     [app.state.stats, app.tasks]
   );
 
+  const bestTotalTimeMs = useMemo(
+    () =>
+      app.tasks.reduce((sum, task) => {
+        const best = app.state.stats?.[task.id]?.bestTime;
+        return best ? sum + best : sum;
+      }, 0),
+    [app.state.stats, app.tasks]
+  );
+
   useEffect(() => {
     if (!app.currentTask) return;
     const done = isTaskComplete(app.currentTask, app.state.placements, app.state.nailColors);
@@ -845,7 +854,9 @@ export default function App() {
                 </div>
                 <div className="stat">
                   <span className="label">Čas spolu</span>
-                  <span className="value">{Math.round(app.state.elapsedMs / 1000)}s</span>
+                  <span className="value">
+                    {bestTotalTimeMs ? `${Math.round(bestTotalTimeMs / 1000)}s` : '—'}
+                  </span>
                 </div>
               </div>
               <div className="completion-buttons">

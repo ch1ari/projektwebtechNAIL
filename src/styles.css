@@ -1599,6 +1599,16 @@ body {
   box-shadow: 0 16px 40px rgba(217, 70, 181, 0.25);
 }
 
+.game-complete-modal .btn-primary {
+  background: linear-gradient(135deg, #c026d3, #ec4899);
+  border: 1px solid rgba(192, 38, 211, 0.4);
+  color: white;
+}
+
+.game-complete-modal .btn-primary:hover {
+  box-shadow: 0 14px 28px rgba(192, 38, 211, 0.35);
+}
+
 .completion-stats.final {
   grid-template-columns: repeat(2, 1fr);
 }
