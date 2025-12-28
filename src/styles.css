@@ -1629,7 +1629,7 @@ body {
 
 .btn-primary:disabled {
   background: linear-gradient(135deg, #fde2f4, #f8c8e5);
-  color: #f8f2f6;
+  color: #e34999;
   border: 1px solid rgba(236, 72, 153, 0.28);
   transform: none;
 }
