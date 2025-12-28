@@ -36,20 +36,23 @@ const paletteColors = [
 const firstTaskId = tasks[0]?.id ?? null;
 
 const loadQueue = () => {
+  const defaultQueue = tasks.map((task) => task.id);
   const stored = window.localStorage.getItem('nail-art-queue');
-  const validIds = new Set(tasks.map((task) => task.id));
-  if (stored) {
-    try {
-      const parsed = JSON.parse(stored);
-      const filtered = Array.isArray(parsed)
-        ? parsed.filter((id) => validIds.has(id))
-        : null;
-      if (filtered && filtered.length) return filtered;
-    } catch (err) {
-      return tasks.map((task) => task.id);
-    }
+  const validIds = new Set(defaultQueue);
+
+  if (!stored) return defaultQueue;
+
+  try {
+    const parsed = JSON.parse(stored);
+    if (!Array.isArray(parsed)) return defaultQueue;
+
+    const filtered = parsed.filter((id) => validIds.has(id));
+    const hasAll = defaultQueue.every((id) => filtered.includes(id));
+
+    return hasAll ? filtered : defaultQueue;
+  } catch (err) {
+    return defaultQueue;
   }
-  return tasks.map((task) => task.id);
 };
 
 const loadStats = () => {
@@ -100,6 +103,7 @@ const defaultState = {
   lockCorrect: false,
   showStats: false,
   showCompletionModal: false,
+  showGameCompleteModal: false,
   showSolutionModal: false,
   status: 'idle',
   timerRunning: true,
@@ -160,6 +164,9 @@ function appReducer(state, action) {
     case 'setTask': {
       const nextTask = tasks.find((task) => task.id === action.payload) ?? null;
       const taskId = nextTask?.id;
+      const selectedIndex = tasks.findIndex((task) => task.id === taskId);
+      const nextQueue =
+        selectedIndex >= 0 ? tasks.slice(selectedIndex).map((task) => task.id) : loadQueue();
       // Increment attempts when starting a new task
       const currentStats = state.stats?.[taskId] ?? {};
       const updatedStats = taskId ? {
@@ -184,7 +191,8 @@ function appReducer(state, action) {
         timerRunning: true,
         elapsedMs: 0,
         status: 'task:selected',
-        stats: updatedStats
+        stats: updatedStats,
+        queue: nextQueue
       };
     }
     case 'setColor': {
@@ -243,6 +251,7 @@ function appReducer(state, action) {
         showHints: false,
         showTemplate: false,
         lockCorrect: false,
+        showGameCompleteModal: false,
         status: 'restart'
       };
     }
@@ -267,10 +276,12 @@ function appReducer(state, action) {
     }
     case 'nextLevel': {
       const queue = state.queue.length ? state.queue.slice(1) : loadQueue();
-      const nextId = queue[0] ?? tasks[0]?.id;
+      const fallbackQueue = loadQueue();
+      const nextId = queue[0] ?? fallbackQueue[0] ?? tasks[0]?.id;
+      const normalizedQueue = queue.length ? queue : fallbackQueue;
       return {
         ...state,
-        queue,
+        queue: normalizedQueue,
         currentTaskId: nextId,
         placements: {},
         nailColors: DEFAULT_NAIL_COLORS,
@@ -289,6 +300,10 @@ function appReducer(state, action) {
       return { ...state, showCompletionModal: true, timerRunning: false };
     case 'hideCompletionModal':
       return { ...state, showCompletionModal: false };
+    case 'showGameCompleteModal':
+      return { ...state, showGameCompleteModal: true, timerRunning: false };
+    case 'hideGameCompleteModal':
+      return { ...state, showGameCompleteModal: false };
     case 'showSolutionModal':
       return { ...state, showSolutionModal: true };
     case 'hideSolutionModal':
@@ -705,6 +720,16 @@ export default function App() {
     if (!app.currentTask) return;
     const done = isTaskComplete(app.currentTask, app.state.placements, app.state.nailColors);
     const alreadyDone = app.state.stats?.[app.currentTask.id]?.completed;
+    const futureStats = {
+      ...app.state.stats,
+      [app.currentTask.id]: {
+        ...(app.state.stats?.[app.currentTask.id] ?? {}),
+        completed: true,
+        completedAt: Date.now(),
+        timeMs: app.state.elapsedMs
+      }
+    };
+    const allLevelsCompleted = app.tasks.every((task) => futureStats?.[task.id]?.completed);
     // Don't show completion modal if user clicked "Riešenie" button
     if (done && !alreadyDone && app.state.status !== 'solved') {
       app.dispatch({
@@ -712,9 +737,13 @@ export default function App() {
         taskId: app.currentTask.id,
         payload: { ...(app.state.stats?.[app.currentTask.id] ?? {}), completed: true, completedAt: Date.now(), timeMs: app.state.elapsedMs }
       });
-      // Show completion modal
+      // Show completion modal or final game modal
       setTimeout(() => {
-        app.dispatch({ type: 'showCompletionModal' });
+        if (allLevelsCompleted) {
+          app.dispatch({ type: 'showGameCompleteModal' });
+        } else {
+          app.dispatch({ type: 'showCompletionModal' });
+        }
       }, 500);
     }
   }, [app.currentTask, app.state.placements, app.state.nailColors, app.state.stats, app.state.elapsedMs, app.state.status, app.dispatch]);
@@ -797,6 +826,40 @@ export default function App() {
                   onClick={() => app.dispatch({ type: 'hideCompletionModal' })}
                 >
                   Zostať tu
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
+        {app.state.showGameCompleteModal ? (
+          <div className="modal-backdrop" role="dialog" aria-modal>
+            <div className="modal completion-modal game-complete-modal">
+              <h2>🌟 Výborná práca!</h2>
+              <p className="completion-message">
+                Prešla si všetky úrovne. Chceš si dať ďalšie kolo alebo skúšať ďalej?
+              </p>
+              <div className="completion-stats final">
+                <div className="stat">
+                  <span className="label">Hotovo</span>
+                  <span className="value">{app.tasks.length}/{app.tasks.length}</span>
+                </div>
+                <div className="stat">
+                  <span className="label">Čas spolu</span>
+                  <span className="value">{Math.round(app.state.elapsedMs / 1000)}s</span>
+                </div>
+              </div>
+              <div className="completion-buttons">
+                <button
+                  className="btn-primary"
+                  onClick={handleNewGame}
+                >
+                  Reštartovať hru
+                </button>
+                <button
+                  className="btn-secondary"
+                  onClick={() => app.dispatch({ type: 'hideGameCompleteModal' })}
+                >
+                  Pokračovať v hre
                 </button>
               </div>
             </div>
