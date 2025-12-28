@@ -34,8 +34,15 @@ const NAIL_NAMES_SK = {
   pinky: 'Malíček'
 };
 
+// Detect touch device
+const isTouchDevice = () => {
+  return (('ontouchstart' in window) ||
+     (navigator.maxTouchPoints > 0) ||
+     (navigator.msMaxTouchPoints > 0));
+};
+
 const Board = forwardRef(function Board({ app, stickers, completionMap }, boardRef) {
-  const { placements, showHints, showTemplate, nailColors } = app.state;
+  const { placements, showHints, showTemplate, nailColors, selectedSticker, selectedColor } = app.state;
   const activeTask = app.currentTask;
   const nailMapRef = useRef(null);
 
@@ -108,6 +115,52 @@ const Board = forwardRef(function Board({ app, stickers, completionMap }, boardR
     }
   }
 
+  // Mobile tap-to-place handler
+  function handleNailClick(event) {
+    if (!isTouchDevice()) return; // Only for mobile
+
+    const hit = nailHitTest(event.clientX, event.clientY);
+    if (!hit) return;
+
+    // If sticker is selected, place it
+    if (selectedSticker) {
+      const sticker = stickers.find((s) => s.id === selectedSticker.id);
+      if (!sticker) return;
+
+      const boardRect = boardRef.current.getBoundingClientRect();
+      const boardX = clamp((event.clientX - boardRect.left) / boardRect.width, 0, 1);
+      const boardY = clamp((event.clientY - boardRect.top) / boardRect.height, 0, 1);
+
+      const position = {
+        nailId: hit.id,
+        x: boardX,
+        y: boardY,
+        boardX,
+        boardY,
+        rotation: sticker.startTransform?.rotation ?? 0,
+        scale: sticker.startTransform?.scale ?? sticker.scale ?? 0.35
+      };
+
+      app.dispatch({
+        type: 'placeSticker',
+        payload: { stickerId: sticker.id, position }
+      });
+
+      if (activeTask?.id) {
+        app.dispatch({ type: 'finalizePlacement', payload: { stickerId: sticker.id, taskId: activeTask.id } });
+      }
+
+      // Deselect sticker after placement
+      app.dispatch({ type: 'selectSticker', payload: null });
+      return;
+    }
+
+    // If no sticker selected, paint the nail with selected color
+    if (selectedColor) {
+      app.dispatch({ type: 'paintNail', payload: { nail: hit.id, color: selectedColor } });
+    }
+  }
+
   // Nail positions as percentages of board
   const getNailPosition = (nail) => {
     return {
@@ -131,6 +184,7 @@ const Board = forwardRef(function Board({ app, stickers, completionMap }, boardR
         ref={boardRef}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
+        onClick={handleNailClick}
       >
         <div
           className="board-surface"

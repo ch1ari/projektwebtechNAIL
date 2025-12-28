@@ -96,6 +96,7 @@ const defaultState = {
   placements: {},
   selectedColor: paletteColors[0].value,
   selectedColorName: paletteColors[0].name,
+  selectedSticker: null, // For mobile tap-to-place
   nailColors: initialTaskColors,
   activeToolTab: null,
   showHints: false,
@@ -213,6 +214,9 @@ function appReducer(state, action) {
     }
     case 'setColor': {
       return { ...state, selectedColor: action.payload.value, selectedColorName: action.payload.name };
+    }
+    case 'selectSticker': {
+      return { ...state, selectedSticker: action.payload };
     }
     case 'paintNail': {
       const { nail, color } = action.payload;
@@ -626,6 +630,7 @@ function Toolbelt({ app, boardRef }) {
             dispatch={app.dispatch}
             lockCorrect={app.state.lockCorrect}
             currentTask={app.currentTask}
+            selectedSticker={app.state.selectedSticker}
           />
         </div>
       );
