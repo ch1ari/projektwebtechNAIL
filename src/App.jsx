@@ -36,20 +36,23 @@ const paletteColors = [
 const firstTaskId = tasks[0]?.id ?? null;
 
 const loadQueue = () => {
+  const defaultQueue = tasks.map((task) => task.id);
   const stored = window.localStorage.getItem('nail-art-queue');
-  const validIds = new Set(tasks.map((task) => task.id));
-  if (stored) {
-    try {
-      const parsed = JSON.parse(stored);
-      const filtered = Array.isArray(parsed)
-        ? parsed.filter((id) => validIds.has(id))
-        : null;
-      if (filtered && filtered.length) return filtered;
-    } catch (err) {
-      return tasks.map((task) => task.id);
-    }
+  const validIds = new Set(defaultQueue);
+
+  if (!stored) return defaultQueue;
+
+  try {
+    const parsed = JSON.parse(stored);
+    if (!Array.isArray(parsed)) return defaultQueue;
+
+    const filtered = parsed.filter((id) => validIds.has(id));
+    const hasAll = defaultQueue.every((id) => filtered.includes(id));
+
+    return hasAll ? filtered : defaultQueue;
+  } catch (err) {
+    return defaultQueue;
   }
-  return tasks.map((task) => task.id);
 };
 
 const loadStats = () => {
@@ -88,13 +91,13 @@ const initialTaskColors = DEFAULT_NAIL_COLORS;
 // Try to load saved game state, otherwise use defaults
 const savedGameState = loadGameState();
 
-const initialState = savedGameState || {
+const defaultState = {
   currentTaskId: firstTaskId,
   placements: {},
   selectedColor: paletteColors[0].value,
   selectedColorName: paletteColors[0].name,
   nailColors: initialTaskColors,
-  activeToolTab: 'colors',
+  activeToolTab: null,
   showHints: false,
   showTemplate: false,
   lockCorrect: false,
@@ -107,6 +110,12 @@ const initialState = savedGameState || {
   queue: loadQueue(),
   stats: loadStats(),
   dragState: null
+};
+
+const initialState = {
+  ...defaultState,
+  ...(savedGameState || {}),
+  activeToolTab: null
 };
 
 function taskTargets(task) {
@@ -154,6 +163,9 @@ function appReducer(state, action) {
     case 'setTask': {
       const nextTask = tasks.find((task) => task.id === action.payload) ?? null;
       const taskId = nextTask?.id;
+      const selectedIndex = tasks.findIndex((task) => task.id === taskId);
+      const nextQueue =
+        selectedIndex >= 0 ? tasks.slice(selectedIndex).map((task) => task.id) : loadQueue();
       // Increment attempts when starting a new task
       const currentStats = state.stats?.[taskId] ?? {};
       const updatedStats = taskId ? {
@@ -171,14 +183,15 @@ function appReducer(state, action) {
         nailColors: DEFAULT_NAIL_COLORS,
         selectedColor: paletteColors[0].value,
         selectedColorName: paletteColors[0].name,
-        activeToolTab: 'colors',
+        activeToolTab: null,
         showHints: false,
         showTemplate: false,
         lockCorrect: false,
         timerRunning: true,
         elapsedMs: 0,
         status: 'task:selected',
-        stats: updatedStats
+        stats: updatedStats,
+        queue: nextQueue
       };
     }
     case 'setColor': {
@@ -231,7 +244,7 @@ function appReducer(state, action) {
         nailColors: DEFAULT_NAIL_COLORS,
         selectedColor: paletteColors[0].value,
         selectedColorName: paletteColors[0].name,
-        activeToolTab: 'colors',
+        activeToolTab: null,
         elapsedMs: 0,
         timerRunning: true,
         showHints: false,
@@ -261,16 +274,18 @@ function appReducer(state, action) {
     }
     case 'nextLevel': {
       const queue = state.queue.length ? state.queue.slice(1) : loadQueue();
-      const nextId = queue[0] ?? tasks[0]?.id;
+      const fallbackQueue = loadQueue();
+      const nextId = queue[0] ?? fallbackQueue[0] ?? tasks[0]?.id;
+      const normalizedQueue = queue.length ? queue : fallbackQueue;
       return {
         ...state,
-        queue,
+        queue: normalizedQueue,
         currentTaskId: nextId,
         placements: {},
         nailColors: DEFAULT_NAIL_COLORS,
         selectedColor: paletteColors[0].value,
         selectedColorName: paletteColors[0].name,
-        activeToolTab: 'colors',
+        activeToolTab: null,
         elapsedMs: 0,
         timerRunning: true
       };
@@ -428,6 +443,11 @@ function TopBar({ app, completionMap, onReturnToMenu }) {
 function Toolbelt({ app, boardRef }) {
   const selectColor = (color) => app.dispatch({ type: 'setColor', payload: color });
 
+  const toggleTab = (tab) => {
+    const nextTab = app.state.activeToolTab === tab ? null : tab;
+    app.dispatch({ type: 'setToolTab', payload: nextTab });
+  };
+
   const handlePointerDown = (event, color) => {
     const target = event.currentTarget;
     target.setPointerCapture(event.pointerId);
@@ -492,59 +512,73 @@ function Toolbelt({ app, boardRef }) {
     app.dispatch({ type: 'endColorDrag' });
   };
 
+  const renderToolContent = () => {
+    if (app.state.activeToolTab === 'colors') {
+      return (
+        <>
+          <div className="color-shelf scroll-row" aria-label="Color palette">
+            {app.paletteColors.map((color) => (
+              <button
+                key={color.value}
+                className={`swatch nail-chip ${app.state.selectedColor === color.value ? 'active' : ''}`}
+                onClick={() => selectColor(color)}
+                onPointerDown={(event) => handlePointerDown(event, color)}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                onPointerCancel={handlePointerCancel}
+                aria-label={`Vybrať farbu ${color.name}`}
+              >
+                <span className="nail-cap" style={{ backgroundColor: color.value }} />
+                <span className="nail-bed" style={{ backgroundColor: color.value }} />
+              </button>
+            ))}
+          </div>
+          <div className="selected-color-readout">
+            <span>Aktuálna farba:</span>
+            <strong>{app.state.selectedColorName}</strong>
+          </div>
+        </>
+      );
+    }
+
+    if (app.state.activeToolTab === 'stickers') {
+      return (
+        <div className="scroll-row sticker-row" aria-label="Sticker box">
+          <Palette
+            stickers={app.currentTask?.stickers ?? []}
+            placements={app.state.placements}
+            dispatch={app.dispatch}
+            lockCorrect={app.state.lockCorrect}
+            currentTask={app.currentTask}
+          />
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  const toolContent = renderToolContent();
+
   return (
-    <div className="toolbelt panel">
+    <div className={`toolbelt panel ${toolContent ? 'toolbelt-open' : 'toolbelt-collapsed'}`}>
       <div className="tool-tabs">
         <button
           className={`tab-button ${app.state.activeToolTab === 'colors' ? 'active' : ''}`}
-          onClick={() => app.dispatch({ type: 'setToolTab', payload: 'colors' })}
+          aria-pressed={app.state.activeToolTab === 'colors'}
+          onClick={() => toggleTab('colors')}
         >
           🎨 Farby
         </button>
         <button
           className={`tab-button ${app.state.activeToolTab === 'stickers' ? 'active' : ''}`}
-          onClick={() => app.dispatch({ type: 'setToolTab', payload: 'stickers' })}
+          aria-pressed={app.state.activeToolTab === 'stickers'}
+          onClick={() => toggleTab('stickers')}
         >
           ✨ Nálepky
         </button>
       </div>
-      <div className="tool-strip">
-        {app.state.activeToolTab === 'colors' ? (
-          <>
-            <div className="color-shelf scroll-row" aria-label="Color palette">
-              {app.paletteColors.map((color) => (
-                <button
-                  key={color.value}
-                  className={`swatch nail-chip ${app.state.selectedColor === color.value ? 'active' : ''}`}
-                  onClick={() => selectColor(color)}
-                  onPointerDown={(event) => handlePointerDown(event, color)}
-                  onPointerMove={handlePointerMove}
-                  onPointerUp={handlePointerUp}
-                  onPointerCancel={handlePointerCancel}
-                  aria-label={`Vybrať farbu ${color.name}`}
-                >
-                  <span className="nail-cap" style={{ backgroundColor: color.value }} />
-                  <span className="nail-bed" style={{ backgroundColor: color.value }} />
-                </button>
-              ))}
-            </div>
-            <div className="selected-color-readout">
-              <span>Aktuálna farba:</span>
-              <strong>{app.state.selectedColorName}</strong>
-            </div>
-          </>
-        ) : (
-          <div className="scroll-row sticker-row" aria-label="Sticker box">
-            <Palette
-              stickers={app.currentTask?.stickers ?? []}
-              placements={app.state.placements}
-              dispatch={app.dispatch}
-              lockCorrect={app.state.lockCorrect}
-              currentTask={app.currentTask}
-            />
-          </div>
-        )}
-      </div>
+      {toolContent ? <div className="tool-strip">{toolContent}</div> : null}
     </div>
   );
 }
@@ -731,6 +765,7 @@ export default function App() {
             <Board
               ref={boardRef}
               app={app}
+              completionMap={completionMap}
               stickers={app.currentTask?.stickers ?? []}
             />
             <Toolbelt app={app} boardRef={boardRef} />

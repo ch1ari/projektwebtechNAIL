@@ -34,7 +34,7 @@ const NAIL_NAMES_SK = {
   pinky: 'Malíček'
 };
 
-const Board = forwardRef(function Board({ app, stickers }, boardRef) {
+const Board = forwardRef(function Board({ app, stickers, completionMap }, boardRef) {
   const { placements, showHints, showTemplate, nailColors } = app.state;
   const activeTask = app.currentTask;
   const nailMapRef = useRef(null);
@@ -115,6 +115,13 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
       y: (nail.shape.cy / VIEWBOX.height) * 100
     };
   };
+
+  const currentIndex = app.tasks.findIndex((task) => task.id === activeTask?.id);
+  const hasNext = currentIndex >= 0 && currentIndex < app.tasks.length - 1;
+  const allPriorCompleted = currentIndex >= 0
+    ? app.tasks.slice(0, currentIndex + 1).every((task) => completionMap[task.id])
+    : false;
+  const canAdvance = hasNext && allPriorCompleted;
 
   return (
     <div className="board-shell">
@@ -454,8 +461,13 @@ const Board = forwardRef(function Board({ app, stickers }, boardRef) {
             </button>
             <button
               className="action-icon-btn"
-              onClick={() => app.dispatch({ type: 'nextLevel' })}
-              data-tooltip="Ďalší level"
+              onClick={() => {
+                if (!canAdvance) return;
+                app.dispatch({ type: 'nextLevel' });
+              }}
+              data-tooltip={canAdvance ? 'Ďalší level' : 'Najprv dokonči predchádzajúce levely'}
+              aria-disabled={!canAdvance}
+              disabled={!canAdvance}
             >
               ⏭
             </button>
