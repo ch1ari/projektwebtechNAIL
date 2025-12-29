@@ -1,7 +1,7 @@
 // Nail Art Match - Service Worker
 // Progressive Web App offline support
 
-const CACHE_VERSION = 'v5';
+const CACHE_VERSION = 'v6';
 const CACHE_NAME = `nail-art-match-${CACHE_VERSION}`;
 const STATIC_CACHE_NAME = `nail-art-static-${CACHE_VERSION}`;
 
@@ -39,7 +39,8 @@ self.addEventListener('install', (event) => {
         return cache.addAll(STATIC_ASSETS);
       })
       .then(() => {
-        console.log('[Service Worker] Installed successfully');
+        console.log('[Service Worker] Installed successfully, skipping waiting');
+        // Immediately activate this version
         return self.skipWaiting();
       })
       .catch((error) => {
@@ -55,10 +56,10 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
       .then((cacheNames) => {
+        // Delete all caches that don't match current version
         return Promise.all(
           cacheNames
             .filter((cacheName) => {
-              // Delete old version caches
               return !cacheName.includes(CACHE_VERSION);
             })
             .map((cacheName) => {
@@ -68,8 +69,13 @@ self.addEventListener('activate', (event) => {
         );
       })
       .then(() => {
-        console.log('[Service Worker] Activated successfully');
+        console.log('[Service Worker] All old caches deleted');
+        console.log('[Service Worker] Taking control of all clients');
+        // Take control of all pages immediately
         return self.clients.claim();
+      })
+      .then(() => {
+        console.log('[Service Worker] Activated successfully');
       })
   );
 });
