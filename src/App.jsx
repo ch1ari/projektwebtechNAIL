@@ -527,21 +527,6 @@ function useAppState() {
 }
 
 function TopBar({ app, completionMap, onReturnToMenu }) {
-  // Helper to check if a task is unlocked based on level system
-  const isTaskUnlocked = (task) => {
-    const { levelState } = app.state;
-    const { currentDifficulty, completedLevels } = levelState;
-    const taskDifficulty = task.difficulty || 'easy';
-
-    // Map difficulty to level number
-    const difficultyToLevel = { easy: 1, medium: 2, hard: 3 };
-    const taskLevel = difficultyToLevel[taskDifficulty];
-    const currentLevel = difficultyToLevel[currentDifficulty];
-
-    // Task is unlocked if its level is <= current level
-    return taskLevel <= currentLevel;
-  };
-
   return (
     <header className="top-bar">
       <button className="menu-button-top" onClick={onReturnToMenu}>
@@ -549,9 +534,11 @@ function TopBar({ app, completionMap, onReturnToMenu }) {
       </button>
       <div className="level-bar" aria-label="Level navigation">
         {app.tasks.map((task, index) => {
-          const locked = !isTaskUnlocked(task);
           const active = task.id === app.state.currentTaskId;
           const completed = completionMap[task.id];
+          // Only unlock current task and completed tasks
+          const locked = !active && !completed;
+
           return (
             <button
               key={task.id}
