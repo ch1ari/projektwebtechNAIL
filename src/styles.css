@@ -1811,38 +1811,51 @@ body {
 
   /* Compact overlays - use smaller padding and font sizes, NO transforms */
   .info-card {
-    padding: 0.4rem 0.6rem;
-    min-width: 140px;
+    padding: 0.3rem 0.5rem;
+    min-width: 110px;
+    gap: 0.3rem;
+  }
+
+  .info-level,
+  .info-color {
+    font-size: 0.7rem;
+    gap: 0.3rem;
   }
 
   .info-label {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
   }
 
   .info-value {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
   }
 
   .color-name {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
   }
 
   .color-preview {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
+  }
+
+  .difficulty-badge {
+    padding: 0.15rem 0.4rem;
+    font-size: 0.6rem;
+    margin-left: 0.3rem;
   }
 
   .timer-card {
-    padding: 0.4rem 0.6rem;
+    padding: 0.3rem 0.5rem;
   }
 
   .timer-value {
-    font-size: 0.9rem;
-    min-width: 35px;
+    font-size: 0.85rem;
+    min-width: 32px;
   }
 
   .timer-icon {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
 
   /* Compact actions panel */
@@ -1911,11 +1924,51 @@ body {
   }
 
   .info-card {
-    padding: 0.35rem 0.5rem;
+    padding: 0.25rem 0.4rem;
+    min-width: 100px;
+    gap: 0.25rem;
+  }
+
+  .info-level,
+  .info-color {
+    font-size: 0.65rem;
+    gap: 0.25rem;
+  }
+
+  .info-label {
+    font-size: 0.6rem;
+  }
+
+  .info-value {
+    font-size: 0.65rem;
+  }
+
+  .color-name {
+    font-size: 0.65rem;
+  }
+
+  .color-preview {
+    width: 14px;
+    height: 14px;
+  }
+
+  .difficulty-badge {
+    padding: 0.1rem 0.3rem;
+    font-size: 0.55rem;
+    margin-left: 0.25rem;
   }
 
   .timer-card {
-    padding: 0.35rem 0.5rem;
+    padding: 0.25rem 0.4rem;
+  }
+
+  .timer-value {
+    font-size: 0.8rem;
+    min-width: 28px;
+  }
+
+  .timer-icon {
+    font-size: 0.9rem;
   }
 
   .action-icon-btn {
@@ -2344,12 +2397,51 @@ body {
 
   /* Compact overlays */
   .info-card {
-    padding: 0.4rem 0.6rem;
-    min-width: 130px;
+    padding: 0.3rem 0.5rem;
+    min-width: 110px;
+    gap: 0.3rem;
+  }
+
+  .info-level,
+  .info-color {
+    font-size: 0.7rem;
+    gap: 0.3rem;
+  }
+
+  .info-label {
+    font-size: 0.65rem;
+  }
+
+  .info-value {
+    font-size: 0.7rem;
+  }
+
+  .color-name {
+    font-size: 0.7rem;
+  }
+
+  .color-preview {
+    width: 16px;
+    height: 16px;
+  }
+
+  .difficulty-badge {
+    padding: 0.15rem 0.4rem;
+    font-size: 0.6rem;
+    margin-left: 0.3rem;
   }
 
   .timer-card {
-    padding: 0.4rem 0.6rem;
+    padding: 0.3rem 0.5rem;
+  }
+
+  .timer-value {
+    font-size: 0.85rem;
+    min-width: 32px;
+  }
+
+  .timer-icon {
+    font-size: 0.95rem;
   }
 
   .actions-panel {
