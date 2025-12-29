@@ -363,13 +363,44 @@ function appReducer(state, action) {
           }
         : state.savedProgress;
 
-      // Use level manager to get next random task
-      const {
-        taskId: nextId,
-        levelState: updatedLevelState,
-        levelComplete,
-        allLevelsComplete
-      } = getNextTask(state.levelState, tasks);
+      // Find next unlocked task in sequential order
+      const currentIndex = tasks.findIndex(t => t.id === state.currentTaskId);
+      let nextId = null;
+
+      // Look for next unlocked task (completed or will be unlocked)
+      for (let i = currentIndex + 1; i < tasks.length; i++) {
+        const taskId = tasks[i].id;
+        const isCompleted = state.stats?.[taskId]?.completed;
+        const previousTaskCompleted = i === 0 || state.stats?.[tasks[i - 1].id]?.completed;
+
+        // Unlock if previous task is completed
+        if (isCompleted || previousTaskCompleted) {
+          nextId = taskId;
+          break;
+        }
+      }
+
+      // If no next unlocked task found, stay on current task
+      if (!nextId) {
+        return state;
+      }
+
+      // Use level manager to update level state based on selected task
+      const { levelState: updatedLevelState } = selectSpecificTask(
+        nextId,
+        state.levelState,
+        tasks
+      );
+
+      // Increment attempts for the new task
+      const currentStats = state.stats?.[nextId] ?? {};
+      const updatedStats = {
+        ...state.stats,
+        [nextId]: {
+          ...currentStats,
+          attempts: (currentStats.attempts ?? 0) + 1
+        }
+      };
 
       const queue = state.queue.length ? state.queue.slice(1) : loadQueue();
       const fallbackQueue = loadQueue();
@@ -388,6 +419,7 @@ function appReducer(state, action) {
         elapsedMs: restored?.elapsedMs ?? 0,
         timerRunning: true,
         savedProgress,
+        stats: updatedStats,
         levelState: updatedLevelState
       };
     }
@@ -963,6 +995,25 @@ export default function App() {
     }
   };
 
+  // Check if there's a next unlocked level available
+  const hasNextUnlockedLevel = useMemo(() => {
+    const currentIndex = app.tasks.findIndex(t => t.id === app.state.currentTaskId);
+    if (currentIndex === -1) return false;
+
+    // Look for next unlocked task
+    for (let i = currentIndex + 1; i < app.tasks.length; i++) {
+      const taskId = app.tasks[i].id;
+      const isCompleted = app.state.stats?.[taskId]?.completed;
+      const previousTaskCompleted = i === 0 || app.state.stats?.[app.tasks[i - 1].id]?.completed;
+
+      // Check if unlocked (completed or previous task is completed)
+      if (isCompleted || previousTaskCompleted) {
+        return true;
+      }
+    }
+    return false;
+  }, [app.state.currentTaskId, app.state.stats, app.tasks]);
+
   return (
     <AppStateContext.Provider value={app}>
       {showIntro ? (
@@ -1006,15 +1057,26 @@ export default function App() {
                 </div>
               </div>
               <div className="completion-buttons">
-                <button
-                  className="btn-primary"
-                  onClick={() => {
-                    app.dispatch({ type: 'hideCompletionModal' });
-                    app.dispatch({ type: 'nextLevel' });
-                  }}
-                >
-                  Ďalší level →
-                </button>
+                {hasNextUnlockedLevel ? (
+                  <button
+                    className="btn-primary"
+                    onClick={() => {
+                      app.dispatch({ type: 'hideCompletionModal' });
+                      app.dispatch({ type: 'nextLevel' });
+                    }}
+                  >
+                    Ďalší level →
+                  </button>
+                ) : (
+                  <button
+                    className="btn-primary"
+                    disabled
+                    style={{ opacity: 0.5, cursor: 'not-allowed' }}
+                    title="Žiadne ďalšie odomknuté levely"
+                  >
+                    Žiadne ďalšie levely
+                  </button>
+                )}
                 <button
                   className="btn-secondary"
                   onClick={() => app.dispatch({ type: 'hideCompletionModal' })}
