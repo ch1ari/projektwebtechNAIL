@@ -169,12 +169,18 @@ const Board = forwardRef(function Board({ app, stickers, completionMap }, boardR
     };
   };
 
-  const currentIndex = app.tasks.findIndex((task) => task.id === activeTask?.id);
-  const hasNext = currentIndex >= 0 && currentIndex < app.tasks.length - 1;
-  const allPriorCompleted = currentIndex >= 0
-    ? app.tasks.slice(0, currentIndex + 1).every((task) => completionMap[task.id])
-    : false;
-  const canAdvance = hasNext && allPriorCompleted;
+  // With the level system, we can always advance to the next task
+  // The level manager handles progression through difficulties and cycling
+  const { levelState } = app.state;
+  const { currentDifficulty, queues, playedInCurrentLevel } = levelState;
+  const currentQueue = queues[currentDifficulty] || [];
+  const unplayedInCurrent = currentQueue.filter(
+    taskId => !playedInCurrentLevel.includes(taskId)
+  );
+
+  // Can advance if there are unplayed tasks in current difficulty OR we can progress to next difficulty
+  // Note: When all levels complete, the system restarts from easy, so there's always a next task
+  const canAdvance = true; // Level manager handles all progression logic
 
   return (
     <div className="board-shell">
