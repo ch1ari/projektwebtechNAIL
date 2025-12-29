@@ -27,13 +27,13 @@
         "stickerId": "berry-cherry",
         "nailName": "middle",
         "targetTransform": { "x": 0.598, "y": 0.163, "rotation": 15, "scale": 0.35 },
-        "tolerance": { "x": 0.35, "y": 0.35, "rotation": 45, "scale": 0.5 }
+        "tolerance": { "x": 0.20, "y": 0.20, "rotation": 30, "scale": 0.4 }
       },
       {
         "stickerId": "berry-diamond",
         "nailName": "thumb",
         "targetTransform": { "x": 0.377, "y": 0.290, "rotation": 0, "scale": 0.35 },
-        "tolerance": { "x": 0.35, "y": 0.35, "rotation": 45, "scale": 0.5 }
+        "tolerance": { "x": 0.20, "y": 0.20, "rotation": 30, "scale": 0.4 }
       }
     ]
   },
@@ -65,13 +65,13 @@
         "stickerId": "rainbow-arc",
         "nailName": "index",
         "targetTransform": { "x": 0.513, "y": 0.174, "rotation": 0, "scale": 0.35 },
-        "tolerance": { "x": 0.35, "y": 0.35, "rotation": 45, "scale": 0.5 }
+        "tolerance": { "x": 0.20, "y": 0.20, "rotation": 30, "scale": 0.4 }
       },
       {
         "stickerId": "rainbow-star",
         "nailName": "ring",
         "targetTransform": { "x": 0.645, "y": 0.233, "rotation": 30, "scale": 0.35 },
-        "tolerance": { "x": 0.35, "y": 0.35, "rotation": 45, "scale": 0.5 }
+        "tolerance": { "x": 0.20, "y": 0.20, "rotation": 30, "scale": 0.4 }
       }
     ]
   },
@@ -103,13 +103,13 @@
         "stickerId": "bloom-rose",
         "nailName": "thumb",
         "targetTransform": { "x": 0.377, "y": 0.290, "rotation": -15, "scale": 0.35 },
-        "tolerance": { "x": 0.35, "y": 0.35, "rotation": 45, "scale": 0.5 }
+        "tolerance": { "x": 0.20, "y": 0.20, "rotation": 30, "scale": 0.4 }
       },
       {
         "stickerId": "bloom-sun",
         "nailName": "ring",
         "targetTransform": { "x": 0.645, "y": 0.233, "rotation": 0, "scale": 0.35 },
-        "tolerance": { "x": 0.35, "y": 0.35, "rotation": 45, "scale": 0.5 }
+        "tolerance": { "x": 0.20, "y": 0.20, "rotation": 30, "scale": 0.4 }
       }
     ]
   },
@@ -141,13 +141,13 @@
         "stickerId": "ice-diamond",
         "nailName": "index",
         "targetTransform": { "x": 0.513, "y": 0.174, "rotation": -15, "scale": 0.35 },
-        "tolerance": { "x": 0.10, "y": 0.10, "rotation": 25, "scale": 0.35 }
+        "tolerance": { "x": 0.06, "y": 0.06, "rotation": 15, "scale": 0.25 }
       },
       {
         "stickerId": "ice-rainbow",
         "nailName": "middle",
         "targetTransform": { "x": 0.598, "y": 0.163, "rotation": 30, "scale": 0.35 },
-        "tolerance": { "x": 0.10, "y": 0.10, "rotation": 25, "scale": 0.35 }
+        "tolerance": { "x": 0.06, "y": 0.06, "rotation": 15, "scale": 0.25 }
       }
     ]
   },
@@ -180,19 +180,19 @@
         "stickerId": "fiesta-sun",
         "nailName": "thumb",
         "targetTransform": { "x": 0.377, "y": 0.290, "rotation": 0, "scale": 0.35 },
-        "tolerance": { "x": 0.10, "y": 0.10, "rotation": 25, "scale": 0.35 }
+        "tolerance": { "x": 0.06, "y": 0.06, "rotation": 15, "scale": 0.25 }
       },
       {
         "stickerId": "fiesta-cherry",
         "nailName": "ring",
         "targetTransform": { "x": 0.645, "y": 0.233, "rotation": 15, "scale": 0.35 },
-        "tolerance": { "x": 0.10, "y": 0.10, "rotation": 25, "scale": 0.35 }
+        "tolerance": { "x": 0.06, "y": 0.06, "rotation": 15, "scale": 0.25 }
       },
       {
         "stickerId": "fiesta-star",
         "nailName": "pinky",
         "targetTransform": { "x": 0.665, "y": 0.364, "rotation": -30, "scale": 0.35 },
-        "tolerance": { "x": 0.10, "y": 0.10, "rotation": 25, "scale": 0.35 }
+        "tolerance": { "x": 0.06, "y": 0.06, "rotation": 15, "scale": 0.25 }
       }
     ]
   },
@@ -225,19 +225,71 @@
         "stickerId": "romance-rose",
         "nailName": "ring",
         "targetTransform": { "x": 0.645, "y": 0.233, "rotation": -30, "scale": 0.35 },
-        "tolerance": { "x": 0.10, "y": 0.10, "rotation": 25, "scale": 0.35 }
+        "tolerance": { "x": 0.06, "y": 0.06, "rotation": 15, "scale": 0.25 }
       },
       {
         "stickerId": "romance-diamond",
         "nailName": "thumb",
         "targetTransform": { "x": 0.377, "y": 0.290, "rotation": 0, "scale": 0.35 },
-        "tolerance": { "x": 0.10, "y": 0.10, "rotation": 25, "scale": 0.35 }
+        "tolerance": { "x": 0.06, "y": 0.06, "rotation": 15, "scale": 0.25 }
       },
       {
         "stickerId": "romance-star",
         "nailName": "middle",
         "targetTransform": { "x": 0.598, "y": 0.163, "rotation": 45, "scale": 0.35 },
-        "tolerance": { "x": 0.10, "y": 0.10, "rotation": 25, "scale": 0.35 }
+        "tolerance": { "x": 0.06, "y": 0.06, "rotation": 15, "scale": 0.25 }
+      }
+    ]
+  },
+  {
+    "id": "medium-garden",
+    "title": "Magická záhrada",
+    "difficulty": "medium",
+    "clientRequest": "Záhradný briefing: rozkvitnutá záhrada s dúhou, hviezdou, slnkom a ružou.",
+    "clientRequirements": [
+      "Palec: Tyrkysová s dúhou mierne otočenou.",
+      "Ukazovák: Zlatá broskyňa a hviezda v strede.",
+      "Prostredník: Púdrová ružová a slnko presne stredom.",
+      "Prstenník: Candy ružová s ružou šikmo nahor.",
+      "Malíček: Nebesky modrá bez ozdoby."
+    ],
+    "nailTargets": {
+      "thumb": "#7ae0c5",
+      "index": "#ffd6a5",
+      "middle": "#fce4ec",
+      "ring": "#ffb3c1",
+      "pinky": "#7ad6ff"
+    },
+    "stickers": [
+      { "id": "garden-rainbow", "name": "Dúha", "img": "/stickers/rainbow.png", "startTransform": { "x": 0.15, "y": 0.75, "rotation": 10, "scale": 0.35 } },
+      { "id": "garden-star", "name": "Hviezda", "img": "/stickers/shooting-star.png", "startTransform": { "x": 0.2, "y": 0.8, "rotation": -20, "scale": 0.35 } },
+      { "id": "garden-sun", "name": "Slnko", "img": "/stickers/sunflower.png", "startTransform": { "x": 0.25, "y": 0.68, "rotation": 5, "scale": 0.35 } },
+      { "id": "garden-rose", "name": "Ruža", "img": "/stickers/rose.png", "startTransform": { "x": 0.12, "y": 0.85, "rotation": -25, "scale": 0.35 } }
+    ],
+    "targets": [
+      {
+        "stickerId": "garden-rainbow",
+        "nailName": "thumb",
+        "targetTransform": { "x": 0.377, "y": 0.290, "rotation": 12, "scale": 0.35 },
+        "tolerance": { "x": 0.06, "y": 0.06, "rotation": 15, "scale": 0.25 }
+      },
+      {
+        "stickerId": "garden-star",
+        "nailName": "index",
+        "targetTransform": { "x": 0.513, "y": 0.174, "rotation": -18, "scale": 0.35 },
+        "tolerance": { "x": 0.06, "y": 0.06, "rotation": 15, "scale": 0.25 }
+      },
+      {
+        "stickerId": "garden-sun",
+        "nailName": "middle",
+        "targetTransform": { "x": 0.598, "y": 0.163, "rotation": 0, "scale": 0.35 },
+        "tolerance": { "x": 0.06, "y": 0.06, "rotation": 15, "scale": 0.25 }
+      },
+      {
+        "stickerId": "garden-rose",
+        "nailName": "ring",
+        "targetTransform": { "x": 0.645, "y": 0.233, "rotation": 35, "scale": 0.35 },
+        "tolerance": { "x": 0.06, "y": 0.06, "rotation": 15, "scale": 0.25 }
       }
     ]
   },
@@ -270,19 +322,19 @@
         "stickerId": "neon-star",
         "nailName": "pinky",
         "targetTransform": { "x": 0.665, "y": 0.364, "rotation": -45, "scale": 0.35 },
-        "tolerance": { "x": 0.08, "y": 0.08, "rotation": 20, "scale": 0.35 }
+        "tolerance": { "x": 0.04, "y": 0.04, "rotation": 10, "scale": 0.2 }
       },
       {
         "stickerId": "neon-diamond",
         "nailName": "index",
         "targetTransform": { "x": 0.513, "y": 0.174, "rotation": 15, "scale": 0.35 },
-        "tolerance": { "x": 0.08, "y": 0.08, "rotation": 20, "scale": 0.35 }
+        "tolerance": { "x": 0.04, "y": 0.04, "rotation": 10, "scale": 0.2 }
       },
       {
         "stickerId": "neon-cherry",
         "nailName": "middle",
         "targetTransform": { "x": 0.598, "y": 0.163, "rotation": 30, "scale": 0.35 },
-        "tolerance": { "x": 0.08, "y": 0.08, "rotation": 20, "scale": 0.35 }
+        "tolerance": { "x": 0.04, "y": 0.04, "rotation": 10, "scale": 0.2 }
       }
     ]
   },
@@ -315,19 +367,130 @@
         "stickerId": "drama-broken",
         "nailName": "thumb",
         "targetTransform": { "x": 0.377, "y": 0.290, "rotation": -15, "scale": 0.35 },
-        "tolerance": { "x": 0.08, "y": 0.08, "rotation": 20, "scale": 0.35 }
+        "tolerance": { "x": 0.04, "y": 0.04, "rotation": 10, "scale": 0.2 }
       },
       {
         "stickerId": "drama-sun",
         "nailName": "middle",
         "targetTransform": { "x": 0.598, "y": 0.163, "rotation": 0, "scale": 0.35 },
-        "tolerance": { "x": 0.08, "y": 0.08, "rotation": 20, "scale": 0.35 }
+        "tolerance": { "x": 0.04, "y": 0.04, "rotation": 10, "scale": 0.2 }
       },
       {
         "stickerId": "drama-rose",
         "nailName": "ring",
         "targetTransform": { "x": 0.645, "y": 0.233, "rotation": 45, "scale": 0.35 },
-        "tolerance": { "x": 0.08, "y": 0.08, "rotation": 20, "scale": 0.35 }
+        "tolerance": { "x": 0.04, "y": 0.04, "rotation": 10, "scale": 0.2 }
+      }
+    ]
+  },
+  {
+    "id": "hard-cosmos",
+    "title": "Kozmická explózia",
+    "difficulty": "hard",
+    "clientRequest": "Kozmický briefing: dúha na palci, diamant a hviezda na ukazováku a prostredníku, čerešne na prstenníku.",
+    "clientRequirements": [
+      "Palec: Horúca ružová a dúha presne v strede, mierne otočená.",
+      "Ukazovák: Tyrkysová s diamantom presne stredom.",
+      "Prostredník: Candy ružová a hviezda šikmo k hornej časti.",
+      "Prstenník: Lesklá ružová s čerešňami mierne doľava.",
+      "Malíček: Nebesky modrá bez nálepky."
+    ],
+    "nailTargets": {
+      "thumb": "#f06292",
+      "index": "#7ae0c5",
+      "middle": "#ffb3c1",
+      "ring": "#f48fb1",
+      "pinky": "#7ad6ff"
+    },
+    "stickers": [
+      { "id": "cosmos-rainbow", "name": "Dúha", "img": "/stickers/rainbow.png", "startTransform": { "x": 0.14, "y": 0.76, "rotation": 8, "scale": 0.35 } },
+      { "id": "cosmos-diamond", "name": "Diamant", "img": "/stickers/diamond.png", "startTransform": { "x": 0.18, "y": 0.82, "rotation": -12, "scale": 0.35 } },
+      { "id": "cosmos-star", "name": "Hviezda", "img": "/stickers/shooting-star.png", "startTransform": { "x": 0.22, "y": 0.72, "rotation": 22, "scale": 0.35 } },
+      { "id": "cosmos-cherry", "name": "Čerešne", "img": "/stickers/cherry.png", "startTransform": { "x": 0.28, "y": 0.88, "rotation": -18, "scale": 0.35 } }
+    ],
+    "targets": [
+      {
+        "stickerId": "cosmos-rainbow",
+        "nailName": "thumb",
+        "targetTransform": { "x": 0.377, "y": 0.290, "rotation": 8, "scale": 0.35 },
+        "tolerance": { "x": 0.04, "y": 0.04, "rotation": 10, "scale": 0.2 }
+      },
+      {
+        "stickerId": "cosmos-diamond",
+        "nailName": "index",
+        "targetTransform": { "x": 0.513, "y": 0.174, "rotation": 0, "scale": 0.35 },
+        "tolerance": { "x": 0.04, "y": 0.04, "rotation": 10, "scale": 0.2 }
+      },
+      {
+        "stickerId": "cosmos-star",
+        "nailName": "middle",
+        "targetTransform": { "x": 0.598, "y": 0.163, "rotation": 38, "scale": 0.35 },
+        "tolerance": { "x": 0.04, "y": 0.04, "rotation": 10, "scale": 0.2 }
+      },
+      {
+        "stickerId": "cosmos-cherry",
+        "nailName": "ring",
+        "targetTransform": { "x": 0.645, "y": 0.233, "rotation": -22, "scale": 0.35 },
+        "tolerance": { "x": 0.04, "y": 0.04, "rotation": 10, "scale": 0.2 }
+      }
+    ]
+  },
+  {
+    "id": "hard-ultimate",
+    "title": "Ultimátna výzva",
+    "difficulty": "hard",
+    "clientRequest": "Extrémny briefing: všetky 5 nechtov rôzne farby, 5 nálepiek presne umiestnených a rotovaných.",
+    "clientRequirements": [
+      "Palec: Horúca ružová so slnkom presne v strede, rovno.",
+      "Ukazovák: Tyrkysová s ružou šikmo k špičke.",
+      "Prostredník: Candy ružová a hviezda presne v strede, otočená -35°.",
+      "Prstenník: Nebesky modrá s diamantom presne v strede.",
+      "Malíček: Lesklá ružová s dúhou otočenou 22°."
+    ],
+    "nailTargets": {
+      "thumb": "#f06292",
+      "index": "#7ae0c5",
+      "middle": "#ffb3c1",
+      "ring": "#7ad6ff",
+      "pinky": "#f48fb1"
+    },
+    "stickers": [
+      { "id": "ultimate-sun", "name": "Slnko", "img": "/stickers/sunflower.png", "startTransform": { "x": 0.12, "y": 0.74, "rotation": 5, "scale": 0.35 } },
+      { "id": "ultimate-rose", "name": "Ruža", "img": "/stickers/rose.png", "startTransform": { "x": 0.16, "y": 0.82, "rotation": -28, "scale": 0.35 } },
+      { "id": "ultimate-star", "name": "Hviezda", "img": "/stickers/shooting-star.png", "startTransform": { "x": 0.20, "y": 0.68, "rotation": 18, "scale": 0.35 } },
+      { "id": "ultimate-diamond", "name": "Diamant", "img": "/stickers/diamond.png", "startTransform": { "x": 0.24, "y": 0.76, "rotation": -8, "scale": 0.35 } },
+      { "id": "ultimate-rainbow", "name": "Dúha", "img": "/stickers/rainbow.png", "startTransform": { "x": 0.28, "y": 0.88, "rotation": 14, "scale": 0.35 } }
+    ],
+    "targets": [
+      {
+        "stickerId": "ultimate-sun",
+        "nailName": "thumb",
+        "targetTransform": { "x": 0.377, "y": 0.290, "rotation": 0, "scale": 0.35 },
+        "tolerance": { "x": 0.04, "y": 0.04, "rotation": 10, "scale": 0.2 }
+      },
+      {
+        "stickerId": "ultimate-rose",
+        "nailName": "index",
+        "targetTransform": { "x": 0.513, "y": 0.174, "rotation": 42, "scale": 0.35 },
+        "tolerance": { "x": 0.04, "y": 0.04, "rotation": 10, "scale": 0.2 }
+      },
+      {
+        "stickerId": "ultimate-star",
+        "nailName": "middle",
+        "targetTransform": { "x": 0.598, "y": 0.163, "rotation": -35, "scale": 0.35 },
+        "tolerance": { "x": 0.04, "y": 0.04, "rotation": 10, "scale": 0.2 }
+      },
+      {
+        "stickerId": "ultimate-diamond",
+        "nailName": "ring",
+        "targetTransform": { "x": 0.645, "y": 0.233, "rotation": 0, "scale": 0.35 },
+        "tolerance": { "x": 0.04, "y": 0.04, "rotation": 10, "scale": 0.2 }
+      },
+      {
+        "stickerId": "ultimate-rainbow",
+        "nailName": "pinky",
+        "targetTransform": { "x": 0.665, "y": 0.364, "rotation": 22, "scale": 0.35 },
+        "tolerance": { "x": 0.04, "y": 0.04, "rotation": 10, "scale": 0.2 }
       }
     ]
   }
