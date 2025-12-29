@@ -112,13 +112,10 @@ const savedGameState = loadGameState();
 const initialLevelState = savedGameState?.levelState || loadLevelState(tasks);
 
 // Determine first task ID from level state or fallback
-const firstTaskId = initialLevelState.queues[initialLevelState.currentDifficulty]?.[0] ?? tasks[0]?.id ?? null;
+const firstTaskId = initialLevelState.currentTaskId ?? tasks[0]?.id ?? null;
 
-// Ensure the first task is added to playedInCurrentLevel if starting fresh
-const initialLevelStateWithFirst = savedGameState?.levelState ? initialLevelState : {
-  ...initialLevelState,
-  playedInCurrentLevel: firstTaskId ? [firstTaskId] : []
-};
+// Use the initial level state as-is (no need for playedInCurrentLevel)
+const initialLevelStateWithFirst = initialLevelState;
 
 const defaultState = {
   currentTaskId: firstTaskId,
@@ -815,14 +812,18 @@ function RightPanel({ app, completionMap, onReturnToMenu }) {
   const hasNext = currentIndex >= 0 && currentIndex < app.tasks.length - 1;
   const nextLocked = hasNext && !currentComplete;
 
-  // Calculate level progress
+  // Calculate level progress for current difficulty group
   const { levelState } = app.state;
-  const { currentDifficulty, queues, playedInCurrentLevel } = levelState;
-  const currentQueue = queues[currentDifficulty] || [];
-  const completedInLevel = currentQueue.filter(taskId =>
-    app.state.stats?.[taskId]?.completed
-  ).length;
-  const totalInLevel = currentQueue.length;
+  const { currentDifficulty } = levelState;
+
+  // Get completed task IDs from stats
+  const completedTaskIds = Object.keys(app.state.stats || {}).filter(
+    taskId => app.state.stats[taskId]?.completed
+  );
+
+  const progressInfo = getLevelProgress(levelState, completedTaskIds);
+  const completedInLevel = progressInfo.completed;
+  const totalInLevel = progressInfo.total;
 
   // Get difficulty label
   const difficultyLabel = currentDifficulty === 'easy' ? 'Easy' :
