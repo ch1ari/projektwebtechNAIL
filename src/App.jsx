@@ -5,6 +5,15 @@ import Palette from './components/Palette.jsx';
 import IntroScreen from './components/IntroScreen.jsx';
 import tasks from './data/tasks.json';
 import { clamp, rotationDeltaDegrees } from './lib/geometry.js';
+import {
+  loadLevelState,
+  saveLevelState,
+  getNextTask,
+  selectSpecificTask,
+  getLevelInfo,
+  getLevelProgress,
+  resetLevelState
+} from './lib/levelManager.js';
 
 export const AppStateContext = createContext();
 
@@ -32,8 +41,6 @@ const paletteColors = [
   { name: 'Bavlnená ružová', value: '#f5c1d8' },
   { name: 'Ľadová modrá', value: '#bde0fe' }
 ];
-
-const firstTaskId = tasks[0]?.id ?? null;
 
 const loadQueue = () => {
   const defaultQueue = tasks.map((task) => task.id);
@@ -67,7 +74,10 @@ const loadStats = () => {
   return {};
 };
 
-// Load saved game state from localStorage
+// State version for migration
+const STATE_VERSION = 2; // Incremented for level system changes
+
+// Load saved game state from localStorage with version check
 const loadGameState = () => {
   const stored = window.localStorage.getItem('nail-art-game-state');
   if (stored) {
@@ -75,6 +85,13 @@ const loadGameState = () => {
       const parsed = JSON.parse(stored);
       // Validate that the saved state has the expected structure
       if (parsed && typeof parsed === 'object') {
+        // Check version - if old version, clear and return null to start fresh
+        if (!parsed.version || parsed.version < STATE_VERSION) {
+          console.log('Old state version detected, clearing saved state for migration');
+          window.localStorage.removeItem('nail-art-game-state');
+          window.localStorage.removeItem('nail-art-level-state');
+          return null;
+        }
         return parsed;
       }
     } catch (err) {
@@ -90,6 +107,18 @@ const initialTaskColors = DEFAULT_NAIL_COLORS;
 
 // Try to load saved game state, otherwise use defaults
 const savedGameState = loadGameState();
+
+// Initialize level state - if there's saved state, use it; otherwise create new
+const initialLevelState = savedGameState?.levelState || loadLevelState(tasks);
+
+// Determine first task ID from level state or fallback
+const firstTaskId = initialLevelState.queues[initialLevelState.currentDifficulty]?.[0] ?? tasks[0]?.id ?? null;
+
+// Ensure the first task is added to playedInCurrentLevel if starting fresh
+const initialLevelStateWithFirst = savedGameState?.levelState ? initialLevelState : {
+  ...initialLevelState,
+  playedInCurrentLevel: firstTaskId ? [firstTaskId] : []
+};
 
 const defaultState = {
   currentTaskId: firstTaskId,
@@ -112,13 +141,24 @@ const defaultState = {
   queue: loadQueue(),
   stats: loadStats(),
   dragState: null,
-  savedProgress: {}
+  savedProgress: {},
+  levelState: initialLevelStateWithFirst
 };
 
-const initialState = {
+// Validate currentTaskId from savedGameState
+const validateTaskId = (taskId) => {
+  return tasks.find(t => t.id === taskId) ? taskId : firstTaskId;
+};
+
+const initialState = savedGameState ? {
   ...defaultState,
-  ...(savedGameState || {}),
-  activeToolTab: null
+  ...savedGameState,
+  activeToolTab: null,
+  levelState: initialLevelState,
+  // Ensure currentTaskId is valid and exists in tasks array
+  currentTaskId: validateTaskId(savedGameState.currentTaskId)
+} : {
+  ...defaultState
 };
 
 function taskTargets(task) {
@@ -183,6 +223,14 @@ function appReducer(state, action) {
       const selectedIndex = tasks.findIndex((task) => task.id === taskId);
       const nextQueue =
         selectedIndex >= 0 ? tasks.slice(selectedIndex).map((task) => task.id) : loadQueue();
+
+      // Update level state when manually selecting a task
+      const { levelState: updatedLevelState } = selectSpecificTask(
+        taskId,
+        state.levelState,
+        tasks
+      );
+
       // Increment attempts when starting a new task
       const currentStats = state.stats?.[taskId] ?? {};
       const updatedStats = taskId ? {
@@ -209,7 +257,8 @@ function appReducer(state, action) {
         status: 'task:selected',
         stats: updatedStats,
         queue: nextQueue,
-        savedProgress: progressSnapshot
+        savedProgress: progressSnapshot,
+        levelState: updatedLevelState
       };
     }
     case 'setColor': {
@@ -314,11 +363,19 @@ function appReducer(state, action) {
           }
         : state.savedProgress;
 
+      // Use level manager to get next random task
+      const {
+        taskId: nextId,
+        levelState: updatedLevelState,
+        levelComplete,
+        allLevelsComplete
+      } = getNextTask(state.levelState, tasks);
+
       const queue = state.queue.length ? state.queue.slice(1) : loadQueue();
       const fallbackQueue = loadQueue();
-      const nextId = queue[0] ?? fallbackQueue[0] ?? tasks[0]?.id;
       const normalizedQueue = queue.length ? queue : fallbackQueue;
       const restored = nextId && savedProgress[nextId] ? savedProgress[nextId] : null;
+
       return {
         ...state,
         queue: normalizedQueue,
@@ -330,7 +387,8 @@ function appReducer(state, action) {
         activeToolTab: null,
         elapsedMs: restored?.elapsedMs ?? 0,
         timerRunning: true,
-        savedProgress
+        savedProgress,
+        levelState: updatedLevelState
       };
     }
     case 'queue:update':
@@ -439,6 +497,7 @@ function useAppState() {
   // Persist full game state to localStorage (excluding transient UI states)
   useEffect(() => {
     const stateToPersist = {
+      version: STATE_VERSION, // Add version for migration
       currentTaskId: state.currentTaskId,
       placements: state.placements,
       selectedColor: state.selectedColor,
@@ -452,9 +511,12 @@ function useAppState() {
       queue: state.queue,
       stats: state.stats,
       savedProgress: state.savedProgress,
+      levelState: state.levelState,
       // Don't persist: showStats, showCompletionModal, showSolutionModal, status, timerRunning, dragState
     };
     window.localStorage.setItem('nail-art-game-state', JSON.stringify(stateToPersist));
+    // Also save level state separately for easier access
+    saveLevelState(state.levelState);
   }, [state]);
 
   useEffect(() => {
@@ -478,9 +540,11 @@ function TopBar({ app, completionMap, onReturnToMenu }) {
       </button>
       <div className="level-bar" aria-label="Level navigation">
         {app.tasks.map((task, index) => {
-          const locked = index > 0 && !completionMap[app.tasks[index - 1].id];
           const active = task.id === app.state.currentTaskId;
           const completed = completionMap[task.id];
+          // Only unlock current task and completed tasks
+          const locked = !active && !completed;
+
           return (
             <button
               key={task.id}
@@ -849,6 +913,7 @@ export default function App() {
     window.localStorage.removeItem('nail-art-game-state');
     window.localStorage.removeItem('nail-art-stats');
     window.localStorage.removeItem('nail-art-queue');
+    window.localStorage.removeItem('nail-art-level-state');
     window.localStorage.setItem('nail-art-intro-seen', 'true');
     // Reload page to start fresh
     window.location.reload();
