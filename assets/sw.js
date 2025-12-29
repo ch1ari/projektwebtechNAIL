@@ -1,15 +1,13 @@
 // Nail Art Match - Service Worker
 // Progressive Web App offline support
 
-const CACHE_VERSION = 'v8';
+const CACHE_VERSION = 'v9';
 const CACHE_NAME = `nail-art-match-${CACHE_VERSION}`;
 const STATIC_CACHE_NAME = `nail-art-static-${CACHE_VERSION}`;
 
 // Core files that should always be cached
+// NOTE: HTML files are NOT cached here - they use network-first strategy to always get latest version
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/instructions.html',
   '/favicon.svg',
   '/manifest.json',
   // Images
@@ -90,28 +88,29 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // For navigation requests (HTML pages)
+  // For navigation requests (HTML pages) - use network-first to always get latest
   if (request.mode === 'navigate') {
     event.respondWith(
-      caches.match(request)
-        .then((cachedResponse) => {
-          if (cachedResponse) {
-            console.log('[Service Worker] Serving page from cache:', request.url);
-            return cachedResponse;
+      fetch(request)
+        .then((response) => {
+          if (response && response.status === 200) {
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(request, responseToCache);
+              console.log('[Service Worker] Cached latest HTML:', request.url);
+            });
           }
-
-          return fetch(request)
-            .then((response) => {
-              if (response && response.status === 200) {
-                const responseToCache = response.clone();
-                caches.open(CACHE_NAME).then((cache) => {
-                  cache.put(request, responseToCache);
-                });
+          return response;
+        })
+        .catch(() => {
+          // Offline - try cache
+          return caches.match(request)
+            .then((cachedResponse) => {
+              if (cachedResponse) {
+                console.log('[Service Worker] Serving page from cache (offline):', request.url);
+                return cachedResponse;
               }
-              return response;
-            })
-            .catch(() => {
-              // Offline - return cached index.html
+              // Last resort - return index.html from cache
               return caches.match('/index.html');
             });
         })
