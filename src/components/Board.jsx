@@ -459,6 +459,11 @@ const Board = forwardRef(function Board({ app, stickers, completionMap }, boardR
             <div className="info-level">
               <span className="info-label">Level:</span>
               <span className="info-value">{activeTask?.title ?? activeTask?.name ?? 'none'}</span>
+              {activeTask?.difficulty && (
+                <span className={`difficulty-badge difficulty-${activeTask.difficulty.toLowerCase()}`}>
+                  {activeTask.difficulty === 'easy' ? 'Easy' : activeTask.difficulty === 'medium' ? 'Medium' : 'Hard'}
+                </span>
+              )}
             </div>
             <div className="info-color">
               <span className="info-label">Farba:</span>
