@@ -839,18 +839,16 @@ function RightPanel({ app, completionMap, onReturnToMenu }) {
   const hasNext = currentIndex >= 0 && currentIndex < app.tasks.length - 1;
   const nextLocked = hasNext && !currentComplete;
 
-  // Calculate level progress
-  const { levelState } = app.state;
-  const { currentDifficulty, queues, playedInCurrentLevel } = levelState;
-  const currentQueue = queues[currentDifficulty] || [];
-  const completedInLevel = currentQueue.filter(taskId =>
-    app.state.stats?.[taskId]?.completed
+  // Calculate overall level progress (all tasks, not by difficulty)
+  const completedLevels = app.tasks.filter(task =>
+    app.state.stats?.[task.id]?.completed
   ).length;
-  const totalInLevel = currentQueue.length;
+  const totalLevels = app.tasks.length;
 
-  // Get difficulty label
-  const difficultyLabel = currentDifficulty === 'easy' ? 'Easy' :
-                          currentDifficulty === 'medium' ? 'Medium' : 'Hard';
+  // Get current task difficulty
+  const currentTaskDifficulty = app.currentTask?.difficulty || 'easy';
+  const currentDifficultyLabel = currentTaskDifficulty === 'easy' ? 'Easy' :
+                                  currentTaskDifficulty === 'medium' ? 'Medium' : 'Hard';
 
   return (
     <aside className="panel right-panel">
@@ -894,19 +892,19 @@ function RightPanel({ app, completionMap, onReturnToMenu }) {
         {isLevelProgressVisible && (
           <div className="level-progress-card">
             <div className="level-progress-header">
-              <span className={`difficulty-badge difficulty-${currentDifficulty}`}>
-                {difficultyLabel}
+              <span className={`difficulty-badge difficulty-${currentTaskDifficulty}`}>
+                {currentDifficultyLabel}
               </span>
             </div>
             <div className="level-progress-stats">
               <span className="progress-text">
-                {completedInLevel} / {totalInLevel} úloh dokončených
+                {completedLevels} / {totalLevels} úloh dokončených
               </span>
             </div>
             <div className="level-progress-bar">
               <div
                 className="level-progress-fill"
-                style={{ width: `${totalInLevel > 0 ? (completedInLevel / totalInLevel) * 100 : 0}%` }}
+                style={{ width: `${totalLevels > 0 ? (completedLevels / totalLevels) * 100 : 0}%` }}
               />
             </div>
           </div>
