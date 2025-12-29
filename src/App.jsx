@@ -857,10 +857,15 @@ function RightPanel({ app, completionMap, onReturnToMenu }) {
       {/* Level progress indicator */}
       <div className="level-progress-card">
         <div className="level-progress-header">
-          <span className="level-progress-label">Aktuálny level</span>
-          <span className={`difficulty-badge difficulty-${currentDifficulty}`}>
-            {difficultyLabel}
-          </span>
+          <div className="level-header-row">
+            <span className="level-progress-label">Aktuálny level</span>
+            <span className={`difficulty-badge difficulty-${currentDifficulty}`}>
+              {difficultyLabel}
+            </span>
+          </div>
+          {app.currentTask?.title && (
+            <div className="level-title">{app.currentTask.title}</div>
+          )}
         </div>
         <div className="level-progress-stats">
           <span className="progress-text">

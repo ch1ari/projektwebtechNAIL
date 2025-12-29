@@ -1039,9 +1039,15 @@ body {
 
 .level-progress-header {
   display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.level-header-row {
+  display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.6rem;
 }
 
 .level-progress-label {
@@ -1050,6 +1056,14 @@ body {
   color: #5a2f47;
   text-transform: uppercase;
   letter-spacing: 0.02em;
+}
+
+.level-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #2d1b2e;
+  line-height: 1.3;
+  padding: 0.3rem 0;
 }
 
 .level-progress-stats {
