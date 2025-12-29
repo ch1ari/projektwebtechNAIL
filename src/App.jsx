@@ -792,6 +792,8 @@ function nailHitTest(boardElement, clientX, clientY) {
 }
 
 function RightPanel({ app, completionMap, onReturnToMenu }) {
+  const [showResetConfirm, setShowResetConfirm] = React.useState(false);
+
   const correctCount = Object.values(app.state.placements).filter((p) => p?.isCorrect).length;
   const totalTargets = app.currentTask?.targets?.length ?? 0;
   const nailsCorrect = Object.entries(app.currentTask?.nailTargets ?? {}).filter(
@@ -827,6 +829,16 @@ function RightPanel({ app, completionMap, onReturnToMenu }) {
   // Get difficulty label
   const difficultyLabel = currentDifficulty === 'easy' ? 'Easy' :
                           currentDifficulty === 'medium' ? 'Medium' : 'Hard';
+
+  const handleResetGame = () => {
+    // Clear all saved progress
+    window.localStorage.removeItem('nail-art-game-state');
+    window.localStorage.removeItem('nail-art-stats');
+    window.localStorage.removeItem('nail-art-queue');
+    window.localStorage.removeItem('nail-art-level-state');
+    // Reload page to start fresh
+    window.location.reload();
+  };
 
   return (
     <aside className="panel right-panel">
@@ -899,6 +911,47 @@ function RightPanel({ app, completionMap, onReturnToMenu }) {
           />
         </div>
       </div>
+
+      {/* Reset game button */}
+      <div className="reset-game-section" style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid rgba(217, 70, 181, 0.2)' }}>
+        <button
+          className="btn-secondary"
+          onClick={() => setShowResetConfirm(true)}
+          style={{ width: '100%', fontSize: '0.9rem', padding: '0.6rem' }}
+        >
+          🔄 Resetovať celý progres
+        </button>
+      </div>
+
+      {/* Reset confirmation modal */}
+      {showResetConfirm && (
+        <div className="modal-backdrop" role="dialog" aria-modal style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999 }}>
+          <div className="modal completion-modal">
+            <h2>⚠️ Potvrdenie resetu</h2>
+            <p className="completion-message">
+              Naozaj chceš vymazať <strong>celý progres hry</strong>?
+            </p>
+            <p className="completion-message" style={{ marginTop: '1rem', fontSize: '0.9rem', opacity: 0.8 }}>
+              Stratíš všetky dokončené levely, štatistiky a časy. Táto akcia sa nedá vrátiť späť.
+            </p>
+            <div className="completion-buttons">
+              <button
+                className="btn-primary"
+                style={{ background: '#ef4444', color: 'white' }}
+                onClick={handleResetGame}
+              >
+                Áno, vymazať všetko
+              </button>
+              <button
+                className="btn-secondary"
+                onClick={() => setShowResetConfirm(false)}
+              >
+                Zrušiť
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </aside>
   );
 }
