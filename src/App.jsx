@@ -363,34 +363,16 @@ function appReducer(state, action) {
           }
         : state.savedProgress;
 
-      // Find next unlocked task in sequential order
-      const currentIndex = tasks.findIndex(t => t.id === state.currentTaskId);
-      let nextId = null;
-
-      // Look for next unlocked task (completed or will be unlocked)
-      for (let i = currentIndex + 1; i < tasks.length; i++) {
-        const taskId = tasks[i].id;
-        const isCompleted = state.stats?.[taskId]?.completed;
-        const previousTaskCompleted = i === 0 || state.stats?.[tasks[i - 1].id]?.completed;
-
-        // Unlock if previous task is completed
-        if (isCompleted || previousTaskCompleted) {
-          nextId = taskId;
-          break;
-        }
-      }
-
-      // If no next unlocked task found, stay on current task
-      if (!nextId) {
-        return state;
-      }
-
-      // Use level manager to update level state based on selected task
-      const { levelState: updatedLevelState } = selectSpecificTask(
-        nextId,
+      // Use level manager to get next random task from current or next difficulty level
+      const { taskId: nextId, levelState: updatedLevelState, levelComplete, allLevelsComplete } = getNextTask(
         state.levelState,
         tasks
       );
+
+      // If no next task found, stay on current task
+      if (!nextId) {
+        return state;
+      }
 
       // Increment attempts for the new task
       const currentStats = state.stats?.[nextId] ?? {};
@@ -574,8 +556,13 @@ function TopBar({ app, completionMap, onReturnToMenu }) {
         {app.tasks.map((task, index) => {
           const active = task.id === app.state.currentTaskId;
           const completed = completionMap[task.id];
-          // Only unlock current task and completed tasks
-          const locked = !active && !completed;
+
+          // Get level info for this task and current level
+          const taskLevelInfo = getLevelInfo(task.difficulty || 'easy');
+          const currentLevelInfo = getLevelInfo(app.state.levelState.currentDifficulty);
+
+          // Lock tasks from higher difficulty levels than current
+          const locked = taskLevelInfo.level > currentLevelInfo.level;
 
           return (
             <button
@@ -995,24 +982,12 @@ export default function App() {
     }
   };
 
-  // Check if there's a next unlocked level available
+  // Check if there's a next level available (always true with random task generation)
   const hasNextUnlockedLevel = useMemo(() => {
-    const currentIndex = app.tasks.findIndex(t => t.id === app.state.currentTaskId);
-    if (currentIndex === -1) return false;
-
-    // Look for next unlocked task
-    for (let i = currentIndex + 1; i < app.tasks.length; i++) {
-      const taskId = app.tasks[i].id;
-      const isCompleted = app.state.stats?.[taskId]?.completed;
-      const previousTaskCompleted = i === 0 || app.state.stats?.[app.tasks[i - 1].id]?.completed;
-
-      // Check if unlocked (completed or previous task is completed)
-      if (isCompleted || previousTaskCompleted) {
-        return true;
-      }
-    }
-    return false;
-  }, [app.state.currentTaskId, app.state.stats, app.tasks]);
+    // With random task generation, there's always a next task available
+    // getNextTask will handle progression through difficulty levels
+    return true;
+  }, []);
 
   return (
     <AppStateContext.Provider value={app}>
