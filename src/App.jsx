@@ -5,6 +5,15 @@ import Palette from './components/Palette.jsx';
 import IntroScreen from './components/IntroScreen.jsx';
 import tasks from './data/tasks.json';
 import { clamp, rotationDeltaDegrees } from './lib/geometry.js';
+import {
+  loadLevelState,
+  saveLevelState,
+  getNextTask,
+  selectSpecificTask,
+  getLevelInfo,
+  getLevelProgress,
+  resetLevelState
+} from './lib/levelManager.js';
 
 export const AppStateContext = createContext();
 
@@ -33,7 +42,9 @@ const paletteColors = [
   { name: 'Ľadová modrá', value: '#bde0fe' }
 ];
 
-const firstTaskId = tasks[0]?.id ?? null;
+// Initialize level state on load
+const initialLevelState = loadLevelState(tasks);
+const firstTaskId = initialLevelState.queues[initialLevelState.currentDifficulty]?.[0] ?? tasks[0]?.id ?? null;
 
 const loadQueue = () => {
   const defaultQueue = tasks.map((task) => task.id);
@@ -112,13 +123,15 @@ const defaultState = {
   queue: loadQueue(),
   stats: loadStats(),
   dragState: null,
-  savedProgress: {}
+  savedProgress: {},
+  levelState: initialLevelState
 };
 
 const initialState = {
   ...defaultState,
   ...(savedGameState || {}),
-  activeToolTab: null
+  activeToolTab: null,
+  levelState: savedGameState?.levelState || initialLevelState
 };
 
 function taskTargets(task) {
@@ -183,6 +196,14 @@ function appReducer(state, action) {
       const selectedIndex = tasks.findIndex((task) => task.id === taskId);
       const nextQueue =
         selectedIndex >= 0 ? tasks.slice(selectedIndex).map((task) => task.id) : loadQueue();
+
+      // Update level state when manually selecting a task
+      const { levelState: updatedLevelState } = selectSpecificTask(
+        taskId,
+        state.levelState,
+        tasks
+      );
+
       // Increment attempts when starting a new task
       const currentStats = state.stats?.[taskId] ?? {};
       const updatedStats = taskId ? {
@@ -209,7 +230,8 @@ function appReducer(state, action) {
         status: 'task:selected',
         stats: updatedStats,
         queue: nextQueue,
-        savedProgress: progressSnapshot
+        savedProgress: progressSnapshot,
+        levelState: updatedLevelState
       };
     }
     case 'setColor': {
@@ -314,11 +336,19 @@ function appReducer(state, action) {
           }
         : state.savedProgress;
 
+      // Use level manager to get next random task
+      const {
+        taskId: nextId,
+        levelState: updatedLevelState,
+        levelComplete,
+        allLevelsComplete
+      } = getNextTask(state.levelState, tasks);
+
       const queue = state.queue.length ? state.queue.slice(1) : loadQueue();
       const fallbackQueue = loadQueue();
-      const nextId = queue[0] ?? fallbackQueue[0] ?? tasks[0]?.id;
       const normalizedQueue = queue.length ? queue : fallbackQueue;
       const restored = nextId && savedProgress[nextId] ? savedProgress[nextId] : null;
+
       return {
         ...state,
         queue: normalizedQueue,
@@ -330,7 +360,8 @@ function appReducer(state, action) {
         activeToolTab: null,
         elapsedMs: restored?.elapsedMs ?? 0,
         timerRunning: true,
-        savedProgress
+        savedProgress,
+        levelState: updatedLevelState
       };
     }
     case 'queue:update':
@@ -452,9 +483,12 @@ function useAppState() {
       queue: state.queue,
       stats: state.stats,
       savedProgress: state.savedProgress,
+      levelState: state.levelState,
       // Don't persist: showStats, showCompletionModal, showSolutionModal, status, timerRunning, dragState
     };
     window.localStorage.setItem('nail-art-game-state', JSON.stringify(stateToPersist));
+    // Also save level state separately for easier access
+    saveLevelState(state.levelState);
   }, [state]);
 
   useEffect(() => {
@@ -719,9 +753,43 @@ function RightPanel({ app, completionMap, onReturnToMenu }) {
   const hasNext = currentIndex >= 0 && currentIndex < app.tasks.length - 1;
   const nextLocked = hasNext && !currentComplete;
 
+  // Level info
+  const levelInfo = getLevelInfo(app.state.levelState.currentDifficulty);
+  const levelProgress = getLevelProgress(app.state.levelState);
+
   return (
     <aside className="panel right-panel">
       <h2>Popis & návod</h2>
+
+      {/* Level Progress Info */}
+      <div className="level-info-card" style={{
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        color: 'white',
+        padding: '1rem',
+        borderRadius: '8px',
+        marginBottom: '1rem'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+          <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>{levelInfo.name}</span>
+          <span style={{ fontSize: '0.85rem', opacity: 0.9 }}>
+            {levelProgress.completed}/{levelProgress.total} úloh
+          </span>
+        </div>
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.2)',
+          borderRadius: '4px',
+          height: '8px',
+          overflow: 'hidden'
+        }}>
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.9)',
+            height: '100%',
+            width: `${levelProgress.percentage}%`,
+            transition: 'width 0.3s ease'
+          }} />
+        </div>
+      </div>
+
       <div className="helper-card">
         <ul>
           <li>Porovnaj s klientskou kartou a udrž farby aj ozdoby presne.</li>
@@ -849,6 +917,7 @@ export default function App() {
     window.localStorage.removeItem('nail-art-game-state');
     window.localStorage.removeItem('nail-art-stats');
     window.localStorage.removeItem('nail-art-queue');
+    window.localStorage.removeItem('nail-art-level-state');
     window.localStorage.setItem('nail-art-intro-seen', 'true');
     // Reload page to start fresh
     window.location.reload();
