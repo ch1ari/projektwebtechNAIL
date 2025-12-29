@@ -236,6 +236,50 @@ body {
   letter-spacing: -0.01em;
 }
 
+/* Help section header with toggle button */
+.help-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.help-section-header h2 {
+  margin: 0;
+}
+
+.help-toggle-button {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid rgba(217, 70, 181, 0.3);
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f8c4e1 0%, #f5a9d5 100%);
+  color: #be185d;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(217, 70, 181, 0.15);
+}
+
+.help-toggle-button:hover {
+  background: linear-gradient(135deg, #ffd0e5 0%, #f8c4e1 100%);
+  border-color: rgba(217, 70, 181, 0.5);
+  box-shadow: 0 3px 10px rgba(217, 70, 181, 0.25);
+  transform: translateY(-1px);
+}
+
+.help-toggle-button:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(217, 70, 181, 0.2);
+}
+
 .muted {
   margin: 0 0 1rem;
   color: #7a5a73;

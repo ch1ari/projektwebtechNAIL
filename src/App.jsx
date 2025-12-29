@@ -792,6 +792,18 @@ function nailHitTest(boardElement, clientX, clientY) {
 }
 
 function RightPanel({ app, completionMap, onReturnToMenu }) {
+  // State for showing/hiding help section
+  const [isHelpVisible, setIsHelpVisible] = useState(() => {
+    const saved = window.localStorage.getItem('nail-art-help-visible');
+    return saved !== null ? saved === 'true' : true; // Default to visible
+  });
+
+  const toggleHelp = () => {
+    const newValue = !isHelpVisible;
+    setIsHelpVisible(newValue);
+    window.localStorage.setItem('nail-art-help-visible', String(newValue));
+  };
+
   const correctCount = Object.values(app.state.placements).filter((p) => p?.isCorrect).length;
   const totalTargets = app.currentTask?.targets?.length ?? 0;
   const nailsCorrect = Object.entries(app.currentTask?.nailTargets ?? {}).filter(
@@ -830,17 +842,29 @@ function RightPanel({ app, completionMap, onReturnToMenu }) {
 
   return (
     <aside className="panel right-panel">
-      <h2>Popis & návod</h2>
-      <div className="helper-card">
-        <ul>
-          <li>Porovnaj s klientskou kartou a udrž farby aj ozdoby presne.</li>
-          <li>Nápoveda a duchovia sú len náhľad – nezastavia ťahanie.</li>
-          <li>Reštart vymaže lak aj ozdoby, Riešenie ťa naučí správny tvar.</li>
-        </ul>
-        <a href="/instructions.html" className="helper-guide-link">
-          📖 Kompletný návod
-        </a>
+      <div className="help-section-header">
+        <h2>Popis & návod</h2>
+        <button
+          className="help-toggle-button"
+          onClick={toggleHelp}
+          aria-label={isHelpVisible ? "Zavrieť návod" : "Otvoriť návod"}
+          title={isHelpVisible ? "Zavrieť návod" : "Otvoriť návod"}
+        >
+          {isHelpVisible ? '✕' : '?'}
+        </button>
       </div>
+      {isHelpVisible && (
+        <div className="helper-card">
+          <ul>
+            <li>Porovnaj s klientskou kartou a udrž farby aj ozdoby presne.</li>
+            <li>Nápoveda a duchovia sú len náhľad – nezastavia ťahanie.</li>
+            <li>Reštart vymaže lak aj ozdoby, Riešenie ťa naučí správny tvar.</li>
+          </ul>
+          <a href="/instructions.html" className="helper-guide-link">
+            📖 Kompletný návod
+          </a>
+        </div>
+      )}
 
       {/* Level progress indicator */}
       <div className="level-progress-card">
