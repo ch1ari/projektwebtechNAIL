@@ -1060,24 +1060,12 @@ export default function App() {
     }
   };
 
-  // Check if there's a next unlocked level available
+  // Check if there's a next level available (any next task in sequence)
   const hasNextUnlockedLevel = useMemo(() => {
     const currentIndex = app.tasks.findIndex(t => t.id === app.state.currentTaskId);
-    if (currentIndex === -1) return false;
-
-    // Look for next unlocked task
-    for (let i = currentIndex + 1; i < app.tasks.length; i++) {
-      const taskId = app.tasks[i].id;
-      const isCompleted = app.state.stats?.[taskId]?.completed;
-      const previousTaskCompleted = i === 0 || app.state.stats?.[app.tasks[i - 1].id]?.completed;
-
-      // Check if unlocked (completed or previous task is completed)
-      if (isCompleted || previousTaskCompleted) {
-        return true;
-      }
-    }
-    return false;
-  }, [app.state.currentTaskId, app.state.stats, app.tasks]);
+    // If there's any task after current, we can advance
+    return currentIndex !== -1 && currentIndex < app.tasks.length - 1;
+  }, [app.state.currentTaskId, app.tasks]);
 
   return (
     <AppStateContext.Provider value={app}>
