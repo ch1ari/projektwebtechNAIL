@@ -135,6 +135,7 @@ const defaultState = {
   showCompletionModal: false,
   showGameCompleteModal: false,
   showSolutionModal: false,
+  showInstructions: true,
   status: 'idle',
   timerRunning: true,
   elapsedMs: 0,
@@ -427,6 +428,8 @@ function appReducer(state, action) {
       return { ...state, queue: action.payload };
     case 'toggleStats':
       return { ...state, showStats: !state.showStats };
+    case 'toggleInstructions':
+      return { ...state, showInstructions: !state.showInstructions };
     case 'showCompletionModal':
       return { ...state, showCompletionModal: true, timerRunning: false };
     case 'hideCompletionModal':
@@ -544,7 +547,7 @@ function useAppState() {
       stats: state.stats,
       savedProgress: state.savedProgress,
       levelState: state.levelState,
-      // Don't persist: showStats, showCompletionModal, showSolutionModal, status, timerRunning, dragState
+      // Don't persist: showStats, showCompletionModal, showSolutionModal, showInstructions, status, timerRunning, dragState
     };
     window.localStorage.setItem('nail-art-game-state', JSON.stringify(stateToPersist));
     // Also save level state separately for easier access
@@ -830,17 +833,28 @@ function RightPanel({ app, completionMap, onReturnToMenu }) {
 
   return (
     <aside className="panel right-panel">
-      <h2>Popis & návod</h2>
-      <div className="helper-card">
-        <ul>
-          <li>Porovnaj s klientskou kartou a udrž farby aj ozdoby presne.</li>
-          <li>Nápoveda a duchovia sú len náhľad – nezastavia ťahanie.</li>
-          <li>Reštart vymaže lak aj ozdoby, Riešenie ťa naučí správny tvar.</li>
-        </ul>
-        <a href="/instructions.html" className="helper-guide-link">
-          📖 Kompletný návod
-        </a>
+      <div className="instructions-header">
+        <h2>Popis & návod</h2>
+        <button
+          className="toggle-instructions-btn"
+          onClick={() => app.dispatch({ type: 'toggleInstructions' })}
+          aria-label={app.state.showInstructions ? 'Skryť návod' : 'Zobraziť návod'}
+        >
+          {app.state.showInstructions ? '✕' : '?'}
+        </button>
       </div>
+      {app.state.showInstructions && (
+        <div className="helper-card">
+          <ul>
+            <li>Porovnaj s klientskou kartou a udrž farby aj ozdoby presne.</li>
+            <li>Nápoveda a duchovia sú len náhľad – nezastavia ťahanie.</li>
+            <li>Reštart vymaže lak aj ozdoby, Riešenie ťa naučí správny tvar.</li>
+          </ul>
+          <a href="/instructions.html" className="helper-guide-link">
+            📖 Kompletný návod
+          </a>
+        </div>
+      )}
 
       {/* Level progress indicator */}
       <div className="level-progress-card">
