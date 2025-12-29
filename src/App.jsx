@@ -565,23 +565,6 @@ function useAppState() {
 }
 
 function TopBar({ app, completionMap, onReturnToMenu }) {
-  // Group tasks by difficulty and calculate level numbers within each difficulty
-  const tasksByDifficulty = app.tasks.reduce((acc, task) => {
-    if (!acc[task.difficulty]) {
-      acc[task.difficulty] = [];
-    }
-    acc[task.difficulty].push(task);
-    return acc;
-  }, {});
-
-  // Create a map of task.id -> level number within its difficulty
-  const levelNumbers = {};
-  Object.keys(tasksByDifficulty).forEach(difficulty => {
-    tasksByDifficulty[difficulty].forEach((task, index) => {
-      levelNumbers[task.id] = index + 1;
-    });
-  });
-
   return (
     <header className="top-bar">
       <button className="menu-button-top" onClick={onReturnToMenu}>
@@ -593,7 +576,6 @@ function TopBar({ app, completionMap, onReturnToMenu }) {
           const completed = completionMap[task.id];
           // Only unlock current task and completed tasks
           const locked = !active && !completed;
-          const levelNum = levelNumbers[task.id];
 
           return (
             <button
@@ -604,9 +586,9 @@ function TopBar({ app, completionMap, onReturnToMenu }) {
                 app.dispatch({ type: 'setTask', payload: task.id });
               }}
               disabled={locked}
-              aria-label={`Level ${levelNum} ${task.title} ${locked ? 'locked' : 'playable'}`}
+              aria-label={`Level ${index + 1} ${task.title} ${locked ? 'locked' : 'playable'}`}
             >
-              <span className="level-index">Lv {levelNum}</span>
+              <span className="level-index">Lv {index + 1}</span>
               <span className="level-state" aria-hidden>
                 {locked ? '🔒' : completed ? '✔' : '▶'}
               </span>
