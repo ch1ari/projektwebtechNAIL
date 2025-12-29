@@ -1018,12 +1018,32 @@ body {
 }
 
 /* Level progress card */
+/* Level section wrapper with toggle */
+.level-section-wrapper {
+  margin-top: 1rem;
+}
+
+.level-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.level-section-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #5a2f47;
+  letter-spacing: -0.01em;
+}
+
 .level-progress-card {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 250, 253, 0.95));
   border: 1px solid #ffd0e5;
   border-radius: 12px;
   padding: 0.9rem 1rem;
-  margin-top: 1rem;
   box-shadow: 0 4px 12px rgba(217, 70, 181, 0.15);
 }
 
@@ -2589,60 +2609,114 @@ body {
 
 /* Portrait mobile - fix toolbelt stretching */
 @media (max-width: 768px) and (orientation: portrait) {
+  /* Prevent horizontal overflow on entire page */
+  html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  #root {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  .app-shell {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
   /* Prevent toolbelt from stretching horizontally */
   .toolbelt {
+    width: 100%;
     max-width: 100vw;
-    overflow: hidden;
+    overflow-x: hidden;
+    box-sizing: border-box;
   }
 
   .tool-tabs {
     width: 100%;
     max-width: 100%;
-    overflow-x: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
   }
 
   .tool-strip {
+    width: 100%;
     max-width: 100%;
     overflow-x: hidden;
+    box-sizing: border-box;
   }
 
   .scroll-row {
+    width: 100%;
     max-width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
+    box-sizing: border-box;
   }
 
   .palette-row,
   .sticker-row,
   .color-shelf {
+    width: 100%;
     max-width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    box-sizing: border-box;
   }
 
   /* Prevent palette items from growing too large */
   .palette-item {
-    min-width: 95px;
-    max-width: 110px;
+    min-width: 90px;
+    max-width: 105px;
     flex-shrink: 0;
   }
 
   .swatch {
-    min-width: 75px;
-    max-width: 90px;
+    min-width: 70px;
+    max-width: 85px;
     flex-shrink: 0;
   }
 
   /* Ensure stickers don't cause horizontal overflow */
   .sticker.is-palette {
-    width: 65px;
-    height: 65px;
+    width: 60px;
+    height: 60px;
     flex-shrink: 0;
   }
 
   .sticker.is-palette img {
     max-width: 100%;
     max-height: 100%;
+  }
+
+  /* Reduce info card size to show more of the hand */
+  .info-card {
+    padding: 0.25rem 0.4rem;
+    min-width: 95px;
+    gap: 0.25rem;
+  }
+
+  .info-level,
+  .info-color {
+    font-size: 0.65rem;
+  }
+
+  .info-label {
+    font-size: 0.6rem;
+  }
+
+  .info-value {
+    font-size: 0.65rem;
+  }
+
+  .color-name {
+    font-size: 0.65rem;
+  }
+
+  .color-preview {
+    width: 14px;
+    height: 14px;
   }
 }

@@ -798,10 +798,22 @@ function RightPanel({ app, completionMap, onReturnToMenu }) {
     return saved !== null ? saved === 'true' : true; // Default to visible
   });
 
+  // State for showing/hiding level progress card
+  const [isLevelProgressVisible, setIsLevelProgressVisible] = useState(() => {
+    const saved = window.localStorage.getItem('nail-art-level-progress-visible');
+    return saved !== null ? saved === 'true' : true; // Default to visible
+  });
+
   const toggleHelp = () => {
     const newValue = !isHelpVisible;
     setIsHelpVisible(newValue);
     window.localStorage.setItem('nail-art-help-visible', String(newValue));
+  };
+
+  const toggleLevelProgress = () => {
+    const newValue = !isLevelProgressVisible;
+    setIsLevelProgressVisible(newValue);
+    window.localStorage.setItem('nail-art-level-progress-visible', String(newValue));
   };
 
   const correctCount = Object.values(app.state.placements).filter((p) => p?.isCorrect).length;
@@ -867,24 +879,38 @@ function RightPanel({ app, completionMap, onReturnToMenu }) {
       )}
 
       {/* Level progress indicator */}
-      <div className="level-progress-card">
-        <div className="level-progress-header">
-          <span className="level-progress-label">Aktuálny level</span>
-          <span className={`difficulty-badge difficulty-${currentDifficulty}`}>
-            {difficultyLabel}
-          </span>
+      <div className="level-section-wrapper">
+        <div className="level-section-header">
+          <h3 className="level-section-title">Aktuálny level</h3>
+          <button
+            className="help-toggle-button"
+            onClick={toggleLevelProgress}
+            aria-label={isLevelProgressVisible ? "Zavrieť level info" : "Otvoriť level info"}
+            title={isLevelProgressVisible ? "Zavrieť level info" : "Otvoriť level info"}
+          >
+            {isLevelProgressVisible ? '✕' : 'L'}
+          </button>
         </div>
-        <div className="level-progress-stats">
-          <span className="progress-text">
-            {completedInLevel} / {totalInLevel} úloh dokončených
-          </span>
-        </div>
-        <div className="level-progress-bar">
-          <div
-            className="level-progress-fill"
-            style={{ width: `${totalInLevel > 0 ? (completedInLevel / totalInLevel) * 100 : 0}%` }}
-          />
-        </div>
+        {isLevelProgressVisible && (
+          <div className="level-progress-card">
+            <div className="level-progress-header">
+              <span className={`difficulty-badge difficulty-${currentDifficulty}`}>
+                {difficultyLabel}
+              </span>
+            </div>
+            <div className="level-progress-stats">
+              <span className="progress-text">
+                {completedInLevel} / {totalInLevel} úloh dokončených
+              </span>
+            </div>
+            <div className="level-progress-bar">
+              <div
+                className="level-progress-fill"
+                style={{ width: `${totalInLevel > 0 ? (completedInLevel / totalInLevel) * 100 : 0}%` }}
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="client-brief">
