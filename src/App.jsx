@@ -139,13 +139,18 @@ const defaultState = {
   levelState: initialLevelState
 };
 
+// Validate currentTaskId from savedGameState
+const validateTaskId = (taskId) => {
+  return tasks.find(t => t.id === taskId) ? taskId : firstTaskId;
+};
+
 const initialState = savedGameState ? {
   ...defaultState,
   ...savedGameState,
   activeToolTab: null,
   levelState: initialLevelState,
-  // Ensure currentTaskId is valid
-  currentTaskId: savedGameState.currentTaskId || firstTaskId
+  // Ensure currentTaskId is valid and exists in tasks array
+  currentTaskId: validateTaskId(savedGameState.currentTaskId)
 } : {
   ...defaultState
 };

@@ -172,20 +172,8 @@ export function getLevelInfo(difficulty) {
  * @returns {Object} Level state
  */
 export function loadLevelState(tasks) {
-  const stored = window.localStorage.getItem('nail-art-level-state');
-
-  if (stored) {
-    try {
-      const parsed = JSON.parse(stored);
-      // Validate structure
-      if (parsed && parsed.queues && parsed.currentDifficulty) {
-        return parsed;
-      }
-    } catch (err) {
-      console.warn('Failed to parse level state, creating new one');
-    }
-  }
-
+  // Always create fresh state - don't load from localStorage to avoid issues
+  // The main game state will handle persistence
   return createInitialLevelState(tasks);
 }
 
