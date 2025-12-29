@@ -783,6 +783,19 @@ function RightPanel({ app, completionMap, onReturnToMenu }) {
   const hasNext = currentIndex >= 0 && currentIndex < app.tasks.length - 1;
   const nextLocked = hasNext && !currentComplete;
 
+  // Calculate level progress
+  const { levelState } = app.state;
+  const { currentDifficulty, queues, playedInCurrentLevel } = levelState;
+  const currentQueue = queues[currentDifficulty] || [];
+  const completedInLevel = currentQueue.filter(taskId =>
+    app.state.stats?.[taskId]?.completed
+  ).length;
+  const totalInLevel = currentQueue.length;
+
+  // Get difficulty label
+  const difficultyLabel = currentDifficulty === 'easy' ? 'Easy' :
+                          currentDifficulty === 'medium' ? 'Medium' : 'Hard';
+
   return (
     <aside className="panel right-panel">
       <h2>Popis & návod</h2>
@@ -796,6 +809,28 @@ function RightPanel({ app, completionMap, onReturnToMenu }) {
           📖 Kompletný návod
         </a>
       </div>
+
+      {/* Level progress indicator */}
+      <div className="level-progress-card">
+        <div className="level-progress-header">
+          <span className="level-progress-label">Aktuálny level</span>
+          <span className={`difficulty-badge difficulty-${currentDifficulty}`}>
+            {difficultyLabel}
+          </span>
+        </div>
+        <div className="level-progress-stats">
+          <span className="progress-text">
+            {completedInLevel} / {totalInLevel} úloh dokončených
+          </span>
+        </div>
+        <div className="level-progress-bar">
+          <div
+            className="level-progress-fill"
+            style={{ width: `${totalInLevel > 0 ? (completedInLevel / totalInLevel) * 100 : 0}%` }}
+          />
+        </div>
+      </div>
+
       <div className="client-brief">
         <h3>Klientsky request</h3>
         {requirements.length ? (
