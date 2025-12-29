@@ -33,6 +33,34 @@ const paletteColors = [
   { name: 'Ľadová modrá', value: '#bde0fe' }
 ];
 
+// Fisher-Yates shuffle algorithm for random task ordering
+function shuffleArray(array) {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+// Create shuffled queue grouped by difficulty (easy -> medium -> hard)
+// Each difficulty level is shuffled randomly, but levels remain in order
+function createShuffledQueue(taskList) {
+  const easy = taskList.filter(t => t.difficulty === 'easy');
+  const medium = taskList.filter(t => t.difficulty === 'medium');
+  const hard = taskList.filter(t => t.difficulty === 'hard');
+
+  const shuffledEasy = shuffleArray(easy);
+  const shuffledMedium = shuffleArray(medium);
+  const shuffledHard = shuffleArray(hard);
+
+  return [
+    ...shuffledEasy.map(t => t.id),
+    ...shuffledMedium.map(t => t.id),
+    ...shuffledHard.map(t => t.id)
+  ];
+}
+
 const firstTaskId = tasks[0]?.id ?? null;
 
 const loadQueue = () => {
@@ -40,19 +68,23 @@ const loadQueue = () => {
   const stored = window.localStorage.getItem('nail-art-queue');
   const validIds = new Set(defaultQueue);
 
-  if (!stored) return defaultQueue;
+  // If there's saved progress, continue from where user left off
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      if (!Array.isArray(parsed)) return createShuffledQueue(tasks);
 
-  try {
-    const parsed = JSON.parse(stored);
-    if (!Array.isArray(parsed)) return defaultQueue;
+      const filtered = parsed.filter((id) => validIds.has(id));
+      const hasAll = defaultQueue.every((id) => filtered.includes(id));
 
-    const filtered = parsed.filter((id) => validIds.has(id));
-    const hasAll = defaultQueue.every((id) => filtered.includes(id));
-
-    return hasAll ? filtered : defaultQueue;
-  } catch (err) {
-    return defaultQueue;
+      return hasAll ? filtered : createShuffledQueue(tasks);
+    } catch (err) {
+      return createShuffledQueue(tasks);
+    }
   }
+
+  // No saved progress - create new shuffled queue
+  return createShuffledQueue(tasks);
 };
 
 const loadStats = () => {
@@ -180,9 +212,19 @@ function appReducer(state, action) {
           }
         : state.savedProgress;
       const restored = taskId && progressSnapshot[taskId] ? progressSnapshot[taskId] : null;
-      const selectedIndex = tasks.findIndex((task) => task.id === taskId);
-      const nextQueue =
-        selectedIndex >= 0 ? tasks.slice(selectedIndex).map((task) => task.id) : loadQueue();
+
+      // Preserve shuffled queue: find selected task in current queue
+      const queueIndex = state.queue.findIndex(id => id === taskId);
+      let nextQueue;
+      if (queueIndex >= 0) {
+        // Task is in current queue - start from this task
+        nextQueue = state.queue.slice(queueIndex);
+      } else {
+        // Task not in queue (already completed) - add it to front of current queue
+        // This allows replaying completed tasks without breaking the shuffle
+        nextQueue = [taskId, ...state.queue];
+      }
+
       // Increment attempts when starting a new task
       const currentStats = state.stats?.[taskId] ?? {};
       const updatedStats = taskId ? {
@@ -314,10 +356,13 @@ function appReducer(state, action) {
           }
         : state.savedProgress;
 
-      const queue = state.queue.length ? state.queue.slice(1) : loadQueue();
-      const fallbackQueue = loadQueue();
-      const nextId = queue[0] ?? fallbackQueue[0] ?? tasks[0]?.id;
-      const normalizedQueue = queue.length ? queue : fallbackQueue;
+      // Remove current task from queue
+      const remainingQueue = state.queue.length > 1 ? state.queue.slice(1) : [];
+
+      // If queue is empty, all tasks completed - create new shuffled queue
+      const normalizedQueue = remainingQueue.length > 0 ? remainingQueue : createShuffledQueue(tasks);
+
+      const nextId = normalizedQueue[0] ?? tasks[0]?.id;
       const restored = nextId && savedProgress[nextId] ? savedProgress[nextId] : null;
       return {
         ...state,
