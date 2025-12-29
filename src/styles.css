@@ -2303,175 +2303,238 @@ body {
 @media (max-width: 960px) and (orientation: landscape) {
   body {
     overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+  }
+
+  #root {
+    height: 100%;
+    overflow: hidden;
   }
 
   .app-shell {
-    padding: 0.5rem;
-    gap: 0.5rem;
-    min-height: 100vh;
-    max-height: 100vh;
+    padding: 0.4rem;
+    gap: 0.4rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
   }
 
   /* Compact top bar in landscape */
   .top-bar {
-    padding: 0.5rem 1rem;
+    padding: 0.4rem 0.8rem;
     min-height: auto;
+    flex-shrink: 0;
   }
 
   .brand {
-    font-size: 1.1rem;
+    font-size: 1rem;
   }
 
   .subtitle {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
   }
 
   .menu-button-top {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.8rem;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.75rem;
   }
 
   .level-chip {
-    padding: 0.4rem 0.6rem;
+    padding: 0.3rem 0.5rem;
   }
 
   .level-chip .level-index {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
   }
 
   /* Use desktop-like layout in landscape */
   .layout {
-    grid-template-columns: minmax(0, 2fr) minmax(240px, 0.6fr);
-    gap: 0.75rem;
-    max-height: calc(100vh - 80px);
+    grid-template-columns: minmax(0, 2fr) minmax(220px, 0.55fr);
+    gap: 0.5rem;
+    flex: 1;
+    min-height: 0;
     overflow: hidden;
+  }
+
+  .main-column {
+    gap: 0.5rem;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
   }
 
   /* Make board fit the available space */
   .board-shell {
-    max-height: calc(100vh - 140px);
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
   }
 
   .board {
     aspect-ratio: 4 / 3;
-    max-height: calc(100vh - 200px);
+    max-height: 100%;
+    width: 100%;
+    height: auto;
   }
 
-  /* Compact toolbelt in landscape */
+  /* Compact toolbelt in landscape - make it scrollable */
   .toolbelt {
+    gap: 0.3rem;
+    padding: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .tool-tabs {
     gap: 0.4rem;
   }
 
+  .tool-tab {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+  }
+
   .tool-strip {
-    max-height: 25vh;
+    max-height: 18vh;
     overflow-y: auto;
+    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
   }
 
   /* Compact right panel */
   .right-panel {
-    position: sticky;
-    top: 0.5rem;
-    max-height: calc(100vh - 80px);
+    position: static;
+    max-height: none;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding: 0.75rem;
+    padding: 0.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
   .right-panel h2 {
-    font-size: 0.95rem;
-    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
   }
 
   .helper-card,
   .client-brief {
-    padding: 0.6rem;
-    font-size: 0.8rem;
+    padding: 0.5rem;
+    font-size: 0.75rem;
   }
 
   .helper-card ul {
-    font-size: 0.8rem;
-    gap: 0.3rem;
+    font-size: 0.75rem;
+    gap: 0.25rem;
   }
 
   /* Compact overlays */
   .info-card {
-    padding: 0.3rem 0.5rem;
-    min-width: 110px;
-    gap: 0.3rem;
+    padding: 0.25rem 0.4rem;
+    min-width: 100px;
+    gap: 0.25rem;
   }
 
   .info-level,
   .info-color {
-    font-size: 0.7rem;
-    gap: 0.3rem;
+    font-size: 0.65rem;
+    gap: 0.25rem;
   }
 
   .info-label {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
   }
 
   .info-value {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
   }
 
   .color-name {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
   }
 
   .color-preview {
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
   }
 
   .difficulty-badge {
-    padding: 0.15rem 0.4rem;
-    font-size: 0.6rem;
-    margin-left: 0.3rem;
+    padding: 0.15rem 0.35rem;
+    font-size: 0.55rem;
+    margin-left: 0.25rem;
   }
 
   .timer-card {
-    padding: 0.3rem 0.5rem;
+    padding: 0.25rem 0.4rem;
   }
 
   .timer-value {
-    font-size: 0.85rem;
-    min-width: 32px;
+    font-size: 0.8rem;
+    min-width: 30px;
   }
 
   .timer-icon {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
   }
 
   .actions-panel {
-    padding: 0.35rem;
+    padding: 0.3rem;
+    gap: 0.3rem;
   }
 
   .action-icon-btn {
-    width: 30px;
-    height: 30px;
-    font-size: 0.95rem;
+    width: 28px;
+    height: 28px;
+    font-size: 0.9rem;
   }
 
   /* Compact stickers and colors */
   .palette-row {
-    gap: 0.4rem;
+    gap: 0.3rem;
     padding: 0.3rem;
   }
 
   .palette-item {
-    min-width: 85px;
+    min-width: 75px;
     padding: 0.3rem;
   }
 
+  .sticker.is-palette {
+    width: 55px;
+    height: 55px;
+  }
+
   .color-shelf {
-    gap: 0.4rem;
+    gap: 0.3rem;
     padding: 0.3rem;
   }
 
   .swatch {
-    min-width: 70px;
+    min-width: 65px;
+    padding: 0.4rem;
+  }
+
+  .swatch-color {
+    width: 28px;
+    height: 28px;
+  }
+
+  .swatch-name {
+    font-size: 0.65rem;
+  }
+
+  /* Compact score display */
+  .score-display {
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .score-item {
+    font-size: 0.75rem;
   }
 
   /* Hide intro decorations in landscape for performance */

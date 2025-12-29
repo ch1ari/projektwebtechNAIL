@@ -1,7 +1,7 @@
 // Nail Art Match - Service Worker
 // Progressive Web App offline support
 
-const CACHE_VERSION = 'v6';
+const CACHE_VERSION = 'v7';
 const CACHE_NAME = `nail-art-match-${CACHE_VERSION}`;
 const STATIC_CACHE_NAME = `nail-art-static-${CACHE_VERSION}`;
 
