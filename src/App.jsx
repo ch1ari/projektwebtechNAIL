@@ -244,8 +244,8 @@ function appReducer(state, action) {
       return {
         ...state,
         currentTaskId: taskId ?? null,
-        placements: {},
-        nailColors: DEFAULT_NAIL_COLORS,
+        placements: restored?.placements ?? {},
+        nailColors: restored?.nailColors ?? DEFAULT_NAIL_COLORS,
         selectedColor: restored?.selectedColor ?? paletteColors[0].value,
         selectedColorName: restored?.selectedColorName ?? paletteColors[0].name,
         activeToolTab: null,
