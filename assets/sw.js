@@ -1,7 +1,7 @@
 // Nail Art Match - Service Worker
 // Progressive Web App offline support
 
-const CACHE_VERSION = 'v4';
+const CACHE_VERSION = 'v5';
 const CACHE_NAME = `nail-art-match-${CACHE_VERSION}`;
 const STATIC_CACHE_NAME = `nail-art-static-${CACHE_VERSION}`;
 
@@ -114,57 +114,74 @@ self.addEventListener('fetch', (event) => {
   }
 
   // For all other requests (CSS, JS, images, etc.)
-  event.respondWith(
-    caches.match(request)
-      .then((cachedResponse) => {
-        if (cachedResponse) {
-          console.log('[Service Worker] Serving from cache:', request.url);
-          return cachedResponse;
-        }
+  // Use network-first for JS/CSS to always get latest version
+  const isAppAsset = request.url.includes('/assets/') ||
+                     request.url.includes('.js') ||
+                     request.url.includes('.css');
 
-        // Not in cache, fetch from network
-        console.log('[Service Worker] Fetching from network:', request.url);
-        return fetch(request)
-          .then((response) => {
-            // Don't cache invalid responses
-            if (!response || response.status !== 200 || response.type === 'error') {
-              return response;
-            }
-
-            // Clone the response
+  if (isAppAsset) {
+    // Network-first strategy for app assets (JS/CSS)
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          if (response && response.status === 200) {
             const responseToCache = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(request, responseToCache);
+              console.log('[Service Worker] Updated cache:', request.url);
+            });
+          }
+          return response;
+        })
+        .catch(() => {
+          // Offline - try cache
+          return caches.match(request)
+            .then((cachedResponse) => {
+              if (cachedResponse) {
+                console.log('[Service Worker] Serving from cache (offline):', request.url);
+                return cachedResponse;
+              }
+              throw new Error('Asset not cached and offline');
+            });
+        })
+    );
+  } else {
+    // Cache-first for images and other static content
+    event.respondWith(
+      caches.match(request)
+        .then((cachedResponse) => {
+          if (cachedResponse) {
+            console.log('[Service Worker] Serving from cache:', request.url);
+            return cachedResponse;
+          }
 
-            // Cache everything from our origin
-            caches.open(CACHE_NAME)
-              .then((cache) => {
+          return fetch(request)
+            .then((response) => {
+              if (!response || response.status !== 200 || response.type === 'error') {
+                return response;
+              }
+
+              const responseToCache = response.clone();
+              caches.open(CACHE_NAME).then((cache) => {
                 cache.put(request, responseToCache);
                 console.log('[Service Worker] Cached:', request.url);
               });
 
-            return response;
-          })
-          .catch((error) => {
-            console.error('[Service Worker] Fetch failed (offline?):', error);
-
-            // Try to return cached version
-            return caches.match(request)
-              .then((cachedResponse) => {
+              return response;
+            })
+            .catch((error) => {
+              console.error('[Service Worker] Fetch failed:', error);
+              return caches.match(request).then((cachedResponse) => {
                 if (cachedResponse) {
                   console.log('[Service Worker] Returning cached fallback:', request.url);
                   return cachedResponse;
                 }
-
-                // For images, return a placeholder or throw
-                if (request.destination === 'image') {
-                  console.log('[Service Worker] Image not cached, offline');
-                  // Could return a placeholder image here
-                }
-
                 throw error;
               });
-          });
-      })
-  );
+            });
+        })
+    );
+  }
 });
 
 // Handle messages from clients
