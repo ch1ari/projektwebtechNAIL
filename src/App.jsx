@@ -75,7 +75,7 @@ const loadStats = () => {
 };
 
 // State version for migration
-const STATE_VERSION = 2; // Incremented for level system changes
+const STATE_VERSION = 3; // Incremented for random task generation with playedInCurrentDifficulty
 
 // Load saved game state from localStorage with version check
 const loadGameState = () => {
@@ -115,14 +115,30 @@ const initialLevelState = savedGameState?.levelState || loadLevelState(tasks);
 const firstTaskId = initialLevelState.currentTaskId ?? initialLevelState.queues?.easy?.[0] ?? tasks[0]?.id ?? null;
 
 // Ensure the first task is added to playedInCurrentDifficulty if starting fresh
+// Also handle migration from old state format
+const ensurePlayedInCurrentDifficulty = (levelState, taskId) => {
+  if (!levelState.playedInCurrentDifficulty) {
+    // Create new structure if it doesn't exist
+    return {
+      easy: taskId && levelState.currentDifficulty === 'easy' ? [taskId] : [],
+      medium: taskId && levelState.currentDifficulty === 'medium' ? [taskId] : [],
+      hard: taskId && levelState.currentDifficulty === 'hard' ? [taskId] : []
+    };
+  }
+
+  // Update existing structure
+  const difficulty = levelState.currentDifficulty || 'easy';
+  const playedList = levelState.playedInCurrentDifficulty[difficulty] || [];
+
+  return {
+    ...levelState.playedInCurrentDifficulty,
+    [difficulty]: playedList.includes(taskId) ? playedList : [...playedList, taskId]
+  };
+};
+
 const initialLevelStateWithFirst = savedGameState?.levelState ? initialLevelState : {
   ...initialLevelState,
-  playedInCurrentDifficulty: {
-    ...initialLevelState.playedInCurrentDifficulty,
-    easy: initialLevelState.playedInCurrentDifficulty?.easy?.includes(firstTaskId)
-      ? initialLevelState.playedInCurrentDifficulty.easy
-      : [...(initialLevelState.playedInCurrentDifficulty?.easy || []), firstTaskId]
-  }
+  playedInCurrentDifficulty: ensurePlayedInCurrentDifficulty(initialLevelState, firstTaskId)
 };
 
 const defaultState = {
