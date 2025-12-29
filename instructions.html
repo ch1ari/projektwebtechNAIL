@@ -223,8 +223,18 @@
     <h3>Základné ovládanie</h3>
     <div class="controls-list">
       <ul>
-        <li><strong>Maľovanie nechtov:</strong> Kliknite na farbu v palete a následne na necht, alebo potiahnite farbu priamo na necht.</li>
-        <li><strong>Pridanie nálepky:</strong> Otvorte záložku „Nálepky“ a potiahnite nálepku na správny necht.</li>
+        <li><strong>Maľovanie nechtov:</strong>
+          <ul>
+            <li>🖥️ <strong>Počítač (myš):</strong> Uchopte farbu a potiahnite ju (drag & drop) priamo na necht</li>
+            <li>📱 <strong>Mobil/Tablet (dotyk):</strong> Kliknite na farbu v palete a následne na necht</li>
+          </ul>
+        </li>
+        <li><strong>Pridanie nálepky:</strong>
+          <ul>
+            <li>🖥️ <strong>Počítač (myš):</strong> Otvorte záložku „Nálepky" a potiahnite nálepku (drag & drop) na správny necht</li>
+            <li>📱 <strong>Mobil/Tablet (dotyk):</strong> Kliknite na nálepku (označí sa) a potom kliknite na necht, kam ju chcete umiestniť</li>
+          </ul>
+        </li>
         <li><strong>Otáčanie nálepky:</strong> Kliknite na už umiestnenú nálepku, otočí sa o 15°.</li>
         <li><strong>Odstránenie nálepky:</strong> Kliknite na nálepku v palete, ak je na ploche a chcete ju zložiť.</li>
       </ul>
@@ -262,28 +272,39 @@
 
     <h2>📊 Levely a obtiažnosť</h2>
 
-    <h3>Easy (Ľahká)</h3>
+    <p><strong>🎲 Náhodné generovanie:</strong> Úlohy sa generujú <strong>náhodne v rámci každej náročnosti</strong>. Najprv prejdete všetky Easy úlohy (v náhodnom poradí), potom všetky Medium úlohy (v náhodnom poradí) a nakoniec Hard úlohy. Pri každom reštarte hry sa úlohy premiešajú do nového poradia!</p>
+
+    <div style="background: #e3f2fd; padding: 1rem; border-left: 4px solid #2196f3; margin: 1rem 0; border-radius: 4px;">
+      <strong>🔄 Príklad:</strong>
+      <ul style="margin: 0.5rem 0;">
+        <li>Prvý štart: Jarný kvet → Sladká jahoda → Pastelový dúhový deň (Easy)</li>
+        <li>Po reštarte: Pastelový dúhový deň → Jarný kvet → Sladká jahoda (Easy)</li>
+        <li>Poradie sa mení pri každom novom štarte!</li>
+      </ul>
+    </div>
+
+    <h3>Level 1 - Easy (Začiatočník) - 3 úlohy</h3>
     <ul>
       <li>Sladká jahoda - Ružové tóny s diamantom a čerešňou</li>
       <li>Pastelový dúhový deň - Jemné farby s dúhou a hviezdou</li>
       <li>Jarný kvet - Svieže farby s ružou a slnkom</li>
     </ul>
-    <p><em>Tolerancia umiestnenia: 35% - veľmi voľná</em></p>
+    <p><em>✅ Tolerancia umiestnenia: 35% | Rotácia: ±45° | Počet nálepiek: 2</em></p>
 
-    <h3>Medium (Stredná)</h3>
+    <h3>Level 2 - Medium (Pokročilý) - 3 úlohy</h3>
     <ul>
       <li>Ľadové sklo - Modré tóny s diamantom a dúhou</li>
       <li>Letná fiesta - Tropické farby s 3 nálepkami</li>
       <li>Večerná romantika - Pudrové tóny s 3 nálepkami</li>
     </ul>
-    <p><em>Tolerancia umiestnenia: 10% - stredná presnosť</em></p>
+    <p><em>⚠️ Tolerancia umiestnenia: 10% | Rotácia: ±25° | Počet nálepiek: 2-3</em></p>
 
-    <h3>Hard (Ťažká)</h3>
+    <h3>Level 3 - Hard (Expert) - 2 úlohy</h3>
     <ul>
       <li>Nočný neon - Žiarivé farby s 3 nálepkami</li>
       <li>Drama queen - Výrazné tóny s break-up nálepkou a 2 ďalšími</li>
     </ul>
-    <p><em>Tolerancia umiestnenia: 8% - vysoká presnosť</em></p>
+    <p><em>🔥 Tolerancia umiestnenia: 8% | Rotácia: ±20° | Počet nálepiek: 3</em></p>
 
     <h2>💎 Tipy a triky</h2>
     <ul>
@@ -299,11 +320,20 @@
     <h2>🏆 Štatistiky a pokrok</h2>
     <p>Pokrok sa ukladá automaticky do prehliadača:</p>
     <ul>
-      <li>dokončené levely a ich stav,</li>
-      <li>najrýchlejší čas pre každý level,</li>
-      <li>poradie levelov – nedokončené levely ostávajú v rade.</li>
+      <li><strong>Dokončené úlohy a ich stav</strong> - Každá splnená úloha sa označí ako "completed"</li>
+      <li><strong>Najrýchlejší čas</strong> - Pre každú úlohu sa sleduje váš najlepší čas</li>
+      <li><strong>Počet pokusov</strong> - Koľkokrát ste úlohu skúšali</li>
+      <li><strong>Progress v leveli</strong> - V pravom paneli vidíte "X/3 úloh" pre aktuálny level</li>
     </ul>
-    <p>Levely sa odomykajú postupne: na ďalší sa dostanete po splnení predchádzajúceho.</p>
+
+    <p><strong>📈 Progres cez levely:</strong></p>
+    <ul>
+      <li>Po dokončení všetkých <strong>Easy úloh</strong> → automaticky prejdete na <strong>Medium</strong></li>
+      <li>Po dokončení všetkých <strong>Medium úloh</strong> → automaticky prejdete na <strong>Hard</strong></li>
+      <li>Po dokončení všetkých <strong>Hard úloh</strong> → hra je kompletne dokončená! 🎉</li>
+    </ul>
+
+    <p><strong>💡 Tip:</strong> Môžete si kedykoľvek vybrať konkrétnu úlohu z top menu, ale náhodné generovanie sa aplikuje pri použití tlačidla "Ďalší level".</p>
 
     <h2>⚙️ Technické požiadavky</h2>
     <ul>
