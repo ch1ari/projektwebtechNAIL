@@ -775,43 +775,9 @@ function RightPanel({ app, completionMap, onReturnToMenu }) {
   const hasNext = currentIndex >= 0 && currentIndex < app.tasks.length - 1;
   const nextLocked = hasNext && !currentComplete;
 
-  // Level info
-  const levelInfo = getLevelInfo(app.state.levelState.currentDifficulty);
-  const levelProgress = getLevelProgress(app.state.levelState);
-
   return (
     <aside className="panel right-panel">
       <h2>Popis & návod</h2>
-
-      {/* Level Progress Info */}
-      <div className="level-info-card" style={{
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        color: 'white',
-        padding: '1rem',
-        borderRadius: '8px',
-        marginBottom: '1rem'
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-          <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>{levelInfo.name}</span>
-          <span style={{ fontSize: '0.85rem', opacity: 0.9 }}>
-            {levelProgress.completed}/{levelProgress.total} úloh
-          </span>
-        </div>
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.2)',
-          borderRadius: '4px',
-          height: '8px',
-          overflow: 'hidden'
-        }}>
-          <div style={{
-            background: 'rgba(255, 255, 255, 0.9)',
-            height: '100%',
-            width: `${levelProgress.percentage}%`,
-            transition: 'width 0.3s ease'
-          }} />
-        </div>
-      </div>
-
       <div className="helper-card">
         <ul>
           <li>Porovnaj s klientskou kartou a udrž farby aj ozdoby presne.</li>
