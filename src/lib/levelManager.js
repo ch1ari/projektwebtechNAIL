@@ -1,109 +1,164 @@
-// Level Manager - Handles level progression with sequential levels
-// Tasks progress from easy -> medium -> hard
+// Level Manager - Handles level progression with sequential levels and random tasks
+// Tasks progress from easy -> medium -> hard with shuffled selection
 
 /**
- * Task order by difficulty - defines sequential level progression
- * Levels 1-3: Easy tasks
- * Levels 4-7: Medium tasks
- * Levels 8-12: Hard tasks
+ * Level ranges by difficulty
+ * Levels 1-3: Easy tasks (3 tasks)
+ * Levels 4-7: Medium tasks (4 tasks)
+ * Levels 8-12: Hard tasks (5 tasks)
  */
-export const TASK_ORDER = [
-  // Easy tasks (Levels 1-3)
-  'easy-berry',
-  'easy-rainbow',
-  'easy-bloom',
-  // Medium tasks (Levels 4-7)
-  'medium-ice',
-  'medium-fiesta',
-  'medium-romance',
-  'medium-garden',
-  // Hard tasks (Levels 8-12)
-  'hard-neon',
-  'hard-breakup',
-  'hard-cosmos',
-  'hard-ultimate'
-];
+const LEVEL_RANGES = {
+  easy: { start: 1, end: 3, count: 3 },
+  medium: { start: 4, end: 7, count: 4 },
+  hard: { start: 8, end: 12, count: 5 }
+};
 
 /**
- * Gets the level number for a specific task ID
- * @param {string} taskId - Task ID
- * @returns {number} Level number (1-based)
+ * Fisher-Yates shuffle algorithm for random array shuffling
  */
-export function getLevelForTask(taskId) {
-  const index = TASK_ORDER.indexOf(taskId);
-  return index >= 0 ? index + 1 : 1;
+function shuffleArray(array) {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
 }
 
 /**
- * Gets the task ID for a specific level number
- * @param {number} level - Level number (1-based)
- * @returns {string} Task ID
+ * Groups tasks by difficulty level
+ * @param {Array} tasks - All available tasks
+ * @returns {Object} Tasks grouped by difficulty: { easy: [...], medium: [...], hard: [...] }
  */
-export function getTaskForLevel(level) {
-  const index = level - 1;
-  return TASK_ORDER[index] || TASK_ORDER[0];
+export function groupTasksByDifficulty(tasks) {
+  return tasks.reduce((groups, task) => {
+    const difficulty = task.difficulty || 'easy';
+    if (!groups[difficulty]) {
+      groups[difficulty] = [];
+    }
+    groups[difficulty].push(task);
+    return groups;
+  }, {});
 }
 
 /**
- * Gets difficulty for a specific level
+ * Gets difficulty for a specific level number
  * @param {number} level - Level number (1-based)
  * @returns {string} Difficulty: 'easy', 'medium', or 'hard'
  */
 export function getDifficultyForLevel(level) {
-  if (level <= 3) return 'easy';
-  if (level <= 7) return 'medium';
-  return 'hard';
+  if (level >= LEVEL_RANGES.easy.start && level <= LEVEL_RANGES.easy.end) return 'easy';
+  if (level >= LEVEL_RANGES.medium.start && level <= LEVEL_RANGES.medium.end) return 'medium';
+  if (level >= LEVEL_RANGES.hard.start && level <= LEVEL_RANGES.hard.end) return 'hard';
+  return 'easy';
 }
 
 /**
- * Creates initial level state with sequential task progression
+ * Creates initial level state with shuffled tasks for each difficulty
  * @param {Array} tasks - All available tasks
  * @returns {Object} Level state
  */
 export function createInitialLevelState(tasks) {
-  const firstTaskId = TASK_ORDER[0];
-  const firstTask = tasks.find(t => t.id === firstTaskId);
+  const grouped = groupTasksByDifficulty(tasks);
+
+  // Shuffle tasks for each difficulty level to ensure random order
+  const shuffledQueues = {
+    easy: shuffleArray(grouped.easy || []),
+    medium: shuffleArray(grouped.medium || []),
+    hard: shuffleArray(grouped.hard || [])
+  };
+
+  // Start at level 1 with first easy task from shuffled queue
+  const firstTaskId = shuffledQueues.easy[0]?.id || tasks[0]?.id;
 
   return {
     currentLevel: 1,
     currentTaskId: firstTaskId,
-    currentDifficulty: firstTask?.difficulty || 'easy',
+    currentDifficulty: 'easy',
+    queues: {
+      easy: shuffledQueues.easy.map(t => t.id),
+      medium: shuffledQueues.medium.map(t => t.id),
+      hard: shuffledQueues.hard.map(t => t.id)
+    },
+    playedInCurrentDifficulty: {
+      easy: [firstTaskId],
+      medium: [],
+      hard: []
+    },
     completedLevels: []
   };
 }
 
 /**
- * Gets the next task in sequential order
+ * Gets the next task with random selection from current difficulty
  * @param {Object} levelState - Current level state
  * @param {Array} tasks - All available tasks
  * @returns {Object} { taskId, levelState, levelComplete, allLevelsComplete }
  */
 export function getNextTask(levelState, tasks) {
-  const { currentLevel } = levelState;
-  const nextLevel = currentLevel + 1;
+  const { currentLevel, currentDifficulty, queues, playedInCurrentDifficulty } = levelState;
+  const currentQueue = queues[currentDifficulty] || [];
+  const playedInDifficulty = playedInCurrentDifficulty[currentDifficulty] || [];
 
-  // Check if we've completed all levels
-  if (nextLevel > TASK_ORDER.length) {
-    // All levels complete - restart from beginning
-    const newState = createInitialLevelState(tasks);
+  // Get unplayed tasks from current difficulty queue
+  const unplayedTasks = currentQueue.filter(
+    taskId => !playedInDifficulty.includes(taskId)
+  );
+
+  // If all tasks in current difficulty are played, move to next difficulty
+  if (unplayedTasks.length === 0) {
+    const nextLevel = currentLevel + 1;
+    const nextDifficulty = getDifficultyForLevel(nextLevel);
+
+    // Check if we've completed all levels
+    if (nextLevel > LEVEL_RANGES.hard.end) {
+      // All levels complete - restart with new shuffle
+      const newState = createInitialLevelState(tasks);
+      return {
+        taskId: newState.currentTaskId,
+        levelState: newState,
+        levelComplete: true,
+        allLevelsComplete: true
+      };
+    }
+
+    // Moving to next difficulty - pick first task from shuffled queue
+    const nextQueue = queues[nextDifficulty] || [];
+    const nextTaskId = nextQueue[0];
+
+    const newState = {
+      ...levelState,
+      currentLevel: nextLevel,
+      currentTaskId: nextTaskId,
+      currentDifficulty: nextDifficulty,
+      playedInCurrentDifficulty: {
+        ...playedInCurrentDifficulty,
+        [nextDifficulty]: [nextTaskId]
+      },
+      completedLevels: [...levelState.completedLevels, currentLevel]
+    };
+
     return {
-      taskId: newState.currentTaskId,
+      taskId: nextTaskId,
       levelState: newState,
       levelComplete: true,
-      allLevelsComplete: true
+      allLevelsComplete: false
     };
   }
 
-  // Progress to next level
-  const nextTaskId = getTaskForLevel(nextLevel);
-  const nextTask = tasks.find(t => t.id === nextTaskId);
-  const nextDifficulty = nextTask?.difficulty || getDifficultyForLevel(nextLevel);
+  // Pick random task from unplayed tasks in current difficulty
+  const randomIndex = Math.floor(Math.random() * unplayedTasks.length);
+  const nextTaskId = unplayedTasks[randomIndex];
+  const nextLevel = currentLevel + 1;
 
   const newState = {
     ...levelState,
     currentLevel: nextLevel,
     currentTaskId: nextTaskId,
-    currentDifficulty: nextDifficulty,
+    playedInCurrentDifficulty: {
+      ...playedInCurrentDifficulty,
+      [currentDifficulty]: [...playedInDifficulty, nextTaskId]
+    },
     completedLevels: [...levelState.completedLevels, currentLevel]
   };
 
@@ -116,29 +171,17 @@ export function getNextTask(levelState, tasks) {
 }
 
 /**
- * Gets level info for a specific task or difficulty
- * @param {string} taskIdOrDifficulty - Task ID or difficulty string
+ * Gets level info for a specific difficulty
+ * @param {string} difficulty - Difficulty level
  * @returns {Object} Level info
  */
-export function getLevelInfo(taskIdOrDifficulty) {
-  // Check if it's a task ID
-  const levelNumber = getLevelForTask(taskIdOrDifficulty);
-  if (levelNumber > 0) {
-    const difficulty = getDifficultyForLevel(levelNumber);
-    return {
-      level: levelNumber,
-      difficulty: difficulty,
-      taskId: taskIdOrDifficulty
-    };
-  }
-
-  // Otherwise treat it as a difficulty and return first level of that difficulty
-  const difficulty = taskIdOrDifficulty;
-  if (difficulty === 'easy') return { level: 1, difficulty: 'easy', taskId: TASK_ORDER[0] };
-  if (difficulty === 'medium') return { level: 4, difficulty: 'medium', taskId: TASK_ORDER[3] };
-  if (difficulty === 'hard') return { level: 8, difficulty: 'hard', taskId: TASK_ORDER[7] };
-
-  return { level: 1, difficulty: 'easy', taskId: TASK_ORDER[0] };
+export function getLevelInfo(difficulty) {
+  const ranges = {
+    'easy': { level: 1, difficulty: 'easy' },
+    'medium': { level: 4, difficulty: 'medium' },
+    'hard': { level: 8, difficulty: 'hard' }
+  };
+  return ranges[difficulty] || ranges['easy'];
 }
 
 /**
@@ -167,23 +210,17 @@ export function saveLevelState(levelState) {
  * @returns {Object} { completed, total, percentage }
  */
 export function getLevelProgress(levelState, completedTaskIds = []) {
-  const { currentDifficulty } = levelState;
+  const { currentDifficulty, queues } = levelState;
+  const currentQueue = queues[currentDifficulty] || [];
 
-  // Count tasks in current difficulty group
-  let total = 0;
-  let completed = 0;
+  // Count completed tasks in current difficulty
+  const completed = currentQueue.filter(taskId =>
+    completedTaskIds.includes(taskId)
+  ).length;
 
-  TASK_ORDER.forEach(taskId => {
-    const taskDifficulty = taskId.split('-')[0]; // Extract difficulty from task ID
-    if (taskDifficulty === currentDifficulty) {
-      total++;
-      if (completedTaskIds.includes(taskId)) {
-        completed++;
-      }
-    }
-  });
-
+  const total = currentQueue.length;
   const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+
   return { completed, total, percentage };
 }
 
@@ -211,14 +248,29 @@ export function selectSpecificTask(taskId, levelState, tasks) {
   }
 
   const taskDifficulty = task.difficulty || 'easy';
-  const levelNumber = getLevelForTask(taskId);
+  const levelInfo = getLevelInfo(taskDifficulty);
+
+  // Find the position of this task in the queue for this difficulty
+  const queue = levelState.queues[taskDifficulty] || [];
+  const taskIndex = queue.indexOf(taskId);
+
+  // Calculate level number based on difficulty and tasks played
+  const playedInDifficulty = levelState.playedInCurrentDifficulty[taskDifficulty] || [];
+  const levelOffset = playedInDifficulty.length;
+  const levelNumber = levelInfo.level + levelOffset;
 
   // Update level state to match the selected task
   const newState = {
     ...levelState,
     currentLevel: levelNumber,
     currentTaskId: taskId,
-    currentDifficulty: taskDifficulty
+    currentDifficulty: taskDifficulty,
+    playedInCurrentDifficulty: {
+      ...levelState.playedInCurrentDifficulty,
+      [taskDifficulty]: playedInDifficulty.includes(taskId)
+        ? playedInDifficulty
+        : [...playedInDifficulty, taskId]
+    }
   };
 
   return { levelState: newState, valid: true };

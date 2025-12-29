@@ -112,10 +112,18 @@ const savedGameState = loadGameState();
 const initialLevelState = savedGameState?.levelState || loadLevelState(tasks);
 
 // Determine first task ID from level state or fallback
-const firstTaskId = initialLevelState.currentTaskId ?? tasks[0]?.id ?? null;
+const firstTaskId = initialLevelState.currentTaskId ?? initialLevelState.queues?.easy?.[0] ?? tasks[0]?.id ?? null;
 
-// Use the initial level state as-is (no need for playedInCurrentLevel)
-const initialLevelStateWithFirst = initialLevelState;
+// Ensure the first task is added to playedInCurrentDifficulty if starting fresh
+const initialLevelStateWithFirst = savedGameState?.levelState ? initialLevelState : {
+  ...initialLevelState,
+  playedInCurrentDifficulty: {
+    ...initialLevelState.playedInCurrentDifficulty,
+    easy: initialLevelState.playedInCurrentDifficulty?.easy?.includes(firstTaskId)
+      ? initialLevelState.playedInCurrentDifficulty.easy
+      : [...(initialLevelState.playedInCurrentDifficulty?.easy || []), firstTaskId]
+  }
+};
 
 const defaultState = {
   currentTaskId: firstTaskId,
