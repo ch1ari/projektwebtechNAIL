@@ -142,7 +142,8 @@ const defaultState = {
   stats: loadStats(),
   dragState: null,
   savedProgress: {},
-  levelState: initialLevelStateWithFirst
+  levelState: initialLevelStateWithFirst,
+  isTooltipCollapsed: false
 };
 
 // Validate currentTaskId from savedGameState
@@ -492,6 +493,8 @@ function appReducer(state, action) {
     case 'endColorDrag': {
       return { ...state, dragState: null };
     }
+    case 'toggleTooltip':
+      return { ...state, isTooltipCollapsed: !state.isTooltipCollapsed };
     default:
       return state;
   }
@@ -828,9 +831,35 @@ function RightPanel({ app, completionMap, onReturnToMenu }) {
   const difficultyLabel = currentDifficulty === 'easy' ? 'Easy' :
                           currentDifficulty === 'medium' ? 'Medium' : 'Hard';
 
+  // If collapsed, show only the expand button
+  if (app.state.isTooltipCollapsed) {
+    return (
+      <aside className="panel right-panel collapsed">
+        <button
+          className="tooltip-toggle-btn expand"
+          onClick={() => app.dispatch({ type: 'toggleTooltip' })}
+          aria-label="Розгорнути підказки"
+          title="Розгорнути підказки"
+        >
+          📖
+        </button>
+      </aside>
+    );
+  }
+
   return (
     <aside className="panel right-panel">
-      <h2>Popis & návod</h2>
+      <div className="right-panel-header">
+        <h2>Popis & návod</h2>
+        <button
+          className="tooltip-toggle-btn collapse"
+          onClick={() => app.dispatch({ type: 'toggleTooltip' })}
+          aria-label="Згорнути підказки"
+          title="Згорнути підказки"
+        >
+          ✕
+        </button>
+      </div>
       <div className="helper-card">
         <ul>
           <li>Porovnaj s klientskou kartou a udrž farby aj ozdoby presne.</li>
