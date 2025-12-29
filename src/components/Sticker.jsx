@@ -89,6 +89,12 @@ export default function Sticker({
 
   // Touch/Pointer support for mobile
   function handlePointerDown(event) {
+    // Only use pointer events for touch devices
+    // Let desktop users use native drag-and-drop
+    if (event.pointerType === 'mouse') {
+      return; // Let native drag events handle it
+    }
+
     if (variant === 'palette') {
       setIsDragging(true);
       dragStartRef.current = {
@@ -101,6 +107,7 @@ export default function Sticker({
   }
 
   function handlePointerMove(event) {
+    if (event.pointerType === 'mouse') return; // Skip for mouse
     if (!isDragging || !dragStartRef.current || variant !== 'palette') return;
 
     const dx = event.clientX - dragStartRef.current.x;
@@ -114,6 +121,7 @@ export default function Sticker({
   }
 
   function handlePointerUp(event) {
+    if (event.pointerType === 'mouse') return; // Skip for mouse
     if (!isDragging || !dragStartRef.current || variant !== 'palette') return;
 
     const target = event.currentTarget;
@@ -173,6 +181,7 @@ export default function Sticker({
   }
 
   function handlePointerCancel(event) {
+    if (event.pointerType === 'mouse') return; // Skip for mouse
     const target = event.currentTarget;
     if (target.hasPointerCapture(event.pointerId)) {
       target.releasePointerCapture(event.pointerId);
