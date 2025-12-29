@@ -930,9 +930,8 @@ function RightPanel({ app, completionMap, onReturnToMenu }) {
 export default function App() {
   const app = useAppState();
   const boardRef = useRef(null);
-  // Check if user has seen intro before - only show on first visit
-  const hasSeenIntro = window.localStorage.getItem('nail-art-intro-seen') === 'true';
-  const [showIntro, setShowIntro] = useState(!hasSeenIntro);
+  // Always show intro on first page load in this session
+  const [showIntro, setShowIntro] = useState(true);
 
   // Check if there's saved game progress
   const hasProgress = useMemo(() => {
@@ -992,8 +991,7 @@ export default function App() {
   }, [app.currentTask, app.state.placements, app.state.nailColors, app.state.stats, app.state.elapsedMs, app.state.status, app.dispatch]);
 
   const handlePlay = () => {
-    // Mark intro as seen and hide it
-    window.localStorage.setItem('nail-art-intro-seen', 'true');
+    // Hide intro and start playing
     setShowIntro(false);
     // Reset timer when starting to play from menu
     app.dispatch({ type: 'timer:reset' });
@@ -1005,7 +1003,6 @@ export default function App() {
     window.localStorage.removeItem('nail-art-stats');
     window.localStorage.removeItem('nail-art-queue');
     window.localStorage.removeItem('nail-art-level-state');
-    window.localStorage.setItem('nail-art-intro-seen', 'true');
     // Reload page to start fresh
     window.location.reload();
   };
