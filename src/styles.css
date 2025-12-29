@@ -934,6 +934,47 @@ body {
   padding: 0.3rem 0.1rem 0;
 }
 
+/* Collapsible section header */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.section-header h2 {
+  margin: 0;
+  flex: 1;
+}
+
+.toggle-section-button {
+  background: linear-gradient(135deg, #d946b5, #f472b6);
+  border: none;
+  border-radius: 8px;
+  padding: 0.4rem 0.7rem;
+  color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(217, 70, 181, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
+}
+
+.toggle-section-button:hover {
+  background: linear-gradient(135deg, #db2777, #ec4899);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(217, 70, 181, 0.4);
+}
+
+.toggle-section-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(217, 70, 181, 0.3);
+}
+
 .helper-card {
   background: #fff;
   border: 1px solid #ffd0e5;
@@ -941,6 +982,19 @@ body {
   padding: 0.85rem 1rem;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
   color: #5a2f47;
+  margin-top: 0.75rem;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .helper-card ul {
@@ -985,9 +1039,15 @@ body {
 
 .level-progress-header {
   display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.level-header-row {
+  display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.6rem;
 }
 
 .level-progress-label {
@@ -996,6 +1056,14 @@ body {
   color: #5a2f47;
   text-transform: uppercase;
   letter-spacing: 0.02em;
+}
+
+.level-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #2d1b2e;
+  line-height: 1.3;
+  padding: 0.3rem 0;
 }
 
 .level-progress-stats {

@@ -792,6 +792,7 @@ function nailHitTest(boardElement, clientX, clientY) {
 }
 
 function RightPanel({ app, completionMap, onReturnToMenu }) {
+  const [instructionsCollapsed, setInstructionsCollapsed] = useState(false);
   const correctCount = Object.values(app.state.placements).filter((p) => p?.isCorrect).length;
   const totalTargets = app.currentTask?.targets?.length ?? 0;
   const nailsCorrect = Object.entries(app.currentTask?.nailTargets ?? {}).filter(
@@ -830,25 +831,41 @@ function RightPanel({ app, completionMap, onReturnToMenu }) {
 
   return (
     <aside className="panel right-panel">
-      <h2>Popis & návod</h2>
-      <div className="helper-card">
-        <ul>
-          <li>Porovnaj s klientskou kartou a udrž farby aj ozdoby presne.</li>
-          <li>Nápoveda a duchovia sú len náhľad – nezastavia ťahanie.</li>
-          <li>Reštart vymaže lak aj ozdoby, Riešenie ťa naučí správny tvar.</li>
-        </ul>
-        <a href="/instructions.html" className="helper-guide-link">
-          📖 Kompletný návod
-        </a>
+      <div className="section-header">
+        <h2>Popis & návod</h2>
+        <button
+          className="toggle-section-button"
+          onClick={() => setInstructionsCollapsed(!instructionsCollapsed)}
+          aria-label={instructionsCollapsed ? "Otvoriť návod" : "Zavrieť návod"}
+        >
+          {instructionsCollapsed ? '▼' : '▲'}
+        </button>
       </div>
+      {!instructionsCollapsed && (
+        <div className="helper-card">
+          <ul>
+            <li>Porovnaj s klientskou kartou a udrž farby aj ozdoby presne.</li>
+            <li>Nápoveda a duchovia sú len náhľad – nezastavia ťahanie.</li>
+            <li>Reštart vymaže lak aj ozdoby, Riešenie ťa naučí správny tvar.</li>
+          </ul>
+          <a href="/instructions.html" className="helper-guide-link">
+            📖 Kompletný návod
+          </a>
+        </div>
+      )}
 
       {/* Level progress indicator */}
       <div className="level-progress-card">
         <div className="level-progress-header">
-          <span className="level-progress-label">Aktuálny level</span>
-          <span className={`difficulty-badge difficulty-${currentDifficulty}`}>
-            {difficultyLabel}
-          </span>
+          <div className="level-header-row">
+            <span className="level-progress-label">Aktuálny level</span>
+            <span className={`difficulty-badge difficulty-${currentDifficulty}`}>
+              {difficultyLabel}
+            </span>
+          </div>
+          {app.currentTask?.title && (
+            <div className="level-title">{app.currentTask.title}</div>
+          )}
         </div>
         <div className="level-progress-stats">
           <span className="progress-text">
