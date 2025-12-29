@@ -959,11 +959,10 @@ export default function App() {
   // Always show intro on first page load in this session
   const [showIntro, setShowIntro] = useState(true);
 
-  // Check if there's saved game progress
+  // Check if user has actually started playing (not just visited the site)
   const hasProgress = useMemo(() => {
-    const gameState = window.localStorage.getItem('nail-art-game-state');
-    const stats = window.localStorage.getItem('nail-art-stats');
-    return !!(gameState || stats);
+    const hasStartedPlaying = window.localStorage.getItem('nail-art-has-started-playing');
+    return hasStartedPlaying === 'true';
   }, []);
 
   const completionMap = useMemo(
@@ -1017,6 +1016,8 @@ export default function App() {
   }, [app.currentTask, app.state.placements, app.state.nailColors, app.state.stats, app.state.elapsedMs, app.state.status, app.dispatch]);
 
   const handlePlay = () => {
+    // Mark that user has started playing
+    window.localStorage.setItem('nail-art-has-started-playing', 'true');
     // Hide intro and start playing
     setShowIntro(false);
     // Reset timer when starting to play from menu
@@ -1024,11 +1025,12 @@ export default function App() {
   };
 
   const handleNewGame = () => {
-    // Clear all saved progress
+    // Clear all saved progress including the "has started playing" flag
     window.localStorage.removeItem('nail-art-game-state');
     window.localStorage.removeItem('nail-art-stats');
     window.localStorage.removeItem('nail-art-queue');
     window.localStorage.removeItem('nail-art-level-state');
+    window.localStorage.removeItem('nail-art-has-started-playing');
     // Reload page to start fresh
     window.location.reload();
   };
