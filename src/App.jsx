@@ -42,10 +42,6 @@ const paletteColors = [
   { name: 'Ľadová modrá', value: '#bde0fe' }
 ];
 
-// Initialize level state on load
-const initialLevelState = loadLevelState(tasks);
-const firstTaskId = initialLevelState.queues[initialLevelState.currentDifficulty]?.[0] ?? tasks[0]?.id ?? null;
-
 const loadQueue = () => {
   const defaultQueue = tasks.map((task) => task.id);
   const stored = window.localStorage.getItem('nail-art-queue');
@@ -78,7 +74,10 @@ const loadStats = () => {
   return {};
 };
 
-// Load saved game state from localStorage
+// State version for migration
+const STATE_VERSION = 2; // Incremented for level system changes
+
+// Load saved game state from localStorage with version check
 const loadGameState = () => {
   const stored = window.localStorage.getItem('nail-art-game-state');
   if (stored) {
@@ -86,6 +85,13 @@ const loadGameState = () => {
       const parsed = JSON.parse(stored);
       // Validate that the saved state has the expected structure
       if (parsed && typeof parsed === 'object') {
+        // Check version - if old version, clear and return null to start fresh
+        if (!parsed.version || parsed.version < STATE_VERSION) {
+          console.log('Old state version detected, clearing saved state for migration');
+          window.localStorage.removeItem('nail-art-game-state');
+          window.localStorage.removeItem('nail-art-level-state');
+          return null;
+        }
         return parsed;
       }
     } catch (err) {
@@ -101,6 +107,12 @@ const initialTaskColors = DEFAULT_NAIL_COLORS;
 
 // Try to load saved game state, otherwise use defaults
 const savedGameState = loadGameState();
+
+// Initialize level state - if there's saved state, use it; otherwise create new
+const initialLevelState = savedGameState?.levelState || loadLevelState(tasks);
+
+// Determine first task ID from level state or fallback
+const firstTaskId = initialLevelState.queues[initialLevelState.currentDifficulty]?.[0] ?? tasks[0]?.id ?? null;
 
 const defaultState = {
   currentTaskId: firstTaskId,
@@ -127,11 +139,15 @@ const defaultState = {
   levelState: initialLevelState
 };
 
-const initialState = {
+const initialState = savedGameState ? {
   ...defaultState,
-  ...(savedGameState || {}),
+  ...savedGameState,
   activeToolTab: null,
-  levelState: savedGameState?.levelState || initialLevelState
+  levelState: initialLevelState,
+  // Ensure currentTaskId is valid
+  currentTaskId: savedGameState.currentTaskId || firstTaskId
+} : {
+  ...defaultState
 };
 
 function taskTargets(task) {
@@ -470,6 +486,7 @@ function useAppState() {
   // Persist full game state to localStorage (excluding transient UI states)
   useEffect(() => {
     const stateToPersist = {
+      version: STATE_VERSION, // Add version for migration
       currentTaskId: state.currentTaskId,
       placements: state.placements,
       selectedColor: state.selectedColor,
