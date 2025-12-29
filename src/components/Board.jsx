@@ -1,5 +1,5 @@
 // Board Component - Handles nail art workspace and sticker placement
-import React, { forwardRef, useMemo, useRef } from 'react';
+import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { clamp } from '../lib/geometry.js';
 import Sticker from './Sticker.jsx';
 
@@ -45,6 +45,18 @@ const Board = forwardRef(function Board({ app, stickers, completionMap }, boardR
   const { placements, showHints, showTemplate, nailColors, selectedSticker, selectedColor } = app.state;
   const activeTask = app.currentTask;
   const nailMapRef = useRef(null);
+
+  // State for showing/hiding info card
+  const [isInfoCardVisible, setIsInfoCardVisible] = useState(() => {
+    const saved = window.localStorage.getItem('nail-art-info-card-visible');
+    return saved !== null ? saved === 'true' : true; // Default to visible
+  });
+
+  const toggleInfoCard = () => {
+    const newValue = !isInfoCardVisible;
+    setIsInfoCardVisible(newValue);
+    window.localStorage.setItem('nail-art-info-card-visible', String(newValue));
+  };
 
   const placedStickers = useMemo(
     () => stickers.filter((sticker) => placements[sticker.id]),
@@ -455,24 +467,43 @@ const Board = forwardRef(function Board({ app, stickers, completionMap }, boardR
 
         {/* Level and color info overlay */}
         <div className="board-info-overlay">
-          <div className="info-card">
-            <div className="info-level">
-              <span className="info-label">Level:</span>
-              <span className="info-value">{activeTask?.title ?? activeTask?.name ?? 'none'}</span>
-              {activeTask?.difficulty && (
-                <span className={`difficulty-badge difficulty-${activeTask.difficulty.toLowerCase()}`}>
-                  {activeTask.difficulty === 'easy' ? 'Easy' : activeTask.difficulty === 'medium' ? 'Medium' : 'Hard'}
-                </span>
-              )}
-            </div>
-            <div className="info-color">
-              <span className="info-label">Farba:</span>
-              <div className="info-color-display">
-                <span className="color-preview" style={{ backgroundColor: app.state.selectedColor ?? '#f06292' }} />
-                <span className="color-name">{app.state.selectedColorName ?? 'Žiadna'}</span>
+          {isInfoCardVisible ? (
+            <div className="info-card">
+              <button
+                className="info-card-close"
+                onClick={toggleInfoCard}
+                aria-label="Zavrieť info"
+                title="Zavrieť info"
+              >
+                ✕
+              </button>
+              <div className="info-level">
+                <span className="info-label">Level:</span>
+                <span className="info-value">{activeTask?.title ?? activeTask?.name ?? 'none'}</span>
+                {activeTask?.difficulty && (
+                  <span className={`difficulty-badge difficulty-${activeTask.difficulty.toLowerCase()}`}>
+                    {activeTask.difficulty === 'easy' ? 'Easy' : activeTask.difficulty === 'medium' ? 'Medium' : 'Hard'}
+                  </span>
+                )}
+              </div>
+              <div className="info-color">
+                <span className="info-label">Farba:</span>
+                <div className="info-color-display">
+                  <span className="color-preview" style={{ backgroundColor: app.state.selectedColor ?? '#f06292' }} />
+                  <span className="color-name">{app.state.selectedColorName ?? 'Žiadna'}</span>
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <button
+              className="info-card-toggle-btn"
+              onClick={toggleInfoCard}
+              aria-label="Otvoriť info"
+              title="Otvoriť info"
+            >
+              i
+            </button>
+          )}
         </div>
 
         {/* Timer overlay - top right */}
