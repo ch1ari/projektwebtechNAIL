@@ -1391,6 +1391,7 @@ body {
   display: grid;
   place-items: center;
   z-index: 10000;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .modal {
@@ -1412,6 +1413,8 @@ body {
   border: 1px solid #ffd0e5;
   background: linear-gradient(160deg, #fff7fb, #ffe8f6);
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Stats Modal - Card Layout */
@@ -1982,6 +1985,22 @@ body {
     font-size: 0.85rem;
     padding: 0.7rem;
   }
+
+  /* Reduce sticker sizes on mobile to prevent overflow */
+  .sticker img {
+    width: 42px;
+    height: 42px;
+  }
+
+  .sticker.is-placed {
+    width: 45px;
+    height: 45px;
+  }
+
+  .sticker.is-palette {
+    width: 58px;
+    height: 58px;
+  }
 }
 
 /* Very small mobile screens */
@@ -2002,6 +2021,53 @@ body {
     width: 30px;
     height: 30px;
     font-size: 0.9rem;
+  }
+
+  /* Make stickers even smaller on very small screens */
+  .sticker img {
+    width: 36px;
+    height: 36px;
+  }
+
+  .sticker.is-placed {
+    width: 40px;
+    height: 40px;
+  }
+
+  .sticker.is-palette {
+    width: 50px;
+    height: 50px;
+  }
+
+  /* Disable hover effects on mobile to prevent lag */
+  .stat-card:hover {
+    transform: none;
+    box-shadow: 0 4px 12px rgba(236, 72, 153, 0.1);
+    border-color: #ffd0e5;
+  }
+
+  /* Improve button responsiveness on mobile */
+  .completion-buttons button {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(217, 70, 181, 0.2);
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+  }
+
+  .completion-buttons button:active {
+    transform: scale(0.98);
+  }
+
+  /* Fix stats modal button lag */
+  .btn-primary,
+  .btn-secondary {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .btn-primary:active,
+  .btn-secondary:active {
+    transform: scale(0.98);
   }
 }
 
