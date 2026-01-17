@@ -75,7 +75,7 @@ const loadStats = () => {
 };
 
 // State version for migration
-const STATE_VERSION = 2; // Incremented for level system changes
+const STATE_VERSION = 3; // Incremented for random task generation with playedInCurrentDifficulty
 
 // Load saved game state from localStorage with version check
 const loadGameState = () => {
@@ -112,12 +112,33 @@ const savedGameState = loadGameState();
 const initialLevelState = savedGameState?.levelState || loadLevelState(tasks);
 
 // Determine first task ID from level state or fallback
-const firstTaskId = initialLevelState.queues[initialLevelState.currentDifficulty]?.[0] ?? tasks[0]?.id ?? null;
+const firstTaskId = initialLevelState.currentTaskId ?? initialLevelState.queues?.easy?.[0] ?? tasks[0]?.id ?? null;
 
-// Ensure the first task is added to playedInCurrentLevel if starting fresh
+// Ensure the first task is added to playedInCurrentDifficulty if starting fresh
+// Also handle migration from old state format
+const ensurePlayedInCurrentDifficulty = (levelState, taskId) => {
+  if (!levelState.playedInCurrentDifficulty) {
+    // Create new structure if it doesn't exist
+    return {
+      easy: taskId && levelState.currentDifficulty === 'easy' ? [taskId] : [],
+      medium: taskId && levelState.currentDifficulty === 'medium' ? [taskId] : [],
+      hard: taskId && levelState.currentDifficulty === 'hard' ? [taskId] : []
+    };
+  }
+
+  // Update existing structure
+  const difficulty = levelState.currentDifficulty || 'easy';
+  const playedList = levelState.playedInCurrentDifficulty[difficulty] || [];
+
+  return {
+    ...levelState.playedInCurrentDifficulty,
+    [difficulty]: playedList.includes(taskId) ? playedList : [...playedList, taskId]
+  };
+};
+
 const initialLevelStateWithFirst = savedGameState?.levelState ? initialLevelState : {
   ...initialLevelState,
-  playedInCurrentLevel: firstTaskId ? [firstTaskId] : []
+  playedInCurrentDifficulty: ensurePlayedInCurrentDifficulty(initialLevelState, firstTaskId)
 };
 
 const defaultState = {
@@ -816,14 +837,18 @@ function RightPanel({ app, completionMap, onReturnToMenu }) {
   const hasNext = currentIndex >= 0 && currentIndex < app.tasks.length - 1;
   const nextLocked = hasNext && !currentComplete;
 
-  // Calculate level progress
+  // Calculate level progress for current difficulty group
   const { levelState } = app.state;
-  const { currentDifficulty, queues, playedInCurrentLevel } = levelState;
-  const currentQueue = queues[currentDifficulty] || [];
-  const completedInLevel = currentQueue.filter(taskId =>
-    app.state.stats?.[taskId]?.completed
-  ).length;
-  const totalInLevel = currentQueue.length;
+  const { currentDifficulty } = levelState;
+
+  // Get completed task IDs from stats
+  const completedTaskIds = Object.keys(app.state.stats || {}).filter(
+    taskId => app.state.stats[taskId]?.completed
+  );
+
+  const progressInfo = getLevelProgress(levelState, completedTaskIds);
+  const completedInLevel = progressInfo.completed;
+  const totalInLevel = progressInfo.total;
 
   // Get difficulty label
   const difficultyLabel = currentDifficulty === 'easy' ? 'Easy' :
